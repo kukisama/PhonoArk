@@ -1,0 +1,93 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PhonoArk.ViewModels"
+             xmlns:views="using:PhonoArk.Views"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="PhonoArk.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <vm:MainViewModel />
+  </Design.DataContext>
+
+  <Grid ColumnDefinitions="200,*">
+    <!-- Navigation Sidebar -->
+    <Border Grid.Column="0" 
+            Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+            Padding="10">
+      <StackPanel Spacing="5">
+        <TextBlock Text="PhonoArk" 
+                   FontSize="20" 
+                   FontWeight="Bold" 
+                   Margin="10,10,10,20"
+                   HorizontalAlignment="Center"/>
+
+        <Button Content="📚 IPA Chart"
+                Click="OnIpaChartClick"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="10"
+                Classes="NavButton"/>
+
+        <Button Content="📝 Exam"
+                Click="OnExamClick"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="10"
+                Classes="NavButton"/>
+
+        <Button Content="⭐ Favorites"
+                Click="OnFavoritesClick"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="10"
+                Classes="NavButton"/>
+
+        <Button Content="📊 History"
+                Click="OnHistoryClick"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="10"
+                Classes="NavButton"/>
+
+        <Button Content="📖 Word Learning"
+                IsEnabled="False"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="10"
+                Classes="NavButton"
+                ToolTip.Tip="Coming Soon"/>
+
+        <Button Content="⚙️ Settings"
+                Click="OnSettingsClick"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Left"
+                Padding="10"
+                Classes="NavButton"
+                Margin="0,20,0,0"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Content Area -->
+    <ContentControl Grid.Column="1" Content="{Binding CurrentView}">
+      <ContentControl.DataTemplates>
+        <DataTemplate DataType="vm:IpaChartViewModel">
+          <views:IpaChartView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ExamViewModel">
+          <views:ExamView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:SettingsViewModel">
+          <views:SettingsView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:FavoritesViewModel">
+          <views:FavoritesView/>
+        </DataTemplate>
+        <DataTemplate DataType="vm:ExamHistoryViewModel">
+          <views:ExamHistoryView/>
+        </DataTemplate>
+      </ContentControl.DataTemplates>
+    </ContentControl>
+  </Grid>
+</UserControl>

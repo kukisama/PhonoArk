@@ -1,0 +1,82 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PhonoArk.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="PhonoArk.Views.ExamHistoryView"
+             x:DataType="vm:ExamHistoryViewModel">
+
+  <Grid Margin="20" RowDefinitions="Auto,Auto,*">
+    <TextBlock Grid.Row="0" 
+               Text="Exam History" 
+               FontSize="28" 
+               FontWeight="Bold"
+               Margin="0,0,0,10"/>
+
+    <Border Grid.Row="1"
+            Background="{DynamicResource SystemControlBackgroundAccentBrush}"
+            Padding="15"
+            CornerRadius="8"
+            Margin="0,0,0,20">
+      <TextBlock Text="{Binding AverageScore, StringFormat='Average Score: {0:F1}%'}"
+                 FontSize="18"
+                 FontWeight="SemiBold"
+                 HorizontalAlignment="Center"/>
+    </Border>
+
+    <ScrollViewer Grid.Row="2">
+      <ItemsControl ItemsSource="{Binding ExamResults}">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+                    BorderThickness="1"
+                    CornerRadius="8"
+                    Padding="15"
+                    Margin="0,0,0,10">
+              <Grid ColumnDefinitions="*,Auto,Auto">
+                <StackPanel Grid.Column="0">
+                  <TextBlock Text="{Binding ExamDate, StringFormat='{}{0:g}'}" 
+                             FontSize="16" 
+                             FontWeight="SemiBold"/>
+                  <TextBlock Text="{Binding ExamScope, StringFormat='Scope: {0}'}" 
+                             FontSize="14" 
+                             Opacity="0.7"
+                             Margin="0,5,0,0"/>
+                  <TextBlock Text="{Binding Duration, StringFormat='Duration: {0:mm\\:ss}'}" 
+                             FontSize="14" 
+                             Opacity="0.7"/>
+                </StackPanel>
+                <StackPanel Grid.Column="1" 
+                            VerticalAlignment="Center"
+                            Margin="20,0">
+                  <TextBlock Text="{Binding CorrectAnswers, StringFormat='{}{0}'}" 
+                             FontSize="24" 
+                             FontWeight="Bold"
+                             HorizontalAlignment="Center"/>
+                  <TextBlock Text="{Binding TotalQuestions, StringFormat='/ {0}'}" 
+                             FontSize="14" 
+                             Opacity="0.7"
+                             HorizontalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Grid.Column="2"
+                           Text="{Binding Score, StringFormat='{}{0:F1}%'}"
+                           FontSize="28"
+                           FontWeight="Bold"
+                           VerticalAlignment="Center"/>
+              </Grid>
+            </Border>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
+    </ScrollViewer>
+
+    <TextBlock Grid.Row="2"
+               Text="No exam history yet. Take an exam to see your results!"
+               IsVisible="{Binding !ExamResults.Count}"
+               HorizontalAlignment="Center"
+               VerticalAlignment="Center"
+               FontSize="16"
+               Opacity="0.6"/>
+  </Grid>
+</UserControl>
