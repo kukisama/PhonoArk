@@ -1,59 +1,59 @@
-# PhonoArk Developer Documentation
+# PhonoArk 开发者文档
 
-## Architecture Overview
+## 架构概述
 
-PhonoArk follows the MVVM (Model-View-ViewModel) pattern using Avalonia UI framework and CommunityToolkit.Mvvm for code generation.
+PhonoArk 采用 MVVM (Model-View-ViewModel) 模式，使用 Avalonia UI 框架和 CommunityToolkit.Mvvm 进行代码生成。
 
-### Project Structure
+### 项目结构
 
 ```
 PhonoArk/
-├── Models/              - Domain models and entities
-├── ViewModels/          - MVVM view models with business logic
-├── Views/               - Avalonia XAML user interface
-├── Services/            - Business logic and data access
+├── Models/              - 领域模型和实体
+├── ViewModels/          - MVVM 视图模型及业务逻辑
+├── Views/               - Avalonia XAML 用户界面
+├── Services/            - 业务逻辑和数据访问
 ├── Data/                - Entity Framework Core DbContext
-├── Converters/          - XAML value converters
-└── Assets/              - Images, icons, and resources
+├── Converters/          - XAML 值转换器
+└── Assets/              - 图片、图标和资源
 ```
 
-### Key Components
+### 核心组件
 
 #### Models
-- **Phoneme**: Represents an IPA phoneme with example words
-- **ExampleWord**: Word with IPA transcription and audio paths
-- **FavoritePhoneme**: User's bookmarked phonemes
-- **ExamResult**: Exam history record
-- **AppSettings**: Application configuration
+- **Phoneme**：表示一个 IPA 音素及其示例单词
+- **ExampleWord**：包含 IPA 转写和音频路径的单词
+- **FavoritePhoneme**：用户收藏的音素
+- **ExamResult**：考试历史记录
+- **AppSettings**：应用程序配置
 
 #### Services
-- **PhonemeDataService**: Provides IPA data (44 phonemes with examples)
-- **AudioService**: Handles audio playback (placeholder implementation)
-- **FavoriteService**: Manages phoneme bookmarks
-- **ExamService**: Generates and manages exam questions
-- **ExamHistoryService**: Tracks exam results
-- **SettingsService**: Manages app settings
+- **PhonemeDataService**：提供 IPA 数据（44 个音素及示例）
+- **AudioService**：处理音频播放（占位实现）
+- **FavoriteService**：管理音素收藏
+- **ExamService**：生成和管理考试题目
+- **ExamHistoryService**：跟踪考试结果
+- **SettingsService**：管理应用设置
 
 #### ViewModels
-- **MainViewModel**: Root view model with navigation
-- **IpaChartViewModel**: IPA chart display and interaction
-- **ExamViewModel**: Exam flow and question management
-- **ExamHistoryViewModel**: History display
-- **FavoritesViewModel**: Favorites management
-- **SettingsViewModel**: Settings configuration
+- **MainViewModel**：根视图模型，负责导航
+- **IpaChartViewModel**：IPA 图表展示和交互
+- **ExamViewModel**：考试流程和题目管理
+- **ExamHistoryViewModel**：历史记录展示
+- **FavoritesViewModel**：收藏管理
+- **SettingsViewModel**：设置配置
 
-## Database Schema
+## 数据库架构
 
-Using SQLite with Entity Framework Core:
+使用 SQLite 和 Entity Framework Core：
 
 ```sql
--- FavoritePhonemes
+-- FavoritePhonemes（收藏音素）
 Id (INTEGER PRIMARY KEY)
 PhonemeSymbol (TEXT)
 GroupName (TEXT DEFAULT 'Default')
 CreatedAt (TEXT)
 
--- ExamResults
+-- ExamResults（考试结果）
 Id (INTEGER PRIMARY KEY)
 ExamDate (TEXT)
 TotalQuestions (INTEGER)
@@ -61,7 +61,7 @@ CorrectAnswers (INTEGER)
 ExamScope (TEXT DEFAULT 'All')
 Duration (TEXT)
 
--- Settings
+-- Settings（设置）
 Id (INTEGER PRIMARY KEY)
 DefaultAccent (INTEGER)
 Volume (REAL)
@@ -70,11 +70,11 @@ DarkMode (INTEGER)
 RemindersEnabled (INTEGER)
 ```
 
-## Adding New Features
+## 添加新功能
 
-### Adding a New Phoneme
+### 添加新音素
 
-Edit `Services/PhonemeDataService.cs`:
+编辑 `Services/PhonemeDataService.cs`：
 ```csharp
 _phonemes.Add(new Phoneme
 {
@@ -88,79 +88,79 @@ _phonemes.Add(new Phoneme
 });
 ```
 
-### Adding a New View
+### 添加新视图
 
-1. Create XAML file in `Views/` folder
-2. Create corresponding ViewModel in `ViewModels/`
-3. Register in `MainViewModel.cs` navigation
-4. Add DataTemplate in `MainView.axaml`
+1. 在 `Views/` 文件夹中创建 XAML 文件
+2. 在 `ViewModels/` 中创建对应的 ViewModel
+3. 在 `MainViewModel.cs` 中注册导航
+4. 在 `MainView.axaml` 中添加 DataTemplate
 
-### Implementing Audio Playback
+### 实现音频播放
 
-Currently, the AudioService is a placeholder. To add real audio:
+目前 AudioService 是一个占位实现。要添加真实音频：
 
-1. Add audio files to `Assets/Audio/` folder
-2. Update `Phoneme` and `ExampleWord` models with correct paths
-3. Implement platform-specific audio in `AudioService.cs`
-4. Use Avalonia's AssetLoader for cross-platform file access
+1. 将音频文件添加到 `Assets/Audio/` 文件夹
+2. 更新 `Phoneme` 和 `ExampleWord` 模型，设置正确的路径
+3. 在 `AudioService.cs` 中实现平台特定的音频功能
+4. 使用 Avalonia 的 AssetLoader 进行跨平台文件访问
 
-Example:
+示例：
 ```csharp
 var uri = new Uri($"avares://PhonoArk/Assets/Audio/{audioPath}");
 var stream = AssetLoader.Open(uri);
-// Play stream with platform audio API
+// 使用平台音频 API 播放音频流
 ```
 
-## Testing
+## 测试
 
-### Manual Testing Checklist
+### 手动测试清单
 
-1. **IPA Chart**
-   - [ ] All phonemes display correctly
-   - [ ] Click phoneme shows detail panel
-   - [ ] Accent switching works
-   - [ ] Favorites toggle works
+1. **IPA 图表**
+   - [ ] 所有音素正确显示
+   - [ ] 点击音素显示详情面板
+   - [ ] 口音切换功能正常
+   - [ ] 收藏切换功能正常
 
-2. **Exam**
-   - [ ] Can start exam with different settings
-   - [ ] Questions display correctly
-   - [ ] Answer selection works
-   - [ ] Feedback shows correct/incorrect
-   - [ ] Results save to history
+2. **考试**
+   - [ ] 能够使用不同设置开始考试
+   - [ ] 题目正确显示
+   - [ ] 答案选择功能正常
+   - [ ] 反馈显示正确/错误
+   - [ ] 结果保存到历史记录
 
-3. **Settings**
-   - [ ] All settings save/load correctly
-   - [ ] Volume slider works
-   - [ ] Theme toggle works (when implemented)
+3. **设置**
+   - [ ] 所有设置正确保存/加载
+   - [ ] 音量滑块功能正常
+   - [ ] 主题切换功能正常（待实现）
 
-## Common Issues
+## 常见问题
 
-### Database Not Creating
-- Check write permissions in LocalApplicationData folder
-- Verify connection string in App.axaml.cs
-- Run `dotnet ef database update` if migrations exist
+### 数据库未创建
+- 检查 LocalApplicationData 文件夹的写入权限
+- 验证 App.axaml.cs 中的连接字符串
+- 如果存在迁移，运行 `dotnet ef database update`
 
-### UI Not Updating
-- Ensure properties use `[ObservableProperty]` attribute
-- Check DataContext is set correctly
-- Verify bindings in XAML use correct property names
+### UI 未更新
+- 确保属性使用了 `[ObservableProperty]` 特性
+- 检查 DataContext 是否正确设置
+- 验证 XAML 中的绑定使用了正确的属性名称
 
-### Navigation Not Working
-- Check MainViewModel has all ViewModels registered
-- Verify DataTemplates in MainView.axaml
-- Ensure event handlers in MainView.axaml.cs call correct methods
+### 导航不工作
+- 检查 MainViewModel 是否注册了所有 ViewModel
+- 验证 MainView.axaml 中的 DataTemplate
+- 确保 MainView.axaml.cs 中的事件处理程序调用了正确的方法
 
-## Build & Deployment
+## 构建与部署
 
-### Desktop (Windows/Linux/macOS)
+### 桌面端 (Windows/Linux/macOS)
 ```bash
-# Debug build
+# 调试构建
 dotnet build PhonoArk.Desktop/PhonoArk.Desktop.csproj
 
-# Release build
+# 发布构建
 dotnet publish PhonoArk.Desktop/PhonoArk.Desktop.csproj -c Release -o ./publish
 
-# Self-contained (includes .NET runtime)
+# 自包含部署（包含 .NET 运行时）
 dotnet publish PhonoArk.Desktop/PhonoArk.Desktop.csproj \
   -c Release \
   -r win-x64 \
@@ -170,62 +170,62 @@ dotnet publish PhonoArk.Desktop/PhonoArk.Desktop.csproj \
 
 ### Android
 ```bash
-# Install workload
+# 安装工作负载
 dotnet workload install android
 
-# Build APK
+# 构建 APK
 dotnet build PhonoArk.Android/PhonoArk.Android.csproj -c Release
 
-# APK location: PhonoArk.Android/bin/Release/net10.0-android/
+# APK 位置：PhonoArk.Android/bin/Release/net10.0-android/
 ```
 
-### iOS (macOS only)
+### iOS（仅限 macOS）
 ```bash
-# Install workload
+# 安装工作负载
 dotnet workload install ios
 
-# Build
+# 构建
 dotnet build PhonoArk.iOS/PhonoArk.iOS.csproj -c Release
 ```
 
-## Performance Optimization
+## 性能优化
 
-1. **Lazy Load Data**: Load phonemes on-demand
-2. **Virtualization**: Use VirtualizingStackPanel for long lists
-3. **Image Caching**: Cache loaded images/assets
-4. **Database Indexing**: Add indexes to frequently queried columns
-5. **Async Operations**: Always use async/await for I/O operations
+1. **延迟加载数据**：按需加载音素
+2. **虚拟化**：对长列表使用 VirtualizingStackPanel
+3. **图片缓存**：缓存已加载的图片/资源
+4. **数据库索引**：为频繁查询的列添加索引
+5. **异步操作**：I/O 操作始终使用 async/await
 
-## Future Enhancements
+## 未来增强功能
 
-1. **Audio Integration**
-   - Add real phoneme and word audio files
-   - Implement platform-specific audio playback
-   - Add recording functionality
+1. **音频集成**
+   - 添加真实的音素和单词音频文件
+   - 实现平台特定的音频播放
+   - 添加录音功能
 
-2. **Advanced Exam Modes**
-   - Timed exams
-   - Multiple choice for phoneme recognition
-   - Speaking practice with pronunciation scoring
+2. **高级考试模式**
+   - 限时考试
+   - 音素识别多选题
+   - 带发音评分的口语练习
 
-3. **Cloud Sync**
-   - User authentication
-   - Cloud database (Firebase/Azure)
-   - Cross-device progress sync
+3. **云同步**
+   - 用户认证
+   - 云数据库 (Firebase/Azure)
+   - 跨设备进度同步
 
-4. **Analytics**
-   - Track learning progress
-   - Identify weak areas
-   - Personalized recommendations
+4. **数据分析**
+   - 跟踪学习进度
+   - 识别薄弱环节
+   - 个性化推荐
 
-## Contributing
+## 贡献指南
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Write tests (when test infrastructure is added)
-5. Submit a pull request
+1. Fork 本仓库
+2. 创建功能分支
+3. 进行更改
+4. 编写测试（待测试基础设施完善后）
+5. 提交 Pull Request
 
-## License
+## 许可证
 
-MIT License - See LICENSE file for details
+MIT 许可证 - 详情请参阅 LICENSE 文件
