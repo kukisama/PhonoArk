@@ -42,14 +42,15 @@ public class SettingsService
             existing.ExamQuestionCount = settings.ExamQuestionCount;
             existing.DarkMode = settings.DarkMode;
             existing.RemindersEnabled = settings.RemindersEnabled;
+            _cachedSettings = existing;
         }
         else
         {
             _context.Settings.Add(settings);
+            _cachedSettings = settings;
         }
 
         await _context.SaveChangesAsync();
-        _cachedSettings = settings;
     }
 
     public void ClearCache()

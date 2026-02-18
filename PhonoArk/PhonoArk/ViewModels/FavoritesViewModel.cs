@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using PhonoArk.Models;
 using PhonoArk.Services;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -61,6 +62,13 @@ public partial class FavoritesViewModel : ViewModelBase
 
     partial void OnSelectedGroupChanged(string value)
     {
-        _ = LoadFavoritesAsync();
+        try
+        {
+            _ = LoadFavoritesAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading favorites on group change: {ex.Message}");
+        }
     }
 }

@@ -65,7 +65,14 @@ public partial class App : Application
             settingsViewModel);
 
         // Load settings
-        _ = settingsViewModel.LoadSettingsAsync();
+        try
+        {
+            _ = settingsViewModel.LoadSettingsAsync();
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"Error loading settings: {ex.Message}");
+        }
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
