@@ -1,10 +1,10 @@
-## What's New
+## 更新内容
 
-- Initial release of PhonoArk (音律方舟)
-- Interactive IPA Chart with 44 phonemes
-- Dual accent support (American & British)
-- Practice exams with instant feedback
-- Progress tracking and exam history
-- Favorites system for bookmarking phonemes
-- Dark/Light theme support
-- Cross-platform Desktop support (Windows, Linux, macOS)
+- PhonoArk (音律方舟) 首次发布
+- 包含 44 个音素的交互式 IPA 音标表
+- 双口音支持（美式和英式）
+- 带即时反馈的练习测验
+- 进度跟踪和考试历史记录
+- 收藏夹系统，可收藏音素
+- 深色/浅色主题支持
+- 跨平台桌面支持（Windows、Linux、macOS）

@@ -1,226 +1,226 @@
-# PhonoArk - User Guide
+# PhonoArk - 用户指南
 
-## Welcome to PhonoArk! 🎵
+## 欢迎使用 PhonoArk！🎵
 
-PhonoArk (音律方舟) is your companion for mastering English pronunciation through the International Phonetic Alphabet (IPA).
+PhonoArk（音律方舟）是您通过国际音标（IPA）掌握英语发音的学习伙伴。
 
-## Getting Started
+## 快速入门
 
-### First Launch
+### 首次启动
 
-When you first open PhonoArk, you'll see:
-- **Navigation Sidebar** on the left with main features
-- **IPA Chart** as the default view
-- Options to switch between American and British pronunciation
+首次打开 PhonoArk 时，您将看到：
+- 左侧的**导航侧边栏**，包含主要功能
+- 默认视图为 **IPA 音标表**
+- 可切换美式和英式发音的选项
 
-### Main Features
+### 主要功能
 
-## 1. 📚 IPA Chart
+## 1. 📚 IPA 音标表
 
-The IPA Chart is your main learning tool:
+IPA 音标表是您的主要学习工具：
 
-**How to Use:**
-1. Browse phonemes organized by type (Vowels, Diphthongs, Consonants)
-2. Click any phoneme button to see details
-3. View example words with IPA transcriptions
-4. Play pure phoneme sound by clicking "🔊 Play Sound"
-5. Play word pronunciations by clicking on example words
-6. Add to favorites using "☆ Add to Favorites" button
+**使用方法：**
+1. 按类型浏览音素（元音、双元音、辅音）
+2. 点击任意音素按钮查看详情
+3. 查看带有 IPA 音标标注的示例单词
+4. 点击"🔊 Play Sound"播放纯音素发音
+5. 点击示例单词播放单词发音
+6. 使用"☆ Add to Favorites"按钮添加到收藏
 
-**Accent Switching:**
-- Click the accent button at top (GenAm/RP) to switch
-- All audio will change to the selected accent
+**口音切换：**
+- 点击顶部的口音按钮（GenAm/RP）进行切换
+- 所有音频将切换为所选口音
 
-## 2. 📝 Exam
+## 2. 📝 测验
 
-Test your knowledge with practice exams:
+通过练习测验检验您的知识：
 
-**Starting an Exam:**
-1. Set the number of questions (5-50)
-2. Choose scope:
-   - **All Phonemes**: Test on entire IPA chart
-   - **Favorites Only**: Focus on bookmarked phonemes
-3. Click "Start Exam"
+**开始测验：**
+1. 设置题目数量（5-50）
+2. 选择范围：
+   - **All Phonemes**：测试整个 IPA 音标表
+   - **Favorites Only**：专注于已收藏的音素
+3. 点击"Start Exam"
 
-**Taking the Exam:**
-1. Listen to a phoneme sound
-2. Select the correct word from 4 options
-3. See immediate feedback (correct/incorrect)
-4. Continue to next question
-5. Review your score at the end
+**进行测验：**
+1. 听一个音素发音
+2. 从 4 个选项中选择正确的单词
+3. 查看即时反馈（正确/错误）
+4. 继续下一题
+5. 最后查看您的得分
 
-**Tips:**
-- Listen carefully to the pronunciation
-- You can replay the sound anytime
-- Results are automatically saved to history
+**小贴士：**
+- 仔细聆听发音
+- 您可以随时重播音频
+- 结果会自动保存到历史记录
 
-## 3. ⭐ Favorites
+## 3. ⭐ 收藏
 
-Manage your bookmarked phonemes:
+管理您收藏的音素：
 
-**Features:**
-- View all favorited phonemes
-- Group favorites by category
-- Remove individual favorites
-- Clear all favorites at once
+**功能：**
+- 查看所有已收藏的音素
+- 按类别分组收藏
+- 移除单个收藏
+- 一键清除所有收藏
 
-**Use Cases:**
-- Create custom study sets
-- Focus on difficult sounds
-- Build themed collections (e.g., "vowels only")
+**使用场景：**
+- 创建自定义学习集
+- 专注于难发的音
+- 创建主题集合（例如"仅元音"）
 
-## 4. 📊 History
+## 4. 📊 历史记录
 
-Track your learning progress:
+跟踪您的学习进度：
 
-**What You'll See:**
-- Complete exam history with dates
-- Score percentages
-- Time spent on each exam
-- Average score across all exams
+**您将看到：**
+- 带有日期的完整测验历史
+- 得分百分比
+- 每次测验所花时间
+- 所有测验的平均分
 
-**Using History:**
-- Monitor improvement over time
-- Identify patterns in performance
-- Stay motivated with progress tracking
+**使用历史记录：**
+- 监控学习进步
+- 识别表现模式
+- 通过进度追踪保持学习动力
 
-## 5. 📖 Word Learning (Coming Soon)
+## 5. 📖 单词学习（即将推出）
 
-This feature will include:
-- Flashcard-based word study
-- Spaced repetition system
-- Pronunciation practice
-- Vocabulary building exercises
+该功能将包括：
+- 基于闪卡的单词学习
+- 间隔重复系统
+- 发音练习
+- 词汇构建练习
 
-## 6. ⚙️ Settings
+## 6. ⚙️ 设置
 
-Customize your learning experience:
+自定义您的学习体验：
 
-**Available Settings:**
+**可用设置：**
 
-**Pronunciation:**
-- **Default Accent**: Choose American (GenAm) or British (RP)
-  - Affects all audio playback
+**发音：**
+- **默认口音**：选择美式（GenAm）或英式（RP）
+  - 影响所有音频播放
 
-**Audio:**
-- **Volume**: Adjust playback volume (0-100%)
-  - Use the slider to set your preferred level
+**音频：**
+- **音量**：调整播放音量（0-100%）
+  - 使用滑块设置您偏好的音量
 
-**Learning:**
-- **Default Exam Questions**: Set default question count
-  - Choose 5-50 questions
-- **Study Reminders**: Enable daily practice reminders (coming soon)
+**学习：**
+- **默认测验题数**：设置默认题目数量
+  - 可选择 5-50 题
+- **学习提醒**：启用每日练习提醒（即将推出）
 
-**Appearance:**
-- **Dark Mode**: Toggle between light and dark themes
-  - Follows system preference by default
+**外观：**
+- **深色模式**：在浅色和深色主题之间切换
+  - 默认跟随系统偏好设置
 
-**Saving Settings:**
-- Click "Save Settings" to apply changes
-- Settings persist across app restarts
+**保存设置：**
+- 点击"Save Settings"应用更改
+- 设置在应用重启后保持不变
 
-## Learning Tips
+## 学习建议
 
-### For Beginners
-1. Start with vowels - they're the foundation
-2. Learn one phoneme group at a time
-3. Practice daily with 5-10 question exams
-4. Focus on similar-sounding phonemes
+### 适合初学者
+1. 从元音开始——它们是基础
+2. 每次学习一组音素
+3. 每天用 5-10 题的测验进行练习
+4. 重点关注发音相似的音素
 
-### For Intermediate Learners
-1. Challenge yourself with 20+ question exams
-2. Mix different phoneme types
-3. Practice with your weak spots (use Favorites)
-4. Try to recognize phonemes without looking at words
+### 适合中级学习者
+1. 用 20 题以上的测验挑战自己
+2. 混合不同类型的音素
+3. 针对薄弱环节进行练习（使用收藏功能）
+4. 尝试不看单词识别音素
 
-### For Advanced Users
-1. Switch between accents to recognize differences
-2. Take timed exams (coming soon)
-3. Focus on diphthongs and consonant clusters
-4. Help others learn by sharing your strategies
+### 适合高级用户
+1. 在不同口音之间切换以识别差异
+2. 进行限时测验（即将推出）
+3. 专注于双元音和辅音连缀
+4. 通过分享策略帮助他人学习
 
-## Keyboard Shortcuts (Desktop)
+## 键盘快捷键（桌面端）
 
-*Coming in future updates*
-- `Space`: Play audio
-- `1-4`: Select answer option
-- `Enter`: Next question
-- `Ctrl+F`: Add to favorites
+*将在未来更新中推出*
+- `Space`：播放音频
+- `1-4`：选择答案选项
+- `Enter`：下一题
+- `Ctrl+F`：添加到收藏
 
-## Troubleshooting
+## 故障排除
 
-### Audio Not Playing
-- Check volume settings
-- Ensure system audio is working
-- Verify accent selection is correct
-- Note: Audio files are placeholder in current version
+### 音频无法播放
+- 检查音量设置
+- 确保系统音频正常工作
+- 验证口音选择是否正确
+- 注意：当前版本中音频文件为占位符
 
-### Data Not Saving
-- Check app has write permissions
-- Database location: `%LocalAppData%/PhonoArk/phonoark.db`
-- Try restarting the application
+### 数据无法保存
+- 检查应用是否有写入权限
+- 数据库位置：`%LocalAppData%/PhonoArk/phonoark.db`
+- 尝试重启应用程序
 
-### UI Issues
-- Resize window if controls are cut off
-- Switch between light/dark mode
-- Check for app updates
+### 界面问题
+- 如果控件被截断，请调整窗口大小
+- 尝试在浅色/深色模式之间切换
+- 检查是否有应用更新
 
-## Privacy & Data
+## 隐私与数据
 
-**Local Storage:**
-- All data stored locally on your device
-- No internet connection required
-- Database location: Local application data folder
+**本地存储：**
+- 所有数据存储在您的本地设备上
+- 无需互联网连接
+- 数据库位置：本地应用数据文件夹
 
-**What We Store:**
-- Favorite phonemes
-- Exam results and history
-- Your settings and preferences
+**我们存储的内容：**
+- 收藏的音素
+- 测验结果和历史记录
+- 您的设置和偏好
 
-**What We Don't Store:**
-- Personal information
-- Audio recordings (when feature is added)
-- Usage analytics
+**我们不存储的内容：**
+- 个人信息
+- 录音（功能添加后也不会存储）
+- 使用分析数据
 
-## Support
+## 支持
 
-**Need Help?**
-- Check this guide for common questions
-- Visit GitHub: https://github.com/kukisama/PhonoArk
-- Report issues on GitHub Issues
-- Contribute improvements via Pull Requests
+**需要帮助？**
+- 查阅本指南中的常见问题
+- 访问 GitHub：https://github.com/kukisama/PhonoArk
+- 在 GitHub Issues 上报告问题
+- 通过 Pull Requests 贡献改进
 
-## Credits
+## 致谢
 
-**Developed With:**
+**开发技术：**
 - .NET & Avalonia UI Framework
 - SkiaSharp for rendering
 - Entity Framework Core for data
 - CommunityToolkit.Mvvm for MVVM pattern
 
-**Open Source:**
-- Licensed under MIT License
-- Contributions welcome
-- Built with ❤️ for language learners
+**开源项目：**
+- 基于 MIT License 许可
+- 欢迎贡献
+- 为语言学习者用 ❤️ 构建
 
 ---
 
-## Quick Reference: IPA Symbols
+## 快速参考：IPA 音标符号
 
-### Vowels
+### 元音
 - iː (see), ɪ (sit), e (bed), æ (cat)
 - ɑː (car), ɒ (hot), ɔː (saw), ʊ (book)
 - uː (food), ʌ (cup), ɜː (bird), ə (about)
 
-### Diphthongs
+### 双元音
 - eɪ (day), aɪ (my), ɔɪ (boy), aʊ (now)
 - oʊ (go), ɪə (here), eə (hair), ʊə (poor)
 
-### Consonants
-- **Plosives**: p, b, t, d, k, ɡ
-- **Fricatives**: f, v, θ, ð, s, z, ʃ, ʒ, h
-- **Nasals**: m, n, ŋ
-- **Approximants**: l, r, j, w
-- **Affricates**: tʃ, dʒ
+### 辅音
+- **爆破音**: p, b, t, d, k, ɡ
+- **摩擦音**: f, v, θ, ð, s, z, ʃ, ʒ, h
+- **鼻音**: m, n, ŋ
+- **近音**: l, r, j, w
+- **塞擦音**: tʃ, dʒ
 
-Happy Learning! 🎓
+祝学习愉快！🎓
