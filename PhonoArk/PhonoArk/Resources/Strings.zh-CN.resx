@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve"><value>PhonoArk</value></data>
+  <data name="NavIpaChart" xml:space="preserve"><value>📚 国际音标图</value></data>
+  <data name="NavExam" xml:space="preserve"><value>📝 练习测试</value></data>
+  <data name="NavFavorites" xml:space="preserve"><value>⭐ 收藏</value></data>
+  <data name="NavHistory" xml:space="preserve"><value>📊 历史记录</value></data>
+  <data name="NavWordLearning" xml:space="preserve"><value>📖 单词学习</value></data>
+  <data name="NavSettings" xml:space="preserve"><value>⚙️ 设置</value></data>
+  <data name="ComingSoon" xml:space="preserve"><value>即将上线</value></data>
+  <data name="IpaTitle" xml:space="preserve"><value>国际音标（IPA）</value></data>
+  <data name="AccentSwitchTooltip" xml:space="preserve"><value>在美式发音（GenAm）与英式发音（RP）之间切换</value></data>
+  <data name="Vowels" xml:space="preserve"><value>元音</value></data>
+  <data name="Diphthongs" xml:space="preserve"><value>双元音</value></data>
+  <data name="Consonants" xml:space="preserve"><value>辅音</value></data>
+  <data name="PlaySound" xml:space="preserve"><value>🔊 播放发音</value></data>
+  <data name="ExampleWords" xml:space="preserve"><value>示例单词：</value></data>
+  <data name="SelectPhonemeHint" xml:space="preserve"><value>请选择一个音素查看详情与示例单词</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>设置</value></data>
+  <data name="DefaultAccent" xml:space="preserve"><value>默认口音：</value></data>
+  <data name="AccentGenAm" xml:space="preserve"><value>美式（GenAm）</value></data>
+  <data name="AccentRp" xml:space="preserve"><value>英式（RP）</value></data>
+  <data name="Volume" xml:space="preserve"><value>音量：</value></data>
+  <data name="DefaultExamQuestions" xml:space="preserve"><value>默认题目数量：</value></data>
+  <data name="Appearance" xml:space="preserve"><value>外观：</value></data>
+  <data name="DarkMode" xml:space="preserve"><value>深色模式</value></data>
+  <data name="Learning" xml:space="preserve"><value>学习：</value></data>
+  <data name="EnableStudyReminders" xml:space="preserve"><value>启用学习提醒</value></data>
+  <data name="SaveSettings" xml:space="preserve"><value>保存设置</value></data>
+  <data name="Language" xml:space="preserve"><value>界面语言：</value></data>
+  <data name="PracticeExam" xml:space="preserve"><value>练习测试</value></data>
+  <data name="NumberOfQuestions" xml:space="preserve"><value>题目数量：</value></data>
+  <data name="ExamScope" xml:space="preserve"><value>测试范围：</value></data>
+  <data name="AllPhonemes" xml:space="preserve"><value>全部音素</value></data>
+  <data name="FavoritesOnly" xml:space="preserve"><value>仅收藏</value></data>
+  <data name="StartExam" xml:space="preserve"><value>开始测试</value></data>
+  <data name="QuestionLabel" xml:space="preserve"><value>第</value></data>
+  <data name="OfLabel" xml:space="preserve"><value>共</value></data>
+  <data name="CorrectLabel" xml:space="preserve"><value>答对：</value></data>
+  <data name="ListenAndSelectWord" xml:space="preserve"><value>请听音素发音并选择正确单词：</value></data>
+  <data name="PlayPhoneme" xml:space="preserve"><value>🔊 播放音素</value></data>
+  <data name="SelectWord" xml:space="preserve"><value>请选择单词：</value></data>
+  <data name="NextQuestion" xml:space="preserve"><value>下一题</value></data>
+  <data name="EndExam" xml:space="preserve"><value>结束测试</value></data>
+  <data name="FavoritePhonemes" xml:space="preserve"><value>收藏音素</value></data>
+  <data name="Group" xml:space="preserve"><value>分组：</value></data>
+  <data name="ClearAll" xml:space="preserve"><value>全部清空</value></data>
+  <data name="Remove" xml:space="preserve"><value>移除</value></data>
+  <data name="Added" xml:space="preserve"><value>添加于：</value></data>
+  <data name="NoFavoritesHint" xml:space="preserve"><value>还没有收藏，去 IPA 图表里添加一些吧！</value></data>
+  <data name="ExamHistory" xml:space="preserve"><value>测试历史</value></data>
+  <data name="AverageScore" xml:space="preserve"><value>平均分：</value></data>
+  <data name="Scope" xml:space="preserve"><value>范围：</value></data>
+  <data name="Duration" xml:space="preserve"><value>用时：</value></data>
+  <data name="NoExamHistoryHint" xml:space="preserve"><value>还没有历史记录，先来做一次测试吧！</value></data>
+  <data name="FeedbackNoQuestions" xml:space="preserve"><value>当前范围下暂无可用题目。</value></data>
+  <data name="FeedbackCorrectTemplate" xml:space="preserve"><value>✓ 回答正确！答案是“{0}” {1}</value></data>
+  <data name="FeedbackIncorrectTemplate" xml:space="preserve"><value>✗ 回答错误。正确答案是“{0}” {1}</value></data>
+  <data name="FeedbackExamCompletedTemplate" xml:space="preserve"><value>测试完成！得分：{0}/{1}（{2:F1}%）</value></data>
+</root>

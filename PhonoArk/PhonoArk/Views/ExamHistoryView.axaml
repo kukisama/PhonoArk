@@ -5,11 +5,12 @@
              xmlns:vm="using:PhonoArk.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="PhonoArk.Views.ExamHistoryView"
+             x:CompileBindings="False"
              x:DataType="vm:ExamHistoryViewModel">
 
   <Grid Margin="20" RowDefinitions="Auto,Auto,*">
     <TextBlock Grid.Row="0" 
-               Text="Exam History" 
+               Text="{Binding [ExamHistory], Source={StaticResource Loc}}" 
                FontSize="28" 
                FontWeight="Bold"
                Margin="0,0,0,10"/>
@@ -19,10 +20,14 @@
             Padding="15"
             CornerRadius="8"
             Margin="0,0,0,20">
-      <TextBlock Text="{Binding AverageScore, StringFormat='Average Score: {0:F1}%'}"
-                 FontSize="18"
-                 FontWeight="SemiBold"
-                 HorizontalAlignment="Center"/>
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+        <TextBlock Text="{Binding [AverageScore], Source={StaticResource Loc}}"
+                   FontSize="18"
+                   FontWeight="SemiBold"/>
+        <TextBlock Text="{Binding AverageScore, StringFormat='{}{0:F1}%'}"
+                   FontSize="18"
+                   FontWeight="SemiBold"/>
+      </StackPanel>
     </Border>
 
     <ScrollViewer Grid.Row="2">
@@ -39,13 +44,22 @@
                   <TextBlock Text="{Binding ExamDate, StringFormat='{}{0:g}'}" 
                              FontSize="16" 
                              FontWeight="SemiBold"/>
-                  <TextBlock Text="{Binding ExamScope, StringFormat='Scope: {0}'}" 
-                             FontSize="14" 
-                             Opacity="0.7"
-                             Margin="0,5,0,0"/>
-                  <TextBlock Text="{Binding Duration, StringFormat='Duration: {0:mm\\:ss}'}" 
-                             FontSize="14" 
-                             Opacity="0.7"/>
+                  <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,5,0,0">
+                    <TextBlock Text="{Binding [Scope], Source={StaticResource Loc}}"
+                               FontSize="14"
+                               Opacity="0.7"/>
+                    <TextBlock Text="{Binding ExamScope}"
+                               FontSize="14"
+                               Opacity="0.7"/>
+                  </StackPanel>
+                  <StackPanel Orientation="Horizontal" Spacing="4">
+                    <TextBlock Text="{Binding [Duration], Source={StaticResource Loc}}"
+                               FontSize="14"
+                               Opacity="0.7"/>
+                    <TextBlock Text="{Binding Duration, StringFormat='{}{0:mm\\:ss}'}"
+                               FontSize="14"
+                               Opacity="0.7"/>
+                  </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="1" 
                             VerticalAlignment="Center"
@@ -72,7 +86,7 @@
     </ScrollViewer>
 
     <TextBlock Grid.Row="2"
-               Text="No exam history yet. Take an exam to see your results!"
+               Text="{Binding [NoExamHistoryHint], Source={StaticResource Loc}}"
                IsVisible="{Binding !ExamResults.Count}"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"

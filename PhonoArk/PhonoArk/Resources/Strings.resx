@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, ...</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
+  </resheader>
+  <data name="AppName" xml:space="preserve"><value>PhonoArk</value></data>
+  <data name="NavIpaChart" xml:space="preserve"><value>📚 IPA Chart</value></data>
+  <data name="NavExam" xml:space="preserve"><value>📝 Exam</value></data>
+  <data name="NavFavorites" xml:space="preserve"><value>⭐ Favorites</value></data>
+  <data name="NavHistory" xml:space="preserve"><value>📊 History</value></data>
+  <data name="NavWordLearning" xml:space="preserve"><value>📖 Word Learning</value></data>
+  <data name="NavSettings" xml:space="preserve"><value>⚙️ Settings</value></data>
+  <data name="ComingSoon" xml:space="preserve"><value>Coming Soon</value></data>
+  <data name="IpaTitle" xml:space="preserve"><value>International Phonetic Alphabet</value></data>
+  <data name="AccentSwitchTooltip" xml:space="preserve"><value>Switch between American (GenAm) and British (RP) pronunciation</value></data>
+  <data name="Vowels" xml:space="preserve"><value>Vowels</value></data>
+  <data name="Diphthongs" xml:space="preserve"><value>Diphthongs</value></data>
+  <data name="Consonants" xml:space="preserve"><value>Consonants</value></data>
+  <data name="PlaySound" xml:space="preserve"><value>🔊 Play Sound</value></data>
+  <data name="ExampleWords" xml:space="preserve"><value>Example Words:</value></data>
+  <data name="SelectPhonemeHint" xml:space="preserve"><value>Select a phoneme to see details and example words</value></data>
+  <data name="SettingsTitle" xml:space="preserve"><value>Settings</value></data>
+  <data name="DefaultAccent" xml:space="preserve"><value>Default Accent:</value></data>
+  <data name="AccentGenAm" xml:space="preserve"><value>American (GenAm)</value></data>
+  <data name="AccentRp" xml:space="preserve"><value>British (RP)</value></data>
+  <data name="Volume" xml:space="preserve"><value>Volume:</value></data>
+  <data name="DefaultExamQuestions" xml:space="preserve"><value>Default Exam Questions:</value></data>
+  <data name="Appearance" xml:space="preserve"><value>Appearance:</value></data>
+  <data name="DarkMode" xml:space="preserve"><value>Dark Mode</value></data>
+  <data name="Learning" xml:space="preserve"><value>Learning:</value></data>
+  <data name="EnableStudyReminders" xml:space="preserve"><value>Enable Study Reminders</value></data>
+  <data name="SaveSettings" xml:space="preserve"><value>Save Settings</value></data>
+  <data name="Language" xml:space="preserve"><value>Language:</value></data>
+  <data name="PracticeExam" xml:space="preserve"><value>Practice Exam</value></data>
+  <data name="NumberOfQuestions" xml:space="preserve"><value>Number of Questions:</value></data>
+  <data name="ExamScope" xml:space="preserve"><value>Exam Scope:</value></data>
+  <data name="AllPhonemes" xml:space="preserve"><value>All Phonemes</value></data>
+  <data name="FavoritesOnly" xml:space="preserve"><value>Favorites Only</value></data>
+  <data name="StartExam" xml:space="preserve"><value>Start Exam</value></data>
+  <data name="QuestionLabel" xml:space="preserve"><value>Question</value></data>
+  <data name="OfLabel" xml:space="preserve"><value>of</value></data>
+  <data name="CorrectLabel" xml:space="preserve"><value>Correct:</value></data>
+  <data name="ListenAndSelectWord" xml:space="preserve"><value>Listen to the phoneme and select the correct word:</value></data>
+  <data name="PlayPhoneme" xml:space="preserve"><value>🔊 Play Phoneme</value></data>
+  <data name="SelectWord" xml:space="preserve"><value>Select the word:</value></data>
+  <data name="NextQuestion" xml:space="preserve"><value>Next Question</value></data>
+  <data name="EndExam" xml:space="preserve"><value>End Exam</value></data>
+  <data name="FavoritePhonemes" xml:space="preserve"><value>Favorite Phonemes</value></data>
+  <data name="Group" xml:space="preserve"><value>Group:</value></data>
+  <data name="ClearAll" xml:space="preserve"><value>Clear All</value></data>
+  <data name="Remove" xml:space="preserve"><value>Remove</value></data>
+  <data name="Added" xml:space="preserve"><value>Added:</value></data>
+  <data name="NoFavoritesHint" xml:space="preserve"><value>No favorites yet. Add phonemes from the IPA Chart!</value></data>
+  <data name="ExamHistory" xml:space="preserve"><value>Exam History</value></data>
+  <data name="AverageScore" xml:space="preserve"><value>Average Score:</value></data>
+  <data name="Scope" xml:space="preserve"><value>Scope:</value></data>
+  <data name="Duration" xml:space="preserve"><value>Duration:</value></data>
+  <data name="NoExamHistoryHint" xml:space="preserve"><value>No exam history yet. Take an exam to see your results!</value></data>
+  <data name="FeedbackNoQuestions" xml:space="preserve"><value>No questions available for the selected scope.</value></data>
+  <data name="FeedbackCorrectTemplate" xml:space="preserve"><value>✓ Correct! The answer is '{0}' {1}</value></data>
+  <data name="FeedbackIncorrectTemplate" xml:space="preserve"><value>✗ Incorrect. The correct answer is '{0}' {1}</value></data>
+  <data name="FeedbackExamCompletedTemplate" xml:space="preserve"><value>Exam completed! Score: {0}/{1} ({2:F1}%)</value></data>
+</root>

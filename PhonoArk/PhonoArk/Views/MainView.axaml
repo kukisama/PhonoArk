@@ -6,6 +6,7 @@
              xmlns:views="using:PhonoArk.Views"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="PhonoArk.Views.MainView"
+             x:CompileBindings="False"
              x:DataType="vm:MainViewModel">
   <Design.DataContext>
     <vm:MainViewModel />
@@ -17,49 +18,49 @@
             Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
             Padding="10">
       <StackPanel Spacing="5">
-        <TextBlock Text="PhonoArk" 
+        <TextBlock Text="{Binding [AppName], Source={StaticResource Loc}}" 
                    FontSize="20" 
                    FontWeight="Bold" 
                    Margin="10,10,10,20"
                    HorizontalAlignment="Center"/>
 
-        <Button Content="📚 IPA Chart"
+        <Button Content="{Binding [NavIpaChart], Source={StaticResource Loc}}"
                 Click="OnIpaChartClick"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 Padding="10"
                 Classes="NavButton"/>
 
-        <Button Content="📝 Exam"
+        <Button Content="{Binding [NavExam], Source={StaticResource Loc}}"
                 Click="OnExamClick"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 Padding="10"
                 Classes="NavButton"/>
 
-        <Button Content="⭐ Favorites"
+        <Button Content="{Binding [NavFavorites], Source={StaticResource Loc}}"
                 Click="OnFavoritesClick"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 Padding="10"
                 Classes="NavButton"/>
 
-        <Button Content="📊 History"
+        <Button Content="{Binding [NavHistory], Source={StaticResource Loc}}"
                 Click="OnHistoryClick"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 Padding="10"
                 Classes="NavButton"/>
 
-        <Button Content="📖 Word Learning"
+        <Button Content="{Binding [NavWordLearning], Source={StaticResource Loc}}"
                 IsEnabled="False"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"
                 Padding="10"
                 Classes="NavButton"
-                ToolTip.Tip="Coming Soon"/>
+          ToolTip.Tip="{Binding [ComingSoon], Source={StaticResource Loc}}"/>
 
-        <Button Content="⚙️ Settings"
+        <Button Content="{Binding [NavSettings], Source={StaticResource Loc}}"
                 Click="OnSettingsClick"
                 HorizontalAlignment="Stretch"
                 HorizontalContentAlignment="Left"

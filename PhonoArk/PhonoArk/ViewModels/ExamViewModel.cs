@@ -15,6 +15,7 @@ public partial class ExamViewModel : ViewModelBase
     private readonly ExamService _examService;
     private readonly ExamHistoryService _examHistoryService;
     private readonly AudioService _audioService;
+    private readonly LocalizationService _localizationService;
 
     [ObservableProperty]
     private ObservableCollection<ExamQuestion> _questions = new();
@@ -51,11 +52,13 @@ public partial class ExamViewModel : ViewModelBase
     public ExamViewModel(
         ExamService examService,
         ExamHistoryService examHistoryService,
-        AudioService audioService)
+        AudioService audioService,
+        LocalizationService localizationService)
     {
         _examService = examService;
         _examHistoryService = examHistoryService;
         _audioService = audioService;
+        _localizationService = localizationService;
     }
 
     [RelayCommand]
@@ -65,7 +68,7 @@ public partial class ExamViewModel : ViewModelBase
         
         if (questions.Count == 0)
         {
-            FeedbackMessage = "No questions available for the selected scope.";
+            FeedbackMessage = _localizationService.GetString("FeedbackNoQuestions");
             ShowFeedback = true;
             return;
         }
@@ -102,11 +105,14 @@ public partial class ExamViewModel : ViewModelBase
         if (CurrentQuestion.IsCorrect)
         {
             CorrectAnswers++;
-            FeedbackMessage = $"✓ Correct! The answer is '{answer.Word}' {answer.IpaTranscription}";
+            FeedbackMessage = _localizationService.Format("FeedbackCorrectTemplate", answer.Word, answer.IpaTranscription);
         }
         else
         {
-            FeedbackMessage = $"✗ Incorrect. The correct answer is '{CurrentQuestion.CorrectAnswer.Word}' {CurrentQuestion.CorrectAnswer.IpaTranscription}";
+            FeedbackMessage = _localizationService.Format(
+                "FeedbackIncorrectTemplate",
+                CurrentQuestion.CorrectAnswer.Word,
+                CurrentQuestion.CorrectAnswer.IpaTranscription);
         }
 
         ShowFeedback = true;
@@ -152,7 +158,7 @@ public partial class ExamViewModel : ViewModelBase
 
         await _examHistoryService.SaveResultAsync(result);
 
-        FeedbackMessage = $"Exam completed! Score: {correct}/{total} ({result.Score:F1}%)";
+        FeedbackMessage = _localizationService.Format("FeedbackExamCompletedTemplate", correct, total, result.Score);
         ShowFeedback = true;
     }
 }

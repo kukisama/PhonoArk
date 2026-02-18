@@ -5,32 +5,44 @@
              xmlns:vm="using:PhonoArk.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="PhonoArk.Views.SettingsView"
+             x:CompileBindings="False"
              x:DataType="vm:SettingsViewModel">
 
   <ScrollViewer>
     <StackPanel Margin="20" Spacing="20" MaxWidth="600">
-      <TextBlock Text="Settings" FontSize="28" FontWeight="Bold"/>
+      <TextBlock Text="{Binding [SettingsTitle], Source={StaticResource Loc}}" FontSize="28" FontWeight="Bold"/>
 
       <!-- Accent Selection -->
       <StackPanel Spacing="10">
-        <TextBlock Text="Default Accent:" FontSize="16" FontWeight="SemiBold"/>
-        <ComboBox SelectedItem="{Binding SelectedAccent}" HorizontalAlignment="Stretch">
-          <ComboBoxItem Content="American (GenAm)">
-            <ComboBoxItem.Tag>
-              <x:Int32>0</x:Int32>
-            </ComboBoxItem.Tag>
-          </ComboBoxItem>
-          <ComboBoxItem Content="British (RP)">
-            <ComboBoxItem.Tag>
-              <x:Int32>1</x:Int32>
-            </ComboBoxItem.Tag>
-          </ComboBoxItem>
+        <TextBlock Text="{Binding [DefaultAccent], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
+        <ComboBox ItemsSource="{Binding AccentOptions}"
+                  SelectedItem="{Binding SelectedAccentOption}"
+                  HorizontalAlignment="Stretch">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding DisplayName}"/>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </StackPanel>
+
+      <!-- Language -->
+      <StackPanel Spacing="10">
+        <TextBlock Text="{Binding [Language], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
+        <ComboBox ItemsSource="{Binding LanguageOptions}"
+                  SelectedItem="{Binding SelectedLanguageOption}"
+                  HorizontalAlignment="Stretch">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding DisplayName}"/>
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
         </ComboBox>
       </StackPanel>
 
       <!-- Volume -->
       <StackPanel Spacing="10">
-        <TextBlock Text="Volume:" FontSize="16" FontWeight="SemiBold"/>
+        <TextBlock Text="{Binding [Volume], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
         <Grid ColumnDefinitions="*,Auto">
           <Slider Grid.Column="0" 
                   Value="{Binding Volume}" 
@@ -46,7 +58,7 @@
 
       <!-- Exam Question Count -->
       <StackPanel Spacing="10">
-        <TextBlock Text="Default Exam Questions:" FontSize="16" FontWeight="SemiBold"/>
+        <TextBlock Text="{Binding [DefaultExamQuestions], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
         <NumericUpDown Value="{Binding ExamQuestionCount}"
                       Minimum="5"
                       Maximum="50"
@@ -55,18 +67,18 @@
 
       <!-- Dark Mode -->
       <StackPanel Spacing="10">
-        <TextBlock Text="Appearance:" FontSize="16" FontWeight="SemiBold"/>
-        <CheckBox Content="Dark Mode" IsChecked="{Binding DarkMode}"/>
+        <TextBlock Text="{Binding [Appearance], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
+        <CheckBox Content="{Binding [DarkMode], Source={StaticResource Loc}}" IsChecked="{Binding DarkMode}"/>
       </StackPanel>
 
       <!-- Reminders -->
       <StackPanel Spacing="10">
-        <TextBlock Text="Learning:" FontSize="16" FontWeight="SemiBold"/>
-        <CheckBox Content="Enable Study Reminders" IsChecked="{Binding RemindersEnabled}"/>
+        <TextBlock Text="{Binding [Learning], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
+        <CheckBox Content="{Binding [EnableStudyReminders], Source={StaticResource Loc}}" IsChecked="{Binding RemindersEnabled}"/>
       </StackPanel>
 
       <!-- Save Button -->
-      <Button Content="Save Settings"
+      <Button Content="{Binding [SaveSettings], Source={StaticResource Loc}}"
               Command="{Binding SaveSettingsCommand}"
               HorizontalAlignment="Stretch"
               Padding="15"
