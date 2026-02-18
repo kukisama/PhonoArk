@@ -1,0 +1,172 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PhonoArk.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="PhonoArk.Views.IpaChartView"
+             x:DataType="vm:IpaChartViewModel">
+
+  <Grid RowDefinitions="Auto,*" Margin="10">
+    <!-- Header -->
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
+      <TextBlock Text="International Phonetic Alphabet" 
+                 FontSize="24" 
+                 FontWeight="Bold" 
+                 VerticalAlignment="Center"/>
+      <Button Content="{Binding CurrentAccent}"
+              Command="{Binding SwitchAccentCommand}"
+              Padding="10,5"
+              ToolTip.Tip="Switch between American (GenAm) and British (RP) pronunciation"/>
+    </StackPanel>
+
+    <!-- Main Content -->
+    <Grid Grid.Row="1" ColumnDefinitions="2*,*">
+      <!-- Phoneme Lists -->
+      <ScrollViewer Grid.Column="0" Margin="0,0,10,0">
+        <StackPanel Spacing="20">
+          <!-- Vowels -->
+          <StackPanel>
+            <TextBlock Text="Vowels" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+            <ItemsControl ItemsSource="{Binding Vowels}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Content="{Binding Symbol}"
+                          Command="{Binding $parent[ItemsControl].((vm:IpaChartViewModel)DataContext).SelectPhonemeCommand}"
+                          CommandParameter="{Binding}"
+                          FontSize="24"
+                          MinWidth="60"
+                          MinHeight="60"
+                          Margin="5"
+                          ToolTip.Tip="{Binding Description}"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <!-- Diphthongs -->
+          <StackPanel>
+            <TextBlock Text="Diphthongs" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+            <ItemsControl ItemsSource="{Binding Diphthongs}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Content="{Binding Symbol}"
+                          Command="{Binding $parent[ItemsControl].((vm:IpaChartViewModel)DataContext).SelectPhonemeCommand}"
+                          CommandParameter="{Binding}"
+                          FontSize="24"
+                          MinWidth="60"
+                          MinHeight="60"
+                          Margin="5"
+                          ToolTip.Tip="{Binding Description}"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+
+          <!-- Consonants -->
+          <StackPanel>
+            <TextBlock Text="Consonants" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
+            <ItemsControl ItemsSource="{Binding Consonants}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button Content="{Binding Symbol}"
+                          Command="{Binding $parent[ItemsControl].((vm:IpaChartViewModel)DataContext).SelectPhonemeCommand}"
+                          CommandParameter="{Binding}"
+                          FontSize="24"
+                          MinWidth="60"
+                          MinHeight="60"
+                          Margin="5"
+                          ToolTip.Tip="{Binding Description}"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Phoneme Detail Panel -->
+      <Border Grid.Column="1" 
+              BorderBrush="{DynamicResource SystemAccentColor}"
+              BorderThickness="2"
+              CornerRadius="8"
+              Padding="15"
+              IsVisible="{Binding SelectedPhoneme, Converter={x:Static ObjectConverters.IsNotNull}}">
+        <ScrollViewer>
+          <StackPanel Spacing="10">
+            <TextBlock Text="{Binding SelectedPhoneme.Symbol}" 
+                       FontSize="48" 
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+            
+            <Button Content="🔊 Play Sound"
+                    Command="{Binding PlayPhonemeCommand}"
+                    CommandParameter="{Binding SelectedPhoneme}"
+                    HorizontalAlignment="Stretch"
+                    Padding="10"/>
+
+            <TextBlock Text="{Binding SelectedPhoneme.Description}" 
+                       TextWrapping="Wrap"
+                       FontSize="14"/>
+
+            <Button Content="{Binding IsFavorite, Converter={StaticResource FavoriteButtonConverter}}"
+                    Command="{Binding ToggleFavoriteCommand}"
+                    HorizontalAlignment="Stretch"
+                    Padding="10"/>
+
+            <TextBlock Text="Example Words:" 
+                       FontSize="16" 
+                       FontWeight="SemiBold"
+                       Margin="0,10,0,5"/>
+
+            <ItemsControl ItemsSource="{Binding SelectedPhoneme.ExampleWords}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Button HorizontalAlignment="Stretch"
+                          Margin="0,2"
+                          Padding="10"
+                          Command="{Binding $parent[ItemsControl].((vm:IpaChartViewModel)DataContext).PlayWordCommand}"
+                          CommandParameter="{Binding}">
+                    <StackPanel>
+                      <TextBlock Text="{Binding Word}" FontSize="16" FontWeight="SemiBold"/>
+                      <TextBlock Text="{Binding IpaTranscription}" FontSize="14" Opacity="0.7"/>
+                    </StackPanel>
+                  </Button>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+      <!-- Placeholder when no phoneme selected -->
+      <Border Grid.Column="1" 
+              BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
+              BorderThickness="2"
+              CornerRadius="8"
+              Padding="15"
+              IsVisible="{Binding SelectedPhoneme, Converter={x:Static ObjectConverters.IsNull}}">
+        <TextBlock Text="Select a phoneme to see details and example words"
+                   TextAlignment="Center"
+                   VerticalAlignment="Center"
+                   FontSize="16"
+                   Opacity="0.6"
+                   TextWrapping="Wrap"/>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

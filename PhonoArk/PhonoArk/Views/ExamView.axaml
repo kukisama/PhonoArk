@@ -1,0 +1,134 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:PhonoArk.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="PhonoArk.Views.ExamView"
+             x:DataType="vm:ExamViewModel">
+
+  <Grid Margin="20">
+    <!-- Exam Setup -->
+    <StackPanel IsVisible="{Binding !IsExamActive}" 
+                VerticalAlignment="Center" 
+                HorizontalAlignment="Center"
+                Spacing="20"
+                MaxWidth="400">
+      <TextBlock Text="Practice Exam" 
+                 FontSize="28" 
+                 FontWeight="Bold"
+                 HorizontalAlignment="Center"/>
+
+      <StackPanel Spacing="10">
+        <TextBlock Text="Number of Questions:" FontSize="16"/>
+        <NumericUpDown Value="{Binding QuestionCount}"
+                      Minimum="5"
+                      Maximum="50"
+                      Increment="5"/>
+      </StackPanel>
+
+      <StackPanel Spacing="10">
+        <TextBlock Text="Exam Scope:" FontSize="16"/>
+        <ComboBox SelectedItem="{Binding ExamScope}" HorizontalAlignment="Stretch">
+          <ComboBoxItem Content="All Phonemes" Tag="All"/>
+          <ComboBoxItem Content="Favorites Only" Tag="Favorites"/>
+        </ComboBox>
+      </StackPanel>
+
+      <Button Content="Start Exam"
+              Command="{Binding StartExamCommand}"
+              HorizontalAlignment="Stretch"
+              Padding="15"
+              FontSize="18"/>
+    </StackPanel>
+
+    <!-- Exam Active -->
+    <Grid IsVisible="{Binding IsExamActive}" RowDefinitions="Auto,*,Auto">
+      <!-- Progress Header -->
+      <Border Grid.Row="0" 
+              Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
+              Padding="15"
+              Margin="0,0,0,10">
+        <Grid ColumnDefinitions="*,Auto">
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="{Binding CurrentQuestionIndex, StringFormat='Question {0}'}" 
+                       FontSize="18" 
+                       FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding TotalQuestions, StringFormat='of {0}'}" 
+                       FontSize="14" 
+                       Opacity="0.7"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+            <TextBlock Text="{Binding CorrectAnswers, StringFormat='Correct: {0}'}" 
+                       FontSize="16" 
+                       FontWeight="SemiBold"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- Question Content -->
+      <StackPanel Grid.Row="1" 
+                  VerticalAlignment="Center" 
+                  Spacing="20"
+                  MaxWidth="600">
+        
+        <TextBlock Text="Listen to the phoneme and select the correct word:"
+                   FontSize="18"
+                   TextWrapping="Wrap"
+                   HorizontalAlignment="Center"/>
+
+        <Button Content="🔊 Play Phoneme"
+                Command="{Binding PlayCurrentQuestionCommand}"
+                HorizontalAlignment="Center"
+                Padding="20,15"
+                FontSize="20"/>
+
+        <TextBlock Text="Select the word:"
+                   FontSize="16"
+                   Margin="0,10,0,0"/>
+
+        <!-- Answer Options -->
+        <ItemsControl ItemsSource="{Binding CurrentQuestion.Options}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Content="{Binding Word}"
+                      Command="{Binding $parent[ItemsControl].((vm:ExamViewModel)DataContext).SelectAnswerCommand}"
+                      CommandParameter="{Binding}"
+                      HorizontalAlignment="Stretch"
+                      Margin="0,5"
+                      Padding="15"
+                      FontSize="18"/>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Feedback -->
+        <Border IsVisible="{Binding ShowFeedback}"
+                Background="{DynamicResource SystemControlBackgroundAccentBrush}"
+                Padding="15"
+                CornerRadius="8"
+                Margin="0,10,0,0">
+          <TextBlock Text="{Binding FeedbackMessage}"
+                     FontSize="16"
+                     TextWrapping="Wrap"
+                     HorizontalAlignment="Center"/>
+        </Border>
+      </StackPanel>
+
+      <!-- Control Buttons -->
+      <StackPanel Grid.Row="2" 
+                  Orientation="Horizontal" 
+                  HorizontalAlignment="Center"
+                  Spacing="10"
+                  Margin="0,20,0,0">
+        <Button Content="Next Question"
+                Command="{Binding NextQuestionCommand}"
+                Padding="15,10"
+                IsVisible="{Binding CurrentQuestion.IsAnswered}"/>
+        <Button Content="End Exam"
+                Command="{Binding EndExamCommand}"
+                Padding="15,10"/>
+      </StackPanel>
+    </Grid>
+  </Grid>
+</UserControl>
