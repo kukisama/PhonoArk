@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PhonoArk.Mobile.Core/PhonoArk.Mobile.Core.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PhonoArk.Mobile.Tests/PhonoArk.Mobile.Tests.csproj" />
+  </Folder>
+</Solution>
