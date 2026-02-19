@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PhonoArk.Mobile.App.Pages.PhonemeListPage"
+             Title="音标学习"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- 类别切换 Tab -->
+        <HorizontalStackLayout Grid.Row="0" Spacing="8" Padding="16,12" HorizontalOptions="Center">
+            <Button x:Name="BtnVowel" Text="元音" Clicked="OnCategoryClicked"
+                    BackgroundColor="{StaticResource PrimaryColor}" TextColor="White"
+                    CornerRadius="20" Padding="20,8" FontSize="15" />
+            <Button x:Name="BtnDiphthong" Text="双元音" Clicked="OnCategoryClicked"
+                    BackgroundColor="#E0E0E0" TextColor="#333333"
+                    CornerRadius="20" Padding="20,8" FontSize="15" />
+            <Button x:Name="BtnConsonant" Text="辅音" Clicked="OnCategoryClicked"
+                    BackgroundColor="#E0E0E0" TextColor="#333333"
+                    CornerRadius="20" Padding="20,8" FontSize="15" />
+        </HorizontalStackLayout>
+
+        <!-- 音标网格 -->
+        <CollectionView x:Name="PhonemeGrid" Grid.Row="1" Margin="8,0">
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="4" HorizontalItemSpacing="8" VerticalItemSpacing="8" />
+            </CollectionView.ItemsLayout>
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame BackgroundColor="{StaticResource CardColor}"
+                           CornerRadius="12"
+                           Padding="8"
+                           HasShadow="True"
+                           BorderColor="Transparent"
+                           HeightRequest="80">
+                        <Frame.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnPhonemeClicked" />
+                        </Frame.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center">
+                            <Label Text="{Binding Symbol}"
+                                   FontSize="28"
+                                   FontAttributes="Bold"
+                                   HorizontalTextAlignment="Center"
+                                   TextColor="{StaticResource PrimaryColor}" />
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
+
+</ContentPage>
