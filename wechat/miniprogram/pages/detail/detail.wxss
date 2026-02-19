@@ -1,0 +1,167 @@
+/* pages/detail/detail.wxss */
+
+.detail-page {
+  min-height: 100vh;
+  background: #F5F5F5;
+  padding-bottom: 60rpx;
+}
+
+/* 音标展示区 */
+.phoneme-hero {
+  background: linear-gradient(135deg, #4A90D9, #357ABD);
+  padding: 60rpx 30rpx 50rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.phoneme-shape {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 240rpx;
+  height: 240rpx;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  border: 6rpx solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 24rpx;
+}
+
+.phoneme-shape:active {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.shape-symbol {
+  font-size: 96rpx;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.shape-play-hint {
+  display: flex;
+  align-items: center;
+  margin-top: 8rpx;
+}
+
+.play-btn-icon {
+  font-size: 24rpx;
+  margin-right: 4rpx;
+}
+
+.play-btn-text {
+  font-size: 20rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.phoneme-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-name {
+  font-size: 32rpx;
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 8rpx;
+}
+
+.info-desc {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 分隔标题 */
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 36rpx 30rpx 20rpx;
+}
+
+.section-line {
+  flex: 1;
+  height: 2rpx;
+  background: #ddd;
+}
+
+.section-title {
+  font-size: 28rpx;
+  color: #999;
+  padding: 0 24rpx;
+}
+
+/* 单词列表 */
+.word-list {
+  padding: 0 30rpx;
+}
+
+.word-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 30rpx;
+  margin-bottom: 16rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.15s;
+}
+
+.word-card:active {
+  transform: scale(0.98);
+}
+
+.word-playing {
+  background: #EBF3FC;
+  border-left: 6rpx solid #4A90D9;
+}
+
+.word-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.word-text {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 6rpx;
+}
+
+.word-ipa {
+  font-size: 26rpx;
+  color: #4A90D9;
+}
+
+.word-play {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #F0F4FA;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+.playing-active {
+  background: #4A90D9;
+  animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+  100% { transform: scale(1); }
+}
+
+/* 底部提示 */
+.detail-tip {
+  text-align: center;
+  padding: 30rpx 0;
+  font-size: 24rpx;
+  color: #bbb;
+}

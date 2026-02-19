@@ -1,0 +1,50 @@
+<!--pages/index/index.wxml-->
+<view class="home-page">
+  <!-- 顶部品牌区域 -->
+  <view class="hero-section">
+    <view class="logo-circle">
+      <text class="logo-text">PA</text>
+    </view>
+    <text class="app-title">{{appName}}</text>
+    <text class="app-subtitle">{{subtitle}}</text>
+  </view>
+
+  <!-- 功能入口卡片 -->
+  <view class="feature-cards">
+    <view class="feature-card learn-card" bindtap="goToLearn">
+      <view class="card-icon">📖</view>
+      <view class="card-content">
+        <text class="card-title">音标学习</text>
+        <text class="card-desc">系统学习 44 个国际音标，每个音标配有示例单词与发音</text>
+      </view>
+      <view class="card-arrow">›</view>
+    </view>
+
+    <view class="feature-card exam-card" bindtap="goToExam">
+      <view class="card-icon">📝</view>
+      <view class="card-content">
+        <text class="card-title">音标考试</text>
+        <text class="card-desc">通过听音选音标的方式检验学习成果</text>
+      </view>
+      <view class="card-arrow">›</view>
+    </view>
+  </view>
+
+  <!-- 底部统计 -->
+  <view class="stats-bar">
+    <view class="stat-item">
+      <text class="stat-number">12</text>
+      <text class="stat-label">元音</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-number">8</text>
+      <text class="stat-label">双元音</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-item">
+      <text class="stat-number">24</text>
+      <text class="stat-label">辅音</text>
+    </view>
+  </view>
+</view>

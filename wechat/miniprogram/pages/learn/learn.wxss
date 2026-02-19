@@ -1,0 +1,95 @@
+/* pages/learn/learn.wxss */
+
+.learn-page {
+  min-height: 100vh;
+  background: #F5F5F5;
+}
+
+/* Tab 切换栏 */
+.tab-bar {
+  display: flex;
+  background: #fff;
+  padding: 0 20rpx;
+  border-bottom: 2rpx solid #eee;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tab-item {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 30rpx;
+  color: #666;
+  position: relative;
+  transition: color 0.2s;
+}
+
+.tab-active {
+  color: #4A90D9;
+  font-weight: bold;
+}
+
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60rpx;
+  height: 6rpx;
+  background: #4A90D9;
+  border-radius: 3rpx;
+}
+
+/* 音标网格 */
+.phoneme-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 24rpx 16rpx;
+  justify-content: flex-start;
+}
+
+.phoneme-cell {
+  width: calc(25% - 16rpx);
+  margin: 8rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.04);
+  transition: all 0.15s;
+}
+
+.phoneme-cell:active {
+  background: #EBF3FC;
+  transform: scale(0.95);
+}
+
+.cell-symbol {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #4A90D9;
+  line-height: 1.2;
+}
+
+.cell-name {
+  font-size: 20rpx;
+  color: #999;
+  margin-top: 8rpx;
+}
+
+/* 底部提示 */
+.tip-bar {
+  text-align: center;
+  padding: 30rpx 0 50rpx;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #bbb;
+}
