@@ -1,0 +1,48 @@
+<!--pages/detail/detail.wxml-->
+<view class="detail-page" wx:if="{{phoneme}}">
+  <!-- 音标展示区 -->
+  <view class="phoneme-hero">
+    <view class="phoneme-shape" bindtap="onPlayPhoneme">
+      <text class="shape-symbol">{{phoneme.symbol}}</text>
+      <view class="shape-play-hint">
+        <text class="play-btn-icon">🔊</text>
+        <text class="play-btn-text">点击发音</text>
+      </view>
+    </view>
+    <view class="phoneme-info">
+      <text class="info-name">{{phoneme.name}}</text>
+      <text class="info-desc">{{phoneme.description}}</text>
+    </view>
+  </view>
+
+  <!-- 分隔标题 -->
+  <view class="section-header">
+    <view class="section-line"></view>
+    <text class="section-title">示例单词</text>
+    <view class="section-line"></view>
+  </view>
+
+  <!-- 示例单词列表 -->
+  <view class="word-list">
+    <view
+      wx:for="{{phoneme.examples}}"
+      wx:key="word"
+      class="word-card {{playingIndex === index ? 'word-playing' : ''}}"
+      data-index="{{index}}"
+      bindtap="onPlayWord"
+    >
+      <view class="word-left">
+        <text class="word-text">{{item.word}}</text>
+        <text class="word-ipa">{{item.ipa}}</text>
+      </view>
+      <view class="word-play {{playingIndex === index ? 'playing-active' : ''}}">
+        <text>{{playingIndex === index ? '🔊' : '▶'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="detail-tip">
+    <text>点击单词卡片即可播放发音</text>
+  </view>
+</view>
