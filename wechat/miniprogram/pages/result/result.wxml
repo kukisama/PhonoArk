@@ -1,0 +1,47 @@
+<!--pages/result/result.wxml-->
+<view class="result-page">
+  <!-- 成绩展示区 -->
+  <view class="score-hero">
+    <view class="score-circle" style="border-color: {{scoreColor}}">
+      <text class="score-number" style="color: {{scoreColor}}">{{score}}</text>
+      <text class="score-unit">分</text>
+    </view>
+    <text class="score-level">{{scoreLevel}}</text>
+  </view>
+
+  <!-- 统计信息 -->
+  <view class="stats-card">
+    <view class="stat-row">
+      <text class="stat-label">总题数</text>
+      <text class="stat-value">{{totalQuestions}} 题</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-row">
+      <text class="stat-label">答对</text>
+      <text class="stat-value correct-text">{{correctCount}} 题</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-row">
+      <text class="stat-label">答错</text>
+      <text class="stat-value wrong-text">{{totalQuestions - correctCount}} 题</text>
+    </view>
+    <view class="stat-divider"></view>
+    <view class="stat-row">
+      <text class="stat-label">用时</text>
+      <text class="stat-value">{{formattedDuration}}</text>
+    </view>
+  </view>
+
+  <!-- 操作按钮 -->
+  <view class="action-buttons">
+    <view class="btn-action btn-retry" bindtap="onRetry">
+      <text>🔄 再考一次</text>
+    </view>
+    <view class="btn-action btn-learn" bindtap="onGoLearn">
+      <text>📖 继续学习</text>
+    </view>
+    <view class="btn-action btn-home" bindtap="onGoHome">
+      <text>🏠 返回首页</text>
+    </view>
+  </view>
+</view>

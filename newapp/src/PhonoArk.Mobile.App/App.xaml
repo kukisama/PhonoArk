@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PhonoArk.Mobile.App.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <!-- 全局颜色 -->
+            <Color x:Key="PrimaryColor">#4A90D9</Color>
+            <Color x:Key="SecondaryColor">#7B68EE</Color>
+            <Color x:Key="AccentColor">#FF6B6B</Color>
+            <Color x:Key="SuccessColor">#4CAF50</Color>
+            <Color x:Key="ErrorColor">#F44336</Color>
+            <Color x:Key="BackgroundColor">#F5F5F5</Color>
+            <Color x:Key="CardColor">#FFFFFF</Color>
+            <Color x:Key="TextPrimaryColor">#212121</Color>
+            <Color x:Key="TextSecondaryColor">#757575</Color>
+
+            <!-- 全局样式 -->
+            <Style TargetType="Button" x:Key="PrimaryButton">
+                <Setter Property="BackgroundColor" Value="{StaticResource PrimaryColor}" />
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="CornerRadius" Value="12" />
+                <Setter Property="Padding" Value="16,12" />
+            </Style>
+
+            <Style TargetType="Label" x:Key="PhonemeSymbolLarge">
+                <Setter Property="FontSize" Value="72" />
+                <Setter Property="HorizontalTextAlignment" Value="Center" />
+                <Setter Property="TextColor" Value="{StaticResource PrimaryColor}" />
+                <Setter Property="FontAttributes" Value="Bold" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

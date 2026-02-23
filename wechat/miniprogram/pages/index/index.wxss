@@ -1,0 +1,135 @@
+/* pages/index/index.wxss */
+
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #4A90D9 0%, #357ABD 40%, #F5F5F5 40%);
+  padding-bottom: 60rpx;
+}
+
+/* 顶部品牌区域 */
+.hero-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80rpx 30rpx 60rpx;
+  color: #fff;
+}
+
+.logo-circle {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24rpx;
+  border: 4rpx solid rgba(255, 255, 255, 0.4);
+}
+
+.logo-text {
+  font-size: 52rpx;
+  font-weight: bold;
+  color: #fff;
+}
+
+.app-title {
+  font-size: 52rpx;
+  font-weight: bold;
+  margin-bottom: 12rpx;
+}
+
+.app-subtitle {
+  font-size: 28rpx;
+  opacity: 0.85;
+}
+
+/* 功能入口卡片 */
+.feature-cards {
+  padding: 0 30rpx;
+  margin-top: -20rpx;
+}
+
+.feature-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 36rpx 30rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.feature-card:active {
+  transform: scale(0.98);
+  opacity: 0.9;
+}
+
+.card-icon {
+  font-size: 56rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+
+.card-content {
+  flex: 1;
+}
+
+.card-title {
+  display: block;
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.card-desc {
+  display: block;
+  font-size: 24rpx;
+  color: #999;
+  line-height: 1.5;
+}
+
+.card-arrow {
+  font-size: 40rpx;
+  color: #ccc;
+  flex-shrink: 0;
+  margin-left: 16rpx;
+}
+
+/* 底部统计 */
+.stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border-radius: 20rpx;
+  margin: 36rpx 30rpx 0;
+  padding: 30rpx 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
+}
+
+.stat-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-number {
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #4A90D9;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 4rpx;
+}
+
+.stat-divider {
+  width: 2rpx;
+  height: 50rpx;
+  background: #eee;
+}

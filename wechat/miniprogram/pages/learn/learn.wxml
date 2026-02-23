@@ -1,0 +1,34 @@
+<!--pages/learn/learn.wxml-->
+<view class="learn-page">
+  <!-- 顶部 Tab 切换 -->
+  <view class="tab-bar">
+    <view
+      wx:for="{{tabs}}"
+      wx:key="type"
+      class="tab-item {{currentTab === index ? 'tab-active' : ''}}"
+      data-index="{{index}}"
+      bindtap="onTabTap"
+    >
+      <text>{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 音标网格 -->
+  <view class="phoneme-grid">
+    <view
+      wx:for="{{phonemes}}"
+      wx:key="symbol"
+      class="phoneme-cell"
+      data-symbol="{{item.symbol}}"
+      bindtap="onPhonemeTap"
+    >
+      <text class="cell-symbol">{{item.symbol}}</text>
+      <text class="cell-name">{{item.name}}</text>
+    </view>
+  </view>
+
+  <!-- 底部提示 -->
+  <view class="tip-bar">
+    <text class="tip-text">💡 点击音标查看详情与示例单词</text>
+  </view>
+</view>

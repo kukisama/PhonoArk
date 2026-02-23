@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PhonoArk.Mobile.App.Pages.ExamResultPage"
+             Title="考试结果"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="24,16">
+
+            <!-- 成绩卡片 -->
+            <Frame BackgroundColor="{StaticResource CardColor}"
+                   CornerRadius="16"
+                   Padding="32"
+                   HasShadow="True"
+                   BorderColor="Transparent">
+                <VerticalStackLayout Spacing="8">
+                    <Label x:Name="LblGrade"
+                           FontSize="32"
+                           HorizontalTextAlignment="Center" />
+                    <Label x:Name="LblScore"
+                           FontSize="48"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource PrimaryColor}" />
+                    <Label x:Name="LblScoreDetail"
+                           FontSize="16"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource TextSecondaryColor}" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- 错题回顾标题 -->
+            <Label x:Name="LblWrongTitle"
+                   Text="错题回顾"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="{StaticResource TextPrimaryColor}"
+                   Margin="0,8,0,0" />
+
+            <!-- 错题列表 -->
+            <CollectionView x:Name="WrongList">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BackgroundColor="{StaticResource CardColor}"
+                               CornerRadius="12"
+                               Padding="16"
+                               HasShadow="True"
+                               BorderColor="Transparent"
+                               Margin="0,4">
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Question.Prompt}"
+                                       FontSize="16"
+                                       TextColor="{StaticResource TextPrimaryColor}" />
+                                <Label FontSize="14"
+                                       TextColor="{StaticResource ErrorColor}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="你的答案：" />
+                                            <Span Text="{Binding SelectedAnswer}" FontAttributes="Bold" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                                <Label FontSize="14"
+                                       TextColor="{StaticResource SuccessColor}">
+                                    <Label.FormattedText>
+                                        <FormattedString>
+                                            <Span Text="正确答案：" />
+                                            <Span Text="{Binding CorrectAnswer}" FontAttributes="Bold" />
+                                        </FormattedString>
+                                    </Label.FormattedText>
+                                </Label>
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <!-- 返回首页按钮 -->
+            <Button Text="返回首页"
+                    Style="{StaticResource PrimaryButton}"
+                    Clicked="OnGoHomeClicked"
+                    Margin="0,16" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

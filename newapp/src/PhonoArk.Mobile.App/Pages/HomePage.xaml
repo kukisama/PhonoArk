@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PhonoArk.Mobile.App.Pages.HomePage"
+             Title="音律方舟"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="24" Padding="24,48">
+
+            <!-- 标题 -->
+            <Label Text="🎵 音律方舟"
+                   FontSize="36"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource PrimaryColor}" />
+
+            <Label Text="国际音标学习与测验"
+                   FontSize="16"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource TextSecondaryColor}" />
+
+            <!-- 间距 -->
+            <BoxView HeightRequest="40" Color="Transparent" />
+
+            <!-- 音标学习卡片 -->
+            <Frame BackgroundColor="{StaticResource CardColor}"
+                   CornerRadius="16"
+                   Padding="24"
+                   HasShadow="True"
+                   BorderColor="Transparent">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="📖" FontSize="48" HorizontalTextAlignment="Center" />
+                    <Label Text="音标学习"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource TextPrimaryColor}" />
+                    <Label Text="按类别浏览所有音标，查看示例单词与发音"
+                           FontSize="14"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource TextSecondaryColor}" />
+                    <Button Text="开始学习"
+                            Style="{StaticResource PrimaryButton}"
+                            Clicked="OnLearningClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+            <!-- 音标考试卡片 -->
+            <Frame BackgroundColor="{StaticResource CardColor}"
+                   CornerRadius="16"
+                   Padding="24"
+                   HasShadow="True"
+                   BorderColor="Transparent">
+                <VerticalStackLayout Spacing="12">
+                    <Label Text="📝" FontSize="48" HorizontalTextAlignment="Center" />
+                    <Label Text="音标考试"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource TextPrimaryColor}" />
+                    <Label Text="随机出题，测试你的音标掌握程度"
+                           FontSize="14"
+                           HorizontalTextAlignment="Center"
+                           TextColor="{StaticResource TextSecondaryColor}" />
+                    <Button Text="开始考试"
+                            BackgroundColor="{StaticResource SecondaryColor}"
+                            TextColor="White"
+                            FontSize="18"
+                            CornerRadius="12"
+                            Padding="16,12"
+                            Clicked="OnExamClicked" />
+                </VerticalStackLayout>
+            </Frame>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

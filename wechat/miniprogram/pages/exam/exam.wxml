@@ -1,0 +1,79 @@
+<!--pages/exam/exam.wxml-->
+<view class="exam-page">
+
+  <!-- 考试设置界面 -->
+  <view class="setup-section" wx:if="{{examState === 'setup'}}">
+    <view class="setup-hero">
+      <text class="setup-icon">📝</text>
+      <text class="setup-title">音标考试</text>
+      <text class="setup-desc">听单词发音，选择对应的音标</text>
+    </view>
+
+    <view class="setup-card">
+      <view class="setup-row">
+        <text class="setup-label">题目数量</text>
+        <picker
+          mode="selector"
+          range="{{['5', '10', '15', '20', '30']}}"
+          value="{{1}}"
+          bindchange="onCountChange"
+        >
+          <view class="picker-value">{{questionCount}} 题 ▼</view>
+        </picker>
+      </view>
+    </view>
+
+    <view class="setup-action">
+      <view class="btn-start" bindtap="startExam">开始考试</view>
+    </view>
+  </view>
+
+  <!-- 答题界面 -->
+  <view class="active-section" wx:if="{{examState === 'active'}}">
+    <!-- 进度条 -->
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{progress}}%"></view>
+    </view>
+
+    <!-- 题号与进度 -->
+    <view class="question-header">
+      <text class="question-number">第 {{currentIndex + 1}} 题 / 共 {{questions.length}} 题</text>
+    </view>
+
+    <!-- 题目区域：单词展示 -->
+    <view class="question-card">
+      <text class="question-word">{{currentQuestion.word}}</text>
+      <text class="question-ipa">{{currentQuestion.wordIpa}}</text>
+      <view class="replay-btn" bindtap="onReplay">
+        <text>🔊 再听一遍</text>
+      </view>
+    </view>
+
+    <!-- 提示 -->
+    <view class="question-hint">
+      <text>请选择该单词所属的音标：</text>
+    </view>
+
+    <!-- 选项列表 -->
+    <view class="options-list">
+      <view
+        wx:for="{{currentQuestion.options}}"
+        wx:key="symbol"
+        class="option-btn {{showFeedback && item.isCorrect ? 'option-correct' : ''}} {{showFeedback && selectedOption === index && !item.isCorrect ? 'option-wrong' : ''}} {{!showFeedback && selectedOption === index ? 'option-selected' : ''}}"
+        data-index="{{index}}"
+        bindtap="onSelectOption"
+      >
+        <text class="option-symbol">{{item.symbol}}</text>
+      </view>
+    </view>
+
+    <!-- 反馈提示 -->
+    <view class="feedback" wx:if="{{showFeedback}}">
+      <view class="feedback-content {{isCorrect ? 'feedback-correct' : 'feedback-wrong'}}">
+        <text class="feedback-icon">{{isCorrect ? '✅' : '❌'}}</text>
+        <text class="feedback-text">{{isCorrect ? '回答正确！' : '回答错误，正确答案是 ' + currentQuestion.correctSymbol}}</text>
+      </view>
+    </view>
+  </view>
+
+</view>

@@ -1,0 +1,14 @@
+{
+  "name": "phonoark-wechat-tests",
+  "version": "1.0.0",
+  "description": "音律方舟微信小程序回归测试",
+  "private": true,
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/.bin/jest --no-cache",
+    "test:phonemes": "node --experimental-vm-modules node_modules/.bin/jest tests/phonemes.test.js --no-cache",
+    "test:exam": "node --experimental-vm-modules node_modules/.bin/jest tests/exam.test.js --no-cache"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

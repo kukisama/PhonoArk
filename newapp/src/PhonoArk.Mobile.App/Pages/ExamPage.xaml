@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="PhonoArk.Mobile.App.Pages.ExamPage"
+             Title="音标考试"
+             BackgroundColor="{StaticResource BackgroundColor}">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="24,16">
+
+        <!-- 顶部进度 -->
+        <VerticalStackLayout Grid.Row="0" Spacing="8">
+            <Label x:Name="LblProgress" FontSize="14"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource TextSecondaryColor}" />
+            <ProgressBar x:Name="ProgressBar" Progress="0"
+                         ProgressColor="{StaticResource PrimaryColor}" />
+        </VerticalStackLayout>
+
+        <!-- 题目区域 -->
+        <VerticalStackLayout Grid.Row="1" Spacing="16" VerticalOptions="Center">
+
+            <!-- 题干 -->
+            <Label x:Name="LblPrompt"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   TextColor="{StaticResource TextPrimaryColor}"
+                   Margin="0,0,0,24" />
+
+            <!-- 4 个选项按钮 -->
+            <Button x:Name="BtnOption0" Clicked="OnOptionClicked"
+                    BackgroundColor="{StaticResource CardColor}"
+                    TextColor="{StaticResource TextPrimaryColor}"
+                    FontSize="20" CornerRadius="12" Padding="16,14"
+                    BorderColor="#E0E0E0" BorderWidth="1" />
+            <Button x:Name="BtnOption1" Clicked="OnOptionClicked"
+                    BackgroundColor="{StaticResource CardColor}"
+                    TextColor="{StaticResource TextPrimaryColor}"
+                    FontSize="20" CornerRadius="12" Padding="16,14"
+                    BorderColor="#E0E0E0" BorderWidth="1" />
+            <Button x:Name="BtnOption2" Clicked="OnOptionClicked"
+                    BackgroundColor="{StaticResource CardColor}"
+                    TextColor="{StaticResource TextPrimaryColor}"
+                    FontSize="20" CornerRadius="12" Padding="16,14"
+                    BorderColor="#E0E0E0" BorderWidth="1" />
+            <Button x:Name="BtnOption3" Clicked="OnOptionClicked"
+                    BackgroundColor="{StaticResource CardColor}"
+                    TextColor="{StaticResource TextPrimaryColor}"
+                    FontSize="20" CornerRadius="12" Padding="16,14"
+                    BorderColor="#E0E0E0" BorderWidth="1" />
+
+            <!-- 反馈消息 -->
+            <Label x:Name="LblFeedback"
+                   FontSize="18"
+                   FontAttributes="Bold"
+                   HorizontalTextAlignment="Center"
+                   IsVisible="False" />
+
+        </VerticalStackLayout>
+
+        <!-- 底部下一题按钮 -->
+        <Button x:Name="BtnNext" Grid.Row="2"
+                Text="下一题"
+                Style="{StaticResource PrimaryButton}"
+                Clicked="OnNextClicked"
+                IsVisible="False" />
+
+    </Grid>
+
+</ContentPage>
