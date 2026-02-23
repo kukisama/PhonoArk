@@ -58,19 +58,21 @@ public partial class IpaChartViewModel : ViewModelBase
     [RelayCommand]
     private async Task SelectPhonemeAsync(Phoneme phoneme)
     {
+        ClearPlayingWords();
         SelectedPhoneme = phoneme;
         IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
     }
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task PlayPhonemeAsync(Phoneme phoneme)
     {
         await _audioService.PlayPhonemeAsync(phoneme);
     }
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task PlayWordAsync(ExampleWord word)
     {
+        MarkPlayingWord(word);
         await _audioService.PlayWordAsync(word);
     }
 
@@ -97,5 +99,38 @@ public partial class IpaChartViewModel : ViewModelBase
     {
         CurrentAccent = CurrentAccent == Accent.GenAm ? Accent.RP : Accent.GenAm;
         _audioService.CurrentAccent = CurrentAccent;
+    }
+
+    private void MarkPlayingWord(ExampleWord activeWord)
+    {
+        ClearPlayingWords();
+        activeWord.IsPlaying = true;
+    }
+
+    private void ClearPlayingWords()
+    {
+        foreach (var phoneme in Vowels)
+        {
+            foreach (var word in phoneme.ExampleWords)
+            {
+                word.IsPlaying = false;
+            }
+        }
+
+        foreach (var phoneme in Diphthongs)
+        {
+            foreach (var word in phoneme.ExampleWords)
+            {
+                word.IsPlaying = false;
+            }
+        }
+
+        foreach (var phoneme in Consonants)
+        {
+            foreach (var word in phoneme.ExampleWords)
+            {
+                word.IsPlaying = false;
+            }
+        }
     }
 }

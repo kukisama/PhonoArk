@@ -69,7 +69,9 @@ public class LocalizationService : INotifyPropertyChanged
         PersistCulture(_currentCulture.Name);
 
         OnPropertyChanged(nameof(CurrentCultureName));
+        OnPropertyChanged("Item");
         OnPropertyChanged("Item[]");
+        OnPropertyChanged(string.Empty);
     }
 
     private static CultureInfo ResolveInitialCulture()

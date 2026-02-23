@@ -16,8 +16,8 @@ permissions:
   contents: write
 
 jobs:
-  # ── 第一阶段：并行构建各平台 zip ──
-  build:
+  # ── 第一阶段：并行构建 Windows 桌面与 Android APK ──
+  build-windows:
     strategy:
       matrix:
         include:
@@ -25,10 +25,6 @@ jobs:
             os: windows-latest
           - rid: win-arm64
             os: windows-latest
-          - rid: linux-x64
-            os: ubuntu-latest
-          - rid: osx-arm64
-            os: macos-latest
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -47,17 +43,10 @@ jobs:
           -o artifacts/publish/PhonoArk-${{ matrix.rid }}-fdd
 
       - name: Create zip (Windows)
-        if: runner.os == 'Windows'
         run: |
           Compress-Archive `
             -Path "artifacts/publish/PhonoArk-${{ matrix.rid }}-fdd/*" `
             -DestinationPath "artifacts/PhonoArk-${{ matrix.rid }}-fdd.zip"
-
-      - name: Create zip (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          cd artifacts/publish/PhonoArk-${{ matrix.rid }}-fdd
-          zip -r ../../PhonoArk-${{ matrix.rid }}-fdd.zip .
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -65,9 +54,45 @@ jobs:
           name: release-${{ matrix.rid }}
           path: artifacts/PhonoArk-${{ matrix.rid }}-fdd.zip
 
-  # ── 第二阶段：汇总所有 zip，读取 RELEASE_NOTES.md，创建 GitHub Release ──
+  build-android:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install Android workload
+        run: dotnet workload install android
+
+      - name: Publish Android APK
+        run: >
+          dotnet publish PhonoArk/PhonoArk.Android/PhonoArk.Android.csproj
+          -c Release
+          -f net10.0-android
+          /p:AndroidPackageFormat=apk
+          -o artifacts/android/publish
+
+      - name: Collect Android APK
+        run: |
+          $apk = Get-ChildItem -Path "artifacts/android/publish" -Recurse -Filter *.apk | Select-Object -First 1
+          if (-not $apk) {
+            throw "Android APK not found in publish output."
+          }
+          New-Item -ItemType Directory -Path artifacts -Force | Out-Null
+          Copy-Item -Path $apk.FullName -Destination "artifacts/PhonoArk-android.apk" -Force
+
+      - name: Upload Android artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-android
+          path: artifacts/PhonoArk-android.apk
+
+  # ── 第二阶段：汇总 Windows zip + Android apk，读取 RELEASE_NOTES.md，创建 GitHub Release ──
   release:
-    needs: build
+    needs: [build-windows, build-android]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -86,4 +111,6 @@ jobs:
           body_path: RELEASE_NOTES.md
           generate_release_notes: true
           append_body: true
-          files: dist/*.zip
+          files: |
+            dist/*.zip
+            dist/*.apk

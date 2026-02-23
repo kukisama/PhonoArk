@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace PhonoArk.ViewModels;
@@ -25,6 +26,8 @@ public partial class ExamViewModel : ViewModelBase
 
     [ObservableProperty]
     private int _currentQuestionIndex;
+
+    public int CurrentQuestionNumber => CurrentQuestionIndex + 1;
 
     [ObservableProperty]
     private int _totalQuestions;
@@ -47,7 +50,12 @@ public partial class ExamViewModel : ViewModelBase
     [ObservableProperty]
     private int _questionCount = 10;
 
+    [ObservableProperty]
+    private bool _areOptionsInteractive;
+
     private DateTime _examStartTime;
+
+    private const int AutoAdvanceDelayMilliseconds = 1200;
 
     public ExamViewModel(
         ExamService examService,
@@ -64,7 +72,18 @@ public partial class ExamViewModel : ViewModelBase
     [RelayCommand]
     private async Task StartExamAsync()
     {
-        var questions = await _examService.GenerateExamAsync(QuestionCount, ExamScope);
+        List<ExamQuestion> questions;
+        try
+        {
+            questions = await _examService.GenerateExamAsync(QuestionCount, ExamScope);
+        }
+        catch (Exception ex)
+        {
+            FeedbackMessage = ex.Message;
+            ShowFeedback = true;
+            IsExamActive = false;
+            return;
+        }
         
         if (questions.Count == 0)
         {
@@ -79,6 +98,7 @@ public partial class ExamViewModel : ViewModelBase
         CorrectAnswers = 0;
         IsExamActive = true;
         ShowFeedback = false;
+        AreOptionsInteractive = true;
         _examStartTime = DateTime.UtcNow;
 
         CurrentQuestion = Questions[0];
@@ -94,21 +114,28 @@ public partial class ExamViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task SelectAnswerAsync(ExampleWord answer)
     {
-        if (CurrentQuestion == null || CurrentQuestion.IsAnswered)
+        if (CurrentQuestion == null || CurrentQuestion.IsAnswered || !AreOptionsInteractive)
             return;
+
+        AreOptionsInteractive = false;
+
+        ResetOptionVisualState(CurrentQuestion.Options);
 
         _examService.AnswerQuestion(CurrentQuestion, answer);
 
         if (CurrentQuestion.IsCorrect)
         {
             CorrectAnswers++;
+            answer.IsExamCorrect = true;
             FeedbackMessage = _localizationService.Format("FeedbackCorrectTemplate", answer.Word, answer.IpaTranscription);
         }
         else
         {
+            answer.IsExamWrong = true;
+            CurrentQuestion.CorrectAnswer.IsExamCorrect = true;
             FeedbackMessage = _localizationService.Format(
                 "FeedbackIncorrectTemplate",
                 CurrentQuestion.CorrectAnswer.Word,
@@ -118,7 +145,7 @@ public partial class ExamViewModel : ViewModelBase
         ShowFeedback = true;
         
         // Auto advance to next question after a delay
-        await Task.Delay(2000);
+        await Task.Delay(AutoAdvanceDelayMilliseconds);
         await NextQuestionCommand.ExecuteAsync(null);
     }
 
@@ -127,10 +154,11 @@ public partial class ExamViewModel : ViewModelBase
     {
         ShowFeedback = false;
 
-        if (CurrentQuestionIndex < Questions.Count - 1)
+        if (CurrentQuestionIndex + 1 < Questions.Count)
         {
             CurrentQuestionIndex++;
             CurrentQuestion = Questions[CurrentQuestionIndex];
+            AreOptionsInteractive = true;
             await PlayCurrentQuestionAsync();
         }
         else
@@ -143,6 +171,7 @@ public partial class ExamViewModel : ViewModelBase
     private async Task EndExamAsync()
     {
         IsExamActive = false;
+        AreOptionsInteractive = false;
 
         var duration = DateTime.UtcNow - _examStartTime;
         var (correct, total) = _examService.CalculateResults(Questions.ToList());
@@ -156,9 +185,25 @@ public partial class ExamViewModel : ViewModelBase
             Duration = duration
         };
 
-        await _examHistoryService.SaveResultAsync(result);
+        await _examHistoryService.SaveResultWithAttemptsAsync(result, Questions.ToList());
 
         FeedbackMessage = _localizationService.Format("FeedbackExamCompletedTemplate", correct, total, result.Score);
         ShowFeedback = true;
+
+        ResetOptionVisualState(Questions.SelectMany(q => q.Options));
+    }
+
+    private static void ResetOptionVisualState(IEnumerable<ExampleWord> options)
+    {
+        foreach (var option in options)
+        {
+            option.IsExamCorrect = false;
+            option.IsExamWrong = false;
+        }
+    }
+
+    partial void OnCurrentQuestionIndexChanged(int value)
+    {
+        OnPropertyChanged(nameof(CurrentQuestionNumber));
     }
 }

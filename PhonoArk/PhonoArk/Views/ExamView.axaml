@@ -11,24 +11,23 @@
 
   <Grid Margin="20">
     <!-- Exam Setup -->
-    <StackPanel IsVisible="{Binding !IsExamActive}" 
-                VerticalAlignment="Center" 
-                HorizontalAlignment="Center"
-                Spacing="20"
-                MaxWidth="400">
-      <TextBlock Text="{Binding [PracticeExam], Source={StaticResource Loc}}" 
-                 FontSize="28" 
-                 FontWeight="Bold"
+    <Border IsVisible="{Binding !IsExamActive}" Classes="flutter-card" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
+      <StackPanel Spacing="16">
+      <TextBlock Text="{Binding [PracticeExam], Source={StaticResource Loc}}"
+                 Classes="flutter-title"
                  HorizontalAlignment="Center"/>
 
+      <Border Classes="flutter-card">
       <StackPanel Spacing="10">
         <TextBlock Text="{Binding [NumberOfQuestions], Source={StaticResource Loc}}" FontSize="16"/>
-        <NumericUpDown Value="{Binding QuestionCount}"
+        <NumericUpDown Classes="flutter-input" Value="{Binding QuestionCount}"
                       Minimum="5"
                       Maximum="50"
                       Increment="5"/>
       </StackPanel>
+      </Border>
 
+      <Border Classes="flutter-card">
       <StackPanel Spacing="10">
         <TextBlock Text="{Binding [ExamScope], Source={StaticResource Loc}}" FontSize="16"/>
         <ComboBox SelectedItem="{Binding ExamScope}" HorizontalAlignment="Stretch">
@@ -36,28 +35,26 @@
           <ComboBoxItem Content="{Binding [FavoritesOnly], Source={StaticResource Loc}}" Tag="Favorites"/>
         </ComboBox>
       </StackPanel>
+      </Border>
 
       <Button Content="{Binding [StartExam], Source={StaticResource Loc}}"
+              Classes="flutter-primary"
               Command="{Binding StartExamCommand}"
-              HorizontalAlignment="Stretch"
-              Padding="15"
-              FontSize="18"/>
-    </StackPanel>
+              HorizontalAlignment="Stretch"/>
+      </StackPanel>
+    </Border>
 
     <!-- Exam Active -->
     <Grid IsVisible="{Binding IsExamActive}" RowDefinitions="Auto,*,Auto">
       <!-- Progress Header -->
-      <Border Grid.Row="0" 
-              Background="{DynamicResource SystemControlBackgroundAltHighBrush}"
-              Padding="15"
-              Margin="0,0,0,10">
+      <Border Grid.Row="0" Classes="flutter-card" Margin="0,0,0,10">
         <Grid ColumnDefinitions="*,Auto">
           <StackPanel Grid.Column="0">
             <StackPanel Orientation="Horizontal" Spacing="4">
               <TextBlock Text="{Binding [QuestionLabel], Source={StaticResource Loc}}"
                          FontSize="18"
                          FontWeight="SemiBold"/>
-              <TextBlock Text="{Binding CurrentQuestionIndex}"
+              <TextBlock Text="{Binding CurrentQuestionNumber}"
                          FontSize="18"
                          FontWeight="SemiBold"/>
             </StackPanel>
@@ -84,7 +81,8 @@
       </Border>
 
       <!-- Question Content -->
-      <StackPanel Grid.Row="1" 
+      <Border Grid.Row="1" Classes="flutter-card">
+      <StackPanel 
                   VerticalAlignment="Center" 
                   Spacing="20"
                   MaxWidth="600">
@@ -95,10 +93,18 @@
                    HorizontalAlignment="Center"/>
 
         <Button Content="{Binding [PlayPhoneme], Source={StaticResource Loc}}"
+          Classes="flutter-primary"
                 Command="{Binding PlayCurrentQuestionCommand}"
                 HorizontalAlignment="Center"
-                Padding="20,15"
-                FontSize="20"/>
+          FontSize="20"/>
+
+        <TextBlock FontSize="16"
+                   HorizontalAlignment="Center"
+                   Margin="0,4,0,0">
+          <Run Text="{Binding [TargetPhonemeLabel], Source={StaticResource Loc}}"/>
+          <Run Text=" "/>
+          <Run Text="{Binding CurrentQuestion.Phoneme.Symbol}"/>
+        </TextBlock>
 
         <TextBlock Text="{Binding [SelectWord], Source={StaticResource Loc}}"
                    FontSize="16"
@@ -108,29 +114,34 @@
         <ItemsControl ItemsSource="{Binding CurrentQuestion.Options}">
           <ItemsControl.ItemTemplate>
             <DataTemplate>
-              <Button Content="{Binding Word}"
+              <Button Content="{Binding ExamDisplayWord}"
+                      Classes="exam-option"
+                      Background="{Binding ExamBackground}"
+                      BorderBrush="{Binding ExamBorderBrush}"
+                      Foreground="{Binding ExamForeground}"
+                      IsHitTestVisible="{Binding #Root.DataContext.AreOptionsInteractive}"
                       Command="{Binding #Root.DataContext.SelectAnswerCommand}"
                       CommandParameter="{Binding}"
                       HorizontalAlignment="Stretch"
                       Margin="0,5"
-                      Padding="15"
                       FontSize="18"/>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
 
-        <!-- Feedback -->
-        <Border IsVisible="{Binding ShowFeedback}"
-                Background="{DynamicResource SystemControlBackgroundAccentBrush}"
-                Padding="15"
-                CornerRadius="8"
-                Margin="0,10,0,0">
-          <TextBlock Text="{Binding FeedbackMessage}"
-                     FontSize="16"
-                     TextWrapping="Wrap"
-                     HorizontalAlignment="Center"/>
-        </Border>
+          <!-- Feedback (fixed space to avoid layout jump) -->
+          <Border Classes="flutter-card"
+              Margin="0,10,0,0"
+                MinHeight="56">
+            <TextBlock Text="{Binding FeedbackMessage}"
+               FontSize="16"
+               TextWrapping="Wrap"
+               HorizontalAlignment="Center"
+                 VerticalAlignment="Center"
+                 IsVisible="{Binding ShowFeedback}"/>
+          </Border>
       </StackPanel>
+            </Border>
 
       <!-- Control Buttons -->
       <StackPanel Grid.Row="2" 
@@ -139,12 +150,13 @@
                   Spacing="10"
                   Margin="0,20,0,0">
         <Button Content="{Binding [NextQuestion], Source={StaticResource Loc}}"
+          Classes="flutter-secondary"
                 Command="{Binding NextQuestionCommand}"
-                Padding="15,10"
                 IsVisible="{Binding CurrentQuestion.IsAnswered}"/>
         <Button Content="{Binding [EndExam], Source={StaticResource Loc}}"
+          Classes="flutter-primary"
                 Command="{Binding EndExamCommand}"
-                Padding="15,10"/>
+          />
       </StackPanel>
     </Grid>
   </Grid>

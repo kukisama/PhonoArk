@@ -45,7 +45,12 @@ public partial class App : Application
         // Initialize services
         var phonemeDataService = new PhonemeDataService();
         var audioService = new AudioService();
-        var localizationService = new LocalizationService();
+        var localizationService = Resources["Loc"] as LocalizationService;
+        if (localizationService == null)
+        {
+            localizationService = new LocalizationService();
+            Resources["Loc"] = localizationService;
+        }
         var favoriteService = new FavoriteService(dbContext);
         var examService = new ExamService(phonemeDataService, favoriteService);
         var examHistoryService = new ExamHistoryService(dbContext);
@@ -54,7 +59,7 @@ public partial class App : Application
         // Initialize ViewModels
         var ipaChartViewModel = new IpaChartViewModel(phonemeDataService, audioService, favoriteService);
         var examViewModel = new ExamViewModel(examService, examHistoryService, audioService, localizationService);
-        var examHistoryViewModel = new ExamHistoryViewModel(examHistoryService);
+        var examHistoryViewModel = new ExamHistoryViewModel(examHistoryService, localizationService);
         var favoritesViewModel = new FavoritesViewModel(favoriteService, phonemeDataService);
         var settingsViewModel = new SettingsViewModel(settingsService, audioService, localizationService);
 

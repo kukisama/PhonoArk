@@ -3,91 +3,162 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:PhonoArk.ViewModels"
+             xmlns:controls="using:Avalonia.Controls"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
              x:Class="PhonoArk.Views.ExamHistoryView"
+             x:Name="Root"
              x:CompileBindings="False"
              x:DataType="vm:ExamHistoryViewModel">
 
-  <Grid Margin="20" RowDefinitions="Auto,Auto,*">
+  <Grid Margin="20" RowDefinitions="Auto,Auto,Auto,Auto,*" RowSpacing="10">
     <TextBlock Grid.Row="0" 
                Text="{Binding [ExamHistory], Source={StaticResource Loc}}" 
-               FontSize="28" 
-               FontWeight="Bold"
+               Classes="flutter-title"
                Margin="0,0,0,10"/>
 
     <Border Grid.Row="1"
-            Background="{DynamicResource SystemControlBackgroundAccentBrush}"
-            Padding="15"
-            CornerRadius="8"
-            Margin="0,0,0,20">
-      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
-        <TextBlock Text="{Binding [AverageScore], Source={StaticResource Loc}}"
-                   FontSize="18"
-                   FontWeight="SemiBold"/>
-        <TextBlock Text="{Binding AverageScore, StringFormat='{}{0:F1}%'}"
-                   FontSize="18"
-                   FontWeight="SemiBold"/>
+            Classes="flutter-card"
+            Margin="0,0,0,4">
+      <StackPanel Spacing="8">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="4">
+          <TextBlock Text="{Binding [AverageScore], Source={StaticResource Loc}}"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding AverageScore, StringFormat='{}{0:F1}%'}"
+                     FontSize="18"
+                     FontWeight="SemiBold"/>
+        </StackPanel>
+
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+          <TextBlock Text="{Binding [AttemptSummary], Source={StaticResource Loc}}"
+                     Opacity="0.8"/>
+          <TextBlock Text="{Binding TotalAttempts}" FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding [WrongAttempts], Source={StaticResource Loc}}" Opacity="0.8"/>
+          <TextBlock Text="{Binding WrongAttempts}" FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding [WrongRate], Source={StaticResource Loc}}" Opacity="0.8"/>
+          <TextBlock Text="{Binding WrongRate, StringFormat='{}{0:F1}%'}" FontWeight="SemiBold"/>
+        </StackPanel>
       </StackPanel>
     </Border>
 
-    <ScrollViewer Grid.Row="2">
-      <ItemsControl ItemsSource="{Binding ExamResults}">
+    <Border Grid.Row="2" Classes="flutter-card" Margin="0,0,0,4">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12" VerticalAlignment="Center">
+        <CheckBox Grid.Column="0"
+                  Content="{Binding [ShowWrongOnly], Source={StaticResource Loc}}"
+                  IsChecked="{Binding ShowWrongOnly}"
+                  VerticalAlignment="Center"/>
+        <Button Grid.Column="1"
+                Content="{Binding [ClearHistory], Source={StaticResource Loc}}"
+                Classes="flutter-secondary"
+                Command="{Binding ClearHistoryCommand}"/>
+      </Grid>
+    </Border>
+
+    <controls:Expander Grid.Row="3"
+                       IsExpanded="{Binding IsErrorStatsExpanded}"
+                       Classes="flutter-card"
+                       Header="{Binding [PhonemeErrorStats], Source={StaticResource Loc}}">
+      <StackPanel Spacing="8">
+        <ItemsControl ItemsSource="{Binding ErrorStats}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8" Margin="0,2,0,2">
+                <TextBlock Grid.Column="0" Text="{Binding PhonemeSymbol}" FontWeight="SemiBold"/>
+                <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="4">
+                  <TextBlock Text="{Binding ErrorCount}" Opacity="0.85"/>
+                  <TextBlock Text="{Binding [Times], Source={StaticResource Loc}}" Opacity="0.85"/>
+                </StackPanel>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <TextBlock Text="{Binding [NoErrorStatsHint], Source={StaticResource Loc}}"
+                   IsVisible="{Binding !HasErrorStats}"
+                   Opacity="0.65"/>
+      </StackPanel>
+    </controls:Expander>
+
+    <ScrollViewer Grid.Row="4">
+      <ItemsControl ItemsSource="{Binding Sessions}">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <Border BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-                    BorderThickness="1"
-                    CornerRadius="8"
-                    Padding="15"
+                  BorderThickness="0"
+                  Classes="flutter-card"
                     Margin="0,0,0,10">
-              <Grid ColumnDefinitions="*,Auto,Auto">
-                <StackPanel Grid.Column="0">
-                  <TextBlock Text="{Binding ExamDate, StringFormat='{}{0:g}'}" 
-                             FontSize="16" 
-                             FontWeight="SemiBold"/>
-                  <StackPanel Orientation="Horizontal" Spacing="4" Margin="0,5,0,0">
-                    <TextBlock Text="{Binding [Scope], Source={StaticResource Loc}}"
-                               FontSize="14"
-                               Opacity="0.7"/>
-                    <TextBlock Text="{Binding ExamScope}"
-                               FontSize="14"
-                               Opacity="0.7"/>
-                  </StackPanel>
-                  <StackPanel Orientation="Horizontal" Spacing="4">
-                    <TextBlock Text="{Binding [Duration], Source={StaticResource Loc}}"
-                               FontSize="14"
-                               Opacity="0.7"/>
-                    <TextBlock Text="{Binding Duration, StringFormat='{}{0:mm\\:ss}'}"
-                               FontSize="14"
-                               Opacity="0.7"/>
-                  </StackPanel>
+              <StackPanel Spacing="10">
+                <StackPanel Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+                  <TextBlock Text="{Binding SessionTitle}" FontSize="16" FontWeight="SemiBold"/>
+                  <TextBlock Text="•" Opacity="0.5"/>
+                  <TextBlock Text="{Binding [CorrectLabel], Source={StaticResource Loc}}" Opacity="0.7"/>
+                  <TextBlock Text="{Binding CorrectCount}" FontWeight="SemiBold"/>
+                  <TextBlock Text="{Binding [WrongAttempts], Source={StaticResource Loc}}" Opacity="0.7"/>
+                  <TextBlock Text="{Binding WrongCount}" FontWeight="SemiBold"/>
+                  <TextBlock Text="{Binding [NumberOfQuestions], Source={StaticResource Loc}}" Opacity="0.7"/>
+                  <TextBlock Text="{Binding TotalCount}" FontWeight="SemiBold"/>
                 </StackPanel>
-                <StackPanel Grid.Column="1" 
-                            VerticalAlignment="Center"
-                            Margin="20,0">
-                  <TextBlock Text="{Binding CorrectAnswers, StringFormat='{}{0}'}" 
-                             FontSize="24" 
-                             FontWeight="Bold"
-                             HorizontalAlignment="Center"/>
-                  <TextBlock Text="{Binding TotalQuestions, StringFormat='/ {0}'}" 
-                             FontSize="14" 
-                             Opacity="0.7"
-                             HorizontalAlignment="Center"/>
-                </StackPanel>
-                <TextBlock Grid.Column="2"
-                           Text="{Binding Score, StringFormat='{}{0:F1}%'}"
-                           FontSize="28"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center"/>
-              </Grid>
+
+                <ItemsControl ItemsSource="{Binding Cards}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <WrapPanel ItemWidth="120" ItemHeight="44"/>
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Button Width="112"
+                              Height="36"
+                              Margin="4"
+                              Content="{Binding CardText}"
+                              ToolTip.Tip="{Binding CardToolTip}"
+                              Background="{Binding CardBackground}"
+                              BorderBrush="{Binding CardBorderBrush}"
+                              Foreground="{Binding CardForeground}"
+                              Command="{Binding #Root.DataContext.OpenAttemptDetailsCommand}"
+                              CommandParameter="{Binding}"
+                              Classes="examattemptcard"/>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
             </Border>
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
     </ScrollViewer>
 
-    <TextBlock Grid.Row="2"
+        <Border Grid.Row="4"
+          Margin="0,16,0,0"
+            IsVisible="{Binding ShowAttemptDetails}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            MaxWidth="520"
+            Classes="flutter-card"
+            ZIndex="100">
+      <StackPanel Spacing="8">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <TextBlock Text="{Binding [QuestionLabel], Source={StaticResource Loc}}" FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding SelectedAttempt.QuestionOrder}" FontWeight="SemiBold"/>
+          <TextBlock Text="•" Opacity="0.5"/>
+          <TextBlock Text="{Binding [Phoneme], Source={StaticResource Loc}}" Opacity="0.8"/>
+          <TextBlock Text="{Binding SelectedAttempt.PhonemeSymbol}" FontWeight="SemiBold"/>
+        </StackPanel>
+        <TextBlock Text="{Binding SelectedAttempt.ResultText}" FontWeight="SemiBold"/>
+        <TextBlock Text="{Binding [YourAnswer], Source={StaticResource Loc}}" Opacity="0.8"/>
+        <TextBlock Text="{Binding SelectedAttempt.UserAnswer}"/>
+        <TextBlock Text="{Binding [CorrectAnswerLabel], Source={StaticResource Loc}}" Opacity="0.8"/>
+        <TextBlock Text="{Binding SelectedAttempt.CorrectAnswer}"/>
+        <Button Content="{Binding [Close], Source={StaticResource Loc}}"
+                Command="{Binding CloseAttemptDetailsCommand}"
+                Classes="flutter-secondary"
+                HorizontalAlignment="Right"/>
+      </StackPanel>
+    </Border>
+
+    <TextBlock Grid.Row="4"
                Text="{Binding [NoExamHistoryHint], Source={StaticResource Loc}}"
-               IsVisible="{Binding !ExamResults.Count}"
+               IsVisible="{Binding !HasAttemptItems}"
                HorizontalAlignment="Center"
                VerticalAlignment="Center"
                FontSize="16"

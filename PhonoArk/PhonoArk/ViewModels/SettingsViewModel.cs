@@ -1,5 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Avalonia;
+using Avalonia.Styling;
 using PhonoArk.Models;
 using PhonoArk.Services;
 using System.Collections.ObjectModel;
@@ -52,6 +54,12 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty]
     private AccentOption? _selectedAccentOption;
 
+    [ObservableProperty]
+    private string _voiceDiagnosticsSummary = "尚未运行诊断。";
+
+    [ObservableProperty]
+    private ObservableCollection<string> _voiceDiagnostics = new();
+
     public SettingsViewModel(SettingsService settingsService, AudioService audioService, LocalizationService localizationService)
     {
         _settingsService = settingsService;
@@ -82,6 +90,7 @@ public partial class SettingsViewModel : ViewModelBase
         ExamQuestionCount = settings.ExamQuestionCount;
         DarkMode = settings.DarkMode;
         RemindersEnabled = settings.RemindersEnabled;
+        ApplyThemeVariant(DarkMode);
 
         _audioService.CurrentAccent = SelectedAccent;
         _audioService.Volume = Volume;
@@ -141,7 +150,31 @@ public partial class SettingsViewModel : ViewModelBase
         if (value != null)
         {
             _localizationService.SetCulture(value.Code);
+            RefreshLocalizedOptions();
         }
+    }
+
+    partial void OnDarkModeChanged(bool value)
+    {
+        ApplyThemeVariant(value);
+    }
+
+    [RelayCommand]
+    private async Task RunVoiceDiagnosticsAsync()
+    {
+        var diagnostics = await _audioService.GetVoiceDiagnosticsAsync();
+        VoiceDiagnosticsSummary = diagnostics.Summary;
+        VoiceDiagnostics = new ObservableCollection<string>(diagnostics.Details);
+    }
+
+    private static void ApplyThemeVariant(bool darkMode)
+    {
+        if (Application.Current == null)
+        {
+            return;
+        }
+
+        Application.Current.RequestedThemeVariant = darkMode ? ThemeVariant.Dark : ThemeVariant.Light;
     }
 
     private LanguageOption? FindLanguageOption(string cultureCode)
@@ -168,5 +201,17 @@ public partial class SettingsViewModel : ViewModelBase
         }
 
         return AccentOptions.Count > 0 ? AccentOptions[0] : null;
+    }
+
+    private void RefreshLocalizedOptions()
+    {
+        var currentAccent = SelectedAccent;
+        AccentOptions = new ObservableCollection<AccentOption>
+        {
+            new() { Value = Accent.GenAm, DisplayName = _localizationService.GetString("AccentGenAm") },
+            new() { Value = Accent.RP, DisplayName = _localizationService.GetString("AccentRp") }
+        };
+
+        SelectedAccentOption = FindAccentOption(currentAccent);
     }
 }

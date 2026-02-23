@@ -8,8 +8,51 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Resources>
+        <ResourceDictionary>
         <converters:FavoriteButtonConverter x:Key="FavoriteButtonConverter"/>
         <services:LocalizationService x:Key="Loc"/>
+
+        <ResourceDictionary.ThemeDictionaries>
+            <ResourceDictionary x:Key="Light">
+                <Color x:Key="AppPageBackgroundColor">#F4F7FF</Color>
+                <Color x:Key="AppCardBackgroundColor">#FDFDFD</Color>
+                <Color x:Key="AppCardBorderColor">#1F000000</Color>
+                <Color x:Key="AppAccentSoftColor">#12007AFF</Color>
+                <Color x:Key="AppAccentBorderColor">#26007AFF</Color>
+                <Color x:Key="AppPrimaryColor">#5B8CFF</Color>
+                <Color x:Key="AppPrimaryHoverColor">#4A7CFA</Color>
+                <Color x:Key="AppTileColor">#F4F7FF</Color>
+                <Color x:Key="AppTileHoverColor">#EAF0FF</Color>
+                <Color x:Key="AppNavActiveColor">#1E5EFF</Color>
+                <Color x:Key="AppNavActiveTextColor">#FFFFFFFF</Color>
+            </ResourceDictionary>
+            <ResourceDictionary x:Key="Dark">
+                <Color x:Key="AppPageBackgroundColor">#111827</Color>
+                <Color x:Key="AppCardBackgroundColor">#1F2937</Color>
+                <Color x:Key="AppCardBorderColor">#33FFFFFF</Color>
+                <Color x:Key="AppAccentSoftColor">#2A60A5FA</Color>
+                <Color x:Key="AppAccentBorderColor">#5560A5FA</Color>
+                <Color x:Key="AppPrimaryColor">#4F8CFF</Color>
+                <Color x:Key="AppPrimaryHoverColor">#3B7BEE</Color>
+                <Color x:Key="AppTileColor">#243244</Color>
+                <Color x:Key="AppTileHoverColor">#2C3D53</Color>
+                <Color x:Key="AppNavActiveColor">#4F8CFF</Color>
+                <Color x:Key="AppNavActiveTextColor">#FFFFFFFF</Color>
+            </ResourceDictionary>
+        </ResourceDictionary.ThemeDictionaries>
+
+        <SolidColorBrush x:Key="AppPageBackgroundBrush" Color="{DynamicResource AppPageBackgroundColor}"/>
+        <SolidColorBrush x:Key="AppCardBackgroundBrush" Color="{DynamicResource AppCardBackgroundColor}"/>
+        <SolidColorBrush x:Key="AppCardBorderBrush" Color="{DynamicResource AppCardBorderColor}"/>
+        <SolidColorBrush x:Key="AppAccentSoftBrush" Color="{DynamicResource AppAccentSoftColor}"/>
+        <SolidColorBrush x:Key="AppAccentBorderBrush" Color="{DynamicResource AppAccentBorderColor}"/>
+        <SolidColorBrush x:Key="AppPrimaryBrush" Color="{DynamicResource AppPrimaryColor}"/>
+        <SolidColorBrush x:Key="AppPrimaryHoverBrush" Color="{DynamicResource AppPrimaryHoverColor}"/>
+        <SolidColorBrush x:Key="AppTileBrush" Color="{DynamicResource AppTileColor}"/>
+        <SolidColorBrush x:Key="AppTileHoverBrush" Color="{DynamicResource AppTileHoverColor}"/>
+        <SolidColorBrush x:Key="AppNavActiveBrush" Color="{DynamicResource AppNavActiveColor}"/>
+        <SolidColorBrush x:Key="AppNavActiveTextBrush" Color="{DynamicResource AppNavActiveTextColor}"/>
+        </ResourceDictionary>
     </Application.Resources>
 
     <Application.DataTemplates>
@@ -18,5 +61,234 @@
 
     <Application.Styles>
         <FluentTheme />
+
+        <Style Selector="Border.flutter-card">
+            <Setter Property="Background" Value="{DynamicResource AppCardBackgroundBrush}"/>
+            <Setter Property="CornerRadius" Value="20"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="18"/>
+            <Setter Property="BoxShadow" Value="0 12 28 0 #22000000"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.18"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.18"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Border.flutter-card-lift:pointerover">
+            <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBorderBrush}"/>
+            <Setter Property="BoxShadow" Value="0 18 34 0 #28000000"/>
+        </Style>
+
+        <Style Selector="Button.flutter-nav">
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="#00000000"/>
+            <Setter Property="BorderBrush" Value="#00000000"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.14"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.14"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.flutter-nav:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppAccentSoftBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBorderBrush}"/>
+        </Style>
+
+        <Style Selector="Button.flutter-nav.active">
+            <Setter Property="Background" Value="{DynamicResource AppNavActiveBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppNavActiveBrush}"/>
+            <Setter Property="Foreground" Value="{DynamicResource AppNavActiveTextBrush}"/>
+        </Style>
+
+        <Style Selector="Button.flutter-primary">
+            <Setter Property="CornerRadius" Value="16"/>
+            <Setter Property="Padding" Value="14,12"/>
+            <Setter Property="FontSize" Value="15"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="{DynamicResource AppPrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppPrimaryBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.14"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.flutter-primary:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppPrimaryHoverBrush}"/>
+        </Style>
+
+        <Style Selector="Button.flutter-secondary">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="12,9"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Background" Value="{DynamicResource AppAccentSoftBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.14"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.flutter-secondary:pointerover">
+            <Setter Property="Background" Value="#22007AFF"/>
+        </Style>
+
+        <Style Selector="Button.flutter-secondary.correct">
+            <Setter Property="Background" Value="#1D8A3A"/>
+            <Setter Property="BorderBrush" Value="#1D8A3A"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.flutter-secondary.correct:pointerover, Button.flutter-secondary.correct:pressed">
+            <Setter Property="Background" Value="#1D8A3A"/>
+            <Setter Property="BorderBrush" Value="#1D8A3A"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.flutter-secondary.wrong">
+            <Setter Property="Background" Value="#C62828"/>
+            <Setter Property="BorderBrush" Value="#C62828"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.flutter-secondary.wrong:pointerover, Button.flutter-secondary.wrong:pressed">
+            <Setter Property="Background" Value="#C62828"/>
+            <Setter Property="BorderBrush" Value="#C62828"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.exam-option">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="12,9"/>
+            <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Opacity" Value="1"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.10"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.10"/>
+                    <BrushTransition Property="Foreground" Duration="0:0:0.10"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.examattemptcard">
+            <Setter Property="CornerRadius" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Background" Value="{DynamicResource AppAccentSoftBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBorderBrush}"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style Selector="Button.examattemptcard.correct">
+            <Setter Property="Background" Value="#1D8A3A"/>
+            <Setter Property="BorderBrush" Value="#1D8A3A"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.examattemptcard.correct:pointerover, Button.examattemptcard.correct:pressed, Button.examattemptcard.correct:disabled">
+            <Setter Property="Background" Value="#1D8A3A"/>
+            <Setter Property="BorderBrush" Value="#1D8A3A"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style Selector="Button.examattemptcard.wrong">
+            <Setter Property="Background" Value="#C62828"/>
+            <Setter Property="BorderBrush" Value="#C62828"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <Style Selector="Button.examattemptcard.wrong:pointerover, Button.examattemptcard.wrong:pressed, Button.examattemptcard.wrong:disabled">
+            <Setter Property="Background" Value="#C62828"/>
+            <Setter Property="BorderBrush" Value="#C62828"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="Opacity" Value="1"/>
+        </Style>
+
+        <Style Selector="Button.flutter-tile">
+            <Setter Property="CornerRadius" Value="14"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="MinWidth" Value="64"/>
+            <Setter Property="MinHeight" Value="56"/>
+            <Setter Property="Background" Value="{DynamicResource AppTileBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppCardBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.14"/>
+                    <BrushTransition Property="BorderBrush" Duration="0:0:0.14"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.flutter-tile:pointerover">
+            <Setter Property="Background" Value="{DynamicResource AppTileHoverBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppPrimaryBrush}"/>
+        </Style>
+
+        <Style Selector="Button.flutter-word">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="10"/>
+            <Setter Property="Background" Value="{DynamicResource AppAccentSoftBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBorderBrush}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Transitions">
+                <Transitions>
+                    <BrushTransition Property="Background" Duration="0:0:0.08"/>
+                </Transitions>
+            </Setter>
+        </Style>
+
+        <Style Selector="Button.flutter-word:pressed">
+            <Setter Property="Background" Value="{DynamicResource AppPrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppPrimaryHoverBrush}"/>
+        </Style>
+
+        <Style Selector="Button.flutter-word.playing">
+            <Setter Property="Background" Value="{DynamicResource AppPrimaryBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource AppPrimaryHoverBrush}"/>
+        </Style>
+
+        <Style Selector="ComboBox.flutter-input, NumericUpDown.flutter-input">
+            <Setter Property="MinHeight" Value="42"/>
+        </Style>
+
+        <Style Selector="TextBlock.flutter-title">
+            <Setter Property="FontSize" Value="30"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+        </Style>
+
+        <Style Selector="TextBlock.flutter-caption">
+            <Setter Property="Opacity" Value="0.7"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style Selector="TextBlock.flutter-icon">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets, Inter, Microsoft YaHei"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
     </Application.Styles>
 </Application>

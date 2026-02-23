@@ -9,80 +9,110 @@
              x:DataType="vm:SettingsViewModel">
 
   <ScrollViewer>
-    <StackPanel Margin="20" Spacing="20" MaxWidth="600">
-      <TextBlock Text="{Binding [SettingsTitle], Source={StaticResource Loc}}" FontSize="28" FontWeight="Bold"/>
+    <StackPanel Margin="20" Spacing="14" MaxWidth="760">
+      <TextBlock Text="{Binding [SettingsTitle], Source={StaticResource Loc}}" Classes="flutter-title"/>
+      <TextBlock Text="{Binding [SettingsIntro], Source={StaticResource Loc}}" Classes="flutter-caption" Margin="0,0,0,6"/>
 
-      <!-- Accent Selection -->
-      <StackPanel Spacing="10">
-        <TextBlock Text="{Binding [DefaultAccent], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
-        <ComboBox ItemsSource="{Binding AccentOptions}"
-                  SelectedItem="{Binding SelectedAccentOption}"
-                  HorizontalAlignment="Stretch">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding DisplayName}"/>
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
+      <Border Classes="flutter-card flutter-card-lift">
+        <StackPanel Spacing="10">
+          <TextBlock Text="{Binding [DefaultAccent], Source={StaticResource Loc}, StringFormat='🎤 {0}'}" FontSize="16" FontWeight="SemiBold"/>
+          <ComboBox Classes="flutter-input"
+                    ItemsSource="{Binding AccentOptions}"
+                    SelectedItem="{Binding SelectedAccentOption}"
+                    HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding DisplayName}"/>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+      </Border>
 
-      <!-- Language -->
-      <StackPanel Spacing="10">
-        <TextBlock Text="{Binding [Language], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
-        <ComboBox ItemsSource="{Binding LanguageOptions}"
-                  SelectedItem="{Binding SelectedLanguageOption}"
-                  HorizontalAlignment="Stretch">
-          <ComboBox.ItemTemplate>
-            <DataTemplate>
-              <TextBlock Text="{Binding DisplayName}"/>
-            </DataTemplate>
-          </ComboBox.ItemTemplate>
-        </ComboBox>
-      </StackPanel>
+      <Border Classes="flutter-card flutter-card-lift">
+        <StackPanel Spacing="10">
+          <TextBlock Text="{Binding [Language], Source={StaticResource Loc}, StringFormat='🌐 {0}'}" FontSize="16" FontWeight="SemiBold"/>
+          <ComboBox Classes="flutter-input"
+                    ItemsSource="{Binding LanguageOptions}"
+                    SelectedItem="{Binding SelectedLanguageOption}"
+                    HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding DisplayName}"/>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+      </Border>
 
-      <!-- Volume -->
-      <StackPanel Spacing="10">
-        <TextBlock Text="{Binding [Volume], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
-        <Grid ColumnDefinitions="*,Auto">
-          <Slider Grid.Column="0" 
-                  Value="{Binding Volume}" 
-                  Minimum="0" 
-                  Maximum="1" 
-                  TickFrequency="0.1"/>
-          <TextBlock Grid.Column="1" 
-                     Text="{Binding Volume, StringFormat='{}{0:P0}'}" 
-                     Margin="10,0,0,0"
-                     VerticalAlignment="Center"/>
-        </Grid>
-      </StackPanel>
+      <Border Classes="flutter-card flutter-card-lift">
+        <StackPanel Spacing="10">
+          <TextBlock Text="{Binding [Volume], Source={StaticResource Loc}, StringFormat='🔊 {0}'}" FontSize="16" FontWeight="SemiBold"/>
+          <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+            <Slider Grid.Column="0"
+                    Value="{Binding Volume}"
+                    Minimum="0"
+                    Maximum="1"
+                    TickFrequency="0.05"/>
+            <TextBlock Grid.Column="1"
+                       Text="{Binding Volume, StringFormat='{}{0:P0}'}"
+                       VerticalAlignment="Center"
+                       FontWeight="SemiBold"/>
+          </Grid>
+        </StackPanel>
+      </Border>
 
-      <!-- Exam Question Count -->
-      <StackPanel Spacing="10">
-        <TextBlock Text="{Binding [DefaultExamQuestions], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
-        <NumericUpDown Value="{Binding ExamQuestionCount}"
-                      Minimum="5"
-                      Maximum="50"
-                      Increment="5"/>
-      </StackPanel>
+      <Border Classes="flutter-card flutter-card-lift">
+        <StackPanel Spacing="10">
+          <TextBlock Text="{Binding [DefaultExamQuestions], Source={StaticResource Loc}, StringFormat='🧪 {0}'}" FontSize="16" FontWeight="SemiBold"/>
+          <NumericUpDown Classes="flutter-input"
+                        Value="{Binding ExamQuestionCount}"
+                        Minimum="5"
+                        Maximum="50"
+                        Increment="5"/>
+        </StackPanel>
+      </Border>
 
-      <!-- Dark Mode -->
-      <StackPanel Spacing="10">
-        <TextBlock Text="{Binding [Appearance], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
-        <CheckBox Content="{Binding [DarkMode], Source={StaticResource Loc}}" IsChecked="{Binding DarkMode}"/>
-      </StackPanel>
+      <Border Classes="flutter-card flutter-card-lift">
+        <StackPanel Spacing="12">
+          <TextBlock Text="{Binding [ExperienceSwitch], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
 
-      <!-- Reminders -->
-      <StackPanel Spacing="10">
-        <TextBlock Text="{Binding [Learning], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
-        <CheckBox Content="{Binding [EnableStudyReminders], Source={StaticResource Loc}}" IsChecked="{Binding RemindersEnabled}"/>
-      </StackPanel>
+          <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0" Text="{Binding [DarkMode], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding DarkMode}"/>
+          </Grid>
 
-      <!-- Save Button -->
+          <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0" Text="{Binding [EnableStudyReminders], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
+            <ToggleSwitch Grid.Column="1" IsChecked="{Binding RemindersEnabled}"/>
+          </Grid>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="flutter-card flutter-card-lift">
+        <StackPanel Spacing="10">
+          <TextBlock Text="{Binding [VoiceDiagnostics], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
+          <TextBlock Text="{Binding VoiceDiagnosticsSummary}" TextWrapping="Wrap" Classes="flutter-caption"/>
+
+          <Button Content="{Binding [RunVoiceDiagnostics], Source={StaticResource Loc}}"
+                  Classes="flutter-secondary"
+                  Command="{Binding RunVoiceDiagnosticsCommand}"
+                  HorizontalAlignment="Left"/>
+
+          <ItemsControl ItemsSource="{Binding VoiceDiagnostics}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12" Opacity="0.8"/>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
       <Button Content="{Binding [SaveSettings], Source={StaticResource Loc}}"
+              Classes="flutter-primary"
               Command="{Binding SaveSettingsCommand}"
-              HorizontalAlignment="Stretch"
-              Padding="15"
-              FontSize="16"/>
+              HorizontalAlignment="Stretch"/>
     </StackPanel>
   </ScrollViewer>
 </UserControl>

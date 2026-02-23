@@ -25,6 +25,9 @@
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.1" />
         <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1" />
 
+        <!-- Windows TTS -->
+        <PackageVersion Include="System.Speech" Version="9.0.10" />
+
         <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.15" />
     </ItemGroup>
 </Project>

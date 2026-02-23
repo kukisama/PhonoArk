@@ -9,26 +9,30 @@
              x:CompileBindings="False"
              x:DataType="vm:IpaChartViewModel">
 
-  <Grid RowDefinitions="Auto,*" Margin="10">
+  <Grid RowDefinitions="Auto,*" Margin="10" RowSpacing="10">
     <!-- Header -->
-    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,10">
-            <TextBlock Text="{Binding [IpaTitle], Source={StaticResource Loc}}" 
-                 FontSize="24" 
-                 FontWeight="Bold" 
-                 VerticalAlignment="Center"/>
+    <Border Grid.Row="0" Classes="flutter-card">
+      <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+        <TextBlock Text="{Binding [IpaTitle], Source={StaticResource Loc}}"
+                   FontSize="24"
+                   FontWeight="Bold"
+                   VerticalAlignment="Center"/>
       <Button Content="{Binding CurrentAccent}"
+              Grid.Column="1"
               Command="{Binding SwitchAccentCommand}"
-              Padding="10,5"
+              Classes="flutter-secondary"
               ToolTip.Tip="{Binding [AccentSwitchTooltip], Source={StaticResource Loc}}"/>
-    </StackPanel>
+      </Grid>
+    </Border>
 
     <!-- Main Content -->
-    <Grid Grid.Row="1" ColumnDefinitions="2*,*">
+    <Grid Grid.Row="1" ColumnDefinitions="2*,*" ColumnSpacing="10">
       <!-- Phoneme Lists -->
-      <ScrollViewer Grid.Column="0" Margin="0,0,10,0">
-        <StackPanel Spacing="20">
+      <ScrollViewer Grid.Column="0">
+        <StackPanel Spacing="12">
           <!-- Vowels -->
-          <StackPanel>
+          <Border Classes="flutter-card">
+            <StackPanel>
             <TextBlock Text="{Binding [Vowels], Source={StaticResource Loc}}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
             <ItemsControl ItemsSource="{Binding Vowels}">
               <ItemsControl.ItemsPanel>
@@ -39,20 +43,21 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Symbol}"
+                      Classes="flutter-tile"
                       Command="{Binding #Root.DataContext.SelectPhonemeCommand}"
                           CommandParameter="{Binding}"
                           FontSize="24"
-                          MinWidth="60"
-                          MinHeight="60"
                           Margin="5"
                           ToolTip.Tip="{Binding Description}"/>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
+          </Border>
 
           <!-- Diphthongs -->
-          <StackPanel>
+          <Border Classes="flutter-card">
+            <StackPanel>
             <TextBlock Text="{Binding [Diphthongs], Source={StaticResource Loc}}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
             <ItemsControl ItemsSource="{Binding Diphthongs}">
               <ItemsControl.ItemsPanel>
@@ -63,20 +68,21 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Symbol}"
+                      Classes="flutter-tile"
                       Command="{Binding #Root.DataContext.SelectPhonemeCommand}"
                           CommandParameter="{Binding}"
                           FontSize="24"
-                          MinWidth="60"
-                          MinHeight="60"
                           Margin="5"
                           ToolTip.Tip="{Binding Description}"/>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
+          </Border>
 
           <!-- Consonants -->
-          <StackPanel>
+          <Border Classes="flutter-card">
+            <StackPanel>
             <TextBlock Text="{Binding [Consonants], Source={StaticResource Loc}}" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,10"/>
             <ItemsControl ItemsSource="{Binding Consonants}">
               <ItemsControl.ItemsPanel>
@@ -87,26 +93,23 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Symbol}"
+                      Classes="flutter-tile"
                       Command="{Binding #Root.DataContext.SelectPhonemeCommand}"
                           CommandParameter="{Binding}"
                           FontSize="24"
-                          MinWidth="60"
-                          MinHeight="60"
                           Margin="5"
                           ToolTip.Tip="{Binding Description}"/>
                 </DataTemplate>
               </ItemsControl.ItemTemplate>
             </ItemsControl>
           </StackPanel>
+          </Border>
         </StackPanel>
       </ScrollViewer>
 
       <!-- Phoneme Detail Panel -->
       <Border Grid.Column="1" 
-              BorderBrush="{DynamicResource SystemAccentColor}"
-              BorderThickness="2"
-              CornerRadius="8"
-              Padding="15"
+              Classes="flutter-card"
               IsVisible="{Binding SelectedPhoneme, Converter={x:Static ObjectConverters.IsNotNull}}">
         <ScrollViewer>
           <StackPanel Spacing="10">
@@ -116,19 +119,20 @@
                        HorizontalAlignment="Center"/>
             
                 <Button Content="{Binding [PlaySound], Source={StaticResource Loc}}"
+                  Classes="flutter-primary"
                     Command="{Binding PlayPhonemeCommand}"
                     CommandParameter="{Binding SelectedPhoneme}"
                     HorizontalAlignment="Stretch"
-                    Padding="10"/>
+                  />
 
             <TextBlock Text="{Binding SelectedPhoneme.Description}" 
                        TextWrapping="Wrap"
                        FontSize="14"/>
 
             <Button Content="{Binding IsFavorite, Converter={StaticResource FavoriteButtonConverter}}"
+                  Classes="flutter-secondary"
                     Command="{Binding ToggleFavoriteCommand}"
-                    HorizontalAlignment="Stretch"
-                    Padding="10"/>
+                  HorizontalAlignment="Stretch"/>
 
             <TextBlock Text="{Binding [ExampleWords], Source={StaticResource Loc}}" 
                        FontSize="16" 
@@ -139,8 +143,9 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button HorizontalAlignment="Stretch"
-                          Margin="0,2"
-                          Padding="10"
+                        Margin="0,3"
+                      Classes="flutter-word"
+                      Classes.playing="{Binding IsPlaying}"
                       Command="{Binding #Root.DataContext.PlayWordCommand}"
                           CommandParameter="{Binding}">
                     <StackPanel>
@@ -157,10 +162,7 @@
 
       <!-- Placeholder when no phoneme selected -->
       <Border Grid.Column="1" 
-              BorderBrush="{DynamicResource SystemControlForegroundBaseMediumBrush}"
-              BorderThickness="2"
-              CornerRadius="8"
-              Padding="15"
+              Classes="flutter-card"
               IsVisible="{Binding SelectedPhoneme, Converter={x:Static ObjectConverters.IsNull}}">
         <TextBlock Text="{Binding [SelectPhonemeHint], Source={StaticResource Loc}}"
                    TextAlignment="Center"
