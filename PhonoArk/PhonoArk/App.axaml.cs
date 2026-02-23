@@ -90,10 +90,13 @@ public partial class App : Application
         }
         else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
-            singleViewPlatform.MainView = new MainView
+            var mobileMainView = new MainView
             {
                 DataContext = mainViewModel
             };
+
+            mobileMainView.Classes.Add("mobile");
+            singleViewPlatform.MainView = mobileMainView;
         }
 
         base.OnFrameworkInitializationCompleted();
