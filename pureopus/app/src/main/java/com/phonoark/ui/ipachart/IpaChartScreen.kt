@@ -52,6 +52,8 @@ import com.phonoark.data.model.Accent
 import com.phonoark.data.model.Phoneme
 import java.util.Locale
 
+private const val MAX_EXAMPLE_WORDS = 10
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun IpaChartScreen(
@@ -66,7 +68,7 @@ fun IpaChartScreen(
                 viewModel.tts?.language = Locale.US
             }
         }
-        onDispose { }
+        onDispose { viewModel.tts?.shutdown() }
     }
 
     Column(
@@ -260,7 +262,7 @@ private fun PhonemeDetailPanel(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            phoneme.exampleWords.take(10).forEach { word ->
+            phoneme.exampleWords.take(MAX_EXAMPLE_WORDS).forEach { word ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
