@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PhonoArk</string>
+    <string name="app_subtitle">Flutter-style learning experience</string>
+
+    <!-- Navigation -->
+    <string name="nav_ipa_chart">IPA Chart</string>
+    <string name="nav_exam">Exam</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_history">History</string>
+    <string name="nav_settings">Settings</string>
+    <string name="nav_word_learning">Word Learning</string>
+    <string name="coming_soon">Coming Soon</string>
+
+    <!-- IPA Chart -->
+    <string name="ipa_title">International Phonetic Alphabet</string>
+    <string name="accent_switch_tooltip">Switch between American (GenAm) and British (RP) pronunciation</string>
+    <string name="vowels">Vowels</string>
+    <string name="diphthongs">Diphthongs</string>
+    <string name="consonants">Consonants</string>
+    <string name="play_sound">🔊 Play Sound</string>
+    <string name="example_words">Example Words:</string>
+    <string name="select_phoneme_hint">Select a phoneme to see details and example words</string>
+    <string name="accent_genam">American (GenAm)</string>
+    <string name="accent_rp">British (RP)</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_intro">Personalize your learning: accent, language, volume and exam strategy.</string>
+    <string name="experience_switch">✨ Experience Switches</string>
+    <string name="default_accent">Default Accent:</string>
+    <string name="volume">Volume:</string>
+    <string name="default_exam_questions">Default Exam Questions:</string>
+    <string name="appearance">Appearance:</string>
+    <string name="dark_mode">Dark Mode</string>
+    <string name="learning">Learning:</string>
+    <string name="enable_study_reminders">Enable Study Reminders</string>
+    <string name="save_settings">Save Settings</string>
+    <string name="voice_diagnostics">Voice Diagnostics</string>
+    <string name="run_voice_diagnostics">Run Diagnostics</string>
+    <string name="language">Language:</string>
+
+    <!-- Exam -->
+    <string name="practice_exam">Practice Exam</string>
+    <string name="number_of_questions">Number of Questions:</string>
+    <string name="exam_scope">Exam Scope:</string>
+    <string name="all_phonemes">All Phonemes</string>
+    <string name="favorites_only">Favorites Only</string>
+    <string name="start_exam">Start Exam</string>
+    <string name="question_label">Question</string>
+    <string name="of_label">of</string>
+    <string name="correct_label">Correct:</string>
+    <string name="listen_and_select_word">Listen to the phoneme and select the correct word:</string>
+    <string name="play_phoneme">🔊 Play Phoneme</string>
+    <string name="target_phoneme_label">Target phoneme:</string>
+    <string name="select_word">Select the word:</string>
+    <string name="next_question">Next Question</string>
+    <string name="end_exam">End Exam</string>
+
+    <!-- Favorites -->
+    <string name="favorite_phonemes">Favorite Phonemes</string>
+    <string name="group">Group:</string>
+    <string name="clear_all">Clear All</string>
+    <string name="remove">Remove</string>
+    <string name="added">Added:</string>
+    <string name="no_favorites_hint">No favorites yet. Add phonemes from the IPA Chart!</string>
+
+    <!-- History -->
+    <string name="exam_history">Exam History</string>
+    <string name="average_score">Average Score:</string>
+    <string name="scope">Scope:</string>
+    <string name="duration">Duration:</string>
+    <string name="no_exam_history_hint">No exam history yet. Take an exam to see your results!</string>
+    <string name="exam_session_title_template">Exam Session %1$d</string>
+    <string name="result_correct">Correct</string>
+    <string name="result_wrong">Wrong</string>
+    <string name="close">Close</string>
+    <string name="attempt_summary">Total Attempts:</string>
+    <string name="wrong_attempts">Wrong:</string>
+    <string name="wrong_rate">Wrong Rate:</string>
+    <string name="show_wrong_only">Show wrong attempts only</string>
+    <string name="clear_history">Clear History</string>
+    <string name="phoneme_error_stats">Phoneme Error Statistics</string>
+    <string name="no_error_stats_hint">No wrong attempts yet. Great job!</string>
+    <string name="times">times</string>
+    <string name="phoneme">Phoneme:</string>
+    <string name="your_answer">Your answer:</string>
+    <string name="correct_answer_label">Correct answer:</string>
+
+    <!-- Feedback templates -->
+    <string name="feedback_no_questions">No questions available for the selected scope.</string>
+    <string name="feedback_correct_template">✓ Correct! The answer is \'%1$s\' %2$s</string>
+    <string name="feedback_incorrect_template">✗ Incorrect. The correct answer is \'%1$s\' %2$s</string>
+    <string name="feedback_exam_completed_template">Exam completed! Score: %1$d/%2$d (%.1f%%)</string>
+</resources>
