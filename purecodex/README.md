@@ -15,6 +15,6 @@
 ## 本地构建（需要 Android SDK）
 
 ```bash
-cd /home/runner/work/PhonoArk/PhonoArk
+cd <仓库根目录>
 gradle -p purecodex assembleDebug
 ```
