@@ -9,6 +9,7 @@ using System.Linq;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace PhonoArk.ViewModels;
 
@@ -108,7 +109,8 @@ public partial class ExamHistoryViewModel : ViewModelBase
         _examHistoryService = examHistoryService;
         _localizationService = localizationService;
         _examHistoryService.HistoryChanged += OnHistoryChanged;
-        _localizationService.PropertyChanged += (_, _) => _ = ReloadHistoryAsync(force: true);
+        _localizationService.PropertyChanged += (_, _) =>
+            Dispatcher.UIThread.Post(() => _ = ReloadHistoryAsync(force: true));
     }
 
     public async Task EnsureHistoryLoadedAsync()
@@ -205,8 +207,20 @@ public partial class ExamHistoryViewModel : ViewModelBase
             return;
         }
 
-        var token = _loadCts?.Token ?? CancellationToken.None;
-        await LoadMoreSessionsCoreAsync(SessionChunkSize, token);
+        if (!await _loadGate.WaitAsync(0))
+        {
+            return;
+        }
+
+        try
+        {
+            var token = _loadCts?.Token ?? CancellationToken.None;
+            await LoadMoreSessionsCoreAsync(SessionChunkSize, token);
+        }
+        finally
+        {
+            _loadGate.Release();
+        }
     }
 
     private async Task LoadMoreSessionsCoreAsync(int pageSize, CancellationToken token)
@@ -360,7 +374,7 @@ public partial class ExamHistoryViewModel : ViewModelBase
 
     private void OnHistoryChanged()
     {
-        _ = ReloadHistorySafeAsync();
+        Dispatcher.UIThread.Post(() => _ = ReloadHistorySafeAsync());
     }
 
     private async Task ReloadHistorySafeAsync()

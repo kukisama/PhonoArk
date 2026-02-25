@@ -54,7 +54,7 @@ public partial class App : Application
         localizationService.PropertyChanged += (_, _) => phonemeDataService.RefreshLocalizedDescriptions();
         var favoriteService = new FavoriteService(new AppDbContext(optionsBuilder.Options));
         var examService = new ExamService(phonemeDataService, favoriteService);
-        var examHistoryService = new ExamHistoryService(new AppDbContext(optionsBuilder.Options));
+        var examHistoryService = new ExamHistoryService(optionsBuilder.Options);
         var settingsService = new SettingsService(new AppDbContext(optionsBuilder.Options));
 
         // Initialize ViewModels

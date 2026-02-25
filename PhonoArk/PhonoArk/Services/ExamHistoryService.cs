@@ -18,37 +18,44 @@ public class ExamHistoryService
         public int ErrorCount { get; init; }
     }
 
-    private readonly AppDbContext _context;
+    private readonly DbContextOptions<AppDbContext> _dbOptions;
 
-    public ExamHistoryService(AppDbContext context)
+    public ExamHistoryService(DbContextOptions<AppDbContext> dbOptions)
     {
-        _context = context;
-        EnsureQuestionAttemptsTable();
+        _dbOptions = dbOptions;
+        using var context = CreateContext();
+        EnsureQuestionAttemptsTable(context);
     }
+
+    private AppDbContext CreateContext() => new AppDbContext(_dbOptions);
 
     public async Task<List<ExamResult>> GetAllResultsAsync()
     {
-        return await _context.ExamResults
+        using var context = CreateContext();
+        return await context.ExamResults
             .OrderByDescending(e => e.ExamDate)
             .ToListAsync();
     }
 
     public async Task<ExamResult?> GetResultByIdAsync(int id)
     {
-        return await _context.ExamResults.FindAsync(id);
+        using var context = CreateContext();
+        return await context.ExamResults.FindAsync(id);
     }
 
     public async Task SaveResultAsync(ExamResult result)
     {
-        _context.ExamResults.Add(result);
-        await _context.SaveChangesAsync();
+        using var context = CreateContext();
+        context.ExamResults.Add(result);
+        await context.SaveChangesAsync();
         HistoryChanged?.Invoke();
     }
 
     public async Task SaveResultWithAttemptsAsync(ExamResult result, IReadOnlyList<ExamQuestion> questions)
     {
-        _context.ExamResults.Add(result);
-        await _context.SaveChangesAsync();
+        using var context = CreateContext();
+        context.ExamResults.Add(result);
+        await context.SaveChangesAsync();
 
         var attempts = questions
             .Select((question, index) => new ExamQuestionAttempt
@@ -67,8 +74,8 @@ public class ExamHistoryService
 
         if (attempts.Count > 0)
         {
-            _context.ExamQuestionAttempts.AddRange(attempts);
-            await _context.SaveChangesAsync();
+            context.ExamQuestionAttempts.AddRange(attempts);
+            await context.SaveChangesAsync();
         }
 
         HistoryChanged?.Invoke();
@@ -76,32 +83,36 @@ public class ExamHistoryService
 
     public async Task DeleteResultAsync(int id)
     {
-        var result = await _context.ExamResults.FindAsync(id);
+        using var context = CreateContext();
+        var result = await context.ExamResults.FindAsync(id);
         if (result != null)
         {
-            _context.ExamResults.Remove(result);
-            await _context.SaveChangesAsync();
+            context.ExamResults.Remove(result);
+            await context.SaveChangesAsync();
             HistoryChanged?.Invoke();
         }
     }
 
     public async Task ClearAllResultsAsync()
     {
-        _context.ExamQuestionAttempts.RemoveRange(_context.ExamQuestionAttempts);
-        _context.ExamResults.RemoveRange(_context.ExamResults);
-        await _context.SaveChangesAsync();
+        using var context = CreateContext();
+        context.ExamQuestionAttempts.RemoveRange(context.ExamQuestionAttempts);
+        context.ExamResults.RemoveRange(context.ExamResults);
+        await context.SaveChangesAsync();
         HistoryChanged?.Invoke();
     }
 
     public async Task<double> GetAverageScoreAsync()
     {
-        var results = await _context.ExamResults.ToListAsync();
+        using var context = CreateContext();
+        var results = await context.ExamResults.ToListAsync();
         return results.Count > 0 ? results.Average(r => r.Score) : 0;
     }
 
     public async Task<List<ExamQuestionAttempt>> GetAllQuestionAttemptsAsync()
     {
-        return await _context.ExamQuestionAttempts
+        using var context = CreateContext();
+        return await context.ExamQuestionAttempts
             .OrderByDescending(a => a.ExamDate)
             .ThenBy(a => a.QuestionOrder)
             .ToListAsync();
@@ -109,7 +120,8 @@ public class ExamHistoryService
 
     public async Task<List<ExamQuestionAttempt>> GetAllQuestionAttemptsSummaryAsync()
     {
-        return await _context.ExamQuestionAttempts
+        using var context = CreateContext();
+        return await context.ExamQuestionAttempts
             .OrderByDescending(a => a.ExamDate)
             .ThenBy(a => a.QuestionOrder)
             .Select(a => new ExamQuestionAttempt
@@ -126,7 +138,8 @@ public class ExamHistoryService
 
     public async Task<List<int>> GetExamResultIdPageAsync(int skip, int take)
     {
-        return await _context.ExamResults
+        using var context = CreateContext();
+        return await context.ExamResults
             .OrderByDescending(r => r.Id)
             .ThenByDescending(r => r.ExamDate)
             .Skip(skip)
@@ -144,7 +157,8 @@ public class ExamHistoryService
             return new List<ExamQuestionAttempt>();
         }
 
-        var query = _context.ExamQuestionAttempts
+        using var context = CreateContext();
+        var query = context.ExamQuestionAttempts
             .Where(a => examResultIds.Contains(a.ExamResultId));
 
         if (wrongOnly)
@@ -169,14 +183,16 @@ public class ExamHistoryService
 
     public async Task<(int TotalAttempts, int WrongAttempts)> GetAttemptMetricsAsync()
     {
-        var total = await _context.ExamQuestionAttempts.CountAsync();
-        var wrong = await _context.ExamQuestionAttempts.CountAsync(a => !a.IsCorrect);
+        using var context = CreateContext();
+        var total = await context.ExamQuestionAttempts.CountAsync();
+        var wrong = await context.ExamQuestionAttempts.CountAsync(a => !a.IsCorrect);
         return (total, wrong);
     }
 
     public async Task<ExamQuestionAttempt?> GetQuestionAttemptDetailByIdAsync(int id)
     {
-        return await _context.ExamQuestionAttempts
+        using var context = CreateContext();
+        return await context.ExamQuestionAttempts
             .Where(a => a.Id == id)
             .Select(a => new ExamQuestionAttempt
             {
@@ -196,7 +212,8 @@ public class ExamHistoryService
 
     public async Task<List<PhonemeErrorStat>> GetPhonemeErrorStatsAsync()
     {
-        return await _context.ExamQuestionAttempts
+        using var context = CreateContext();
+        return await context.ExamQuestionAttempts
             .Where(a => !a.IsCorrect)
             .GroupBy(a => a.PhonemeSymbol)
             .Select(group => new PhonemeErrorStat
@@ -209,9 +226,9 @@ public class ExamHistoryService
             .ToListAsync();
     }
 
-    private void EnsureQuestionAttemptsTable()
+    private static void EnsureQuestionAttemptsTable(AppDbContext context)
     {
-        _context.Database.ExecuteSqlRaw(
+        context.Database.ExecuteSqlRaw(
             @"CREATE TABLE IF NOT EXISTS ExamQuestionAttempts (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 ExamResultId INTEGER NOT NULL,
@@ -225,11 +242,11 @@ public class ExamHistoryService
                 IsCorrect INTEGER NOT NULL
             );");
 
-        _context.Database.ExecuteSqlRaw(
+        context.Database.ExecuteSqlRaw(
             "CREATE INDEX IF NOT EXISTS IX_ExamQuestionAttempts_ExamResultId ON ExamQuestionAttempts (ExamResultId);");
-        _context.Database.ExecuteSqlRaw(
+        context.Database.ExecuteSqlRaw(
             "CREATE INDEX IF NOT EXISTS IX_ExamQuestionAttempts_IsCorrect ON ExamQuestionAttempts (IsCorrect);");
-        _context.Database.ExecuteSqlRaw(
+        context.Database.ExecuteSqlRaw(
             "CREATE INDEX IF NOT EXISTS IX_ExamQuestionAttempts_PhonemeSymbol ON ExamQuestionAttempts (PhonemeSymbol);");
     }
 }
