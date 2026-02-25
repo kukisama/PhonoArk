@@ -104,6 +104,32 @@
       <!-- Phoneme Lists -->
       <ScrollViewer x:Name="PhonemeListScrollViewer" Grid.Column="0" Classes="phoneme-list-panel" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="12">
+          <!-- Batch Favorite Buttons -->
+          <Border Classes="flutter-card" Padding="8,6">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="6">
+              <TextBlock Text="★" FontSize="16" VerticalAlignment="Center" Foreground="#B88900" Margin="0,0,4,0"/>
+              <Button Content="{Binding [FavToggleVowels], Source={StaticResource Loc}}"
+                      Command="{Binding ToggleFavoriteVowelsCommand}"
+                      Classes="flutter-secondary"
+                      Classes.active="{Binding AllVowelsFavorited}"
+                      FontSize="13" Padding="10,5" MinHeight="0" MinWidth="0"/>
+              <Button Content="{Binding [FavToggleDiphthongs], Source={StaticResource Loc}}"
+                      Command="{Binding ToggleFavoriteDiphthongsCommand}"
+                      Classes="flutter-secondary"
+                      Classes.active="{Binding AllDiphthongsFavorited}"
+                      FontSize="13" Padding="10,5" MinHeight="0" MinWidth="0"/>
+              <Button Content="{Binding [FavToggleConsonants], Source={StaticResource Loc}}"
+                      Command="{Binding ToggleFavoriteConsonantsCommand}"
+                      Classes="flutter-secondary"
+                      Classes.active="{Binding AllConsonantsFavorited}"
+                      FontSize="13" Padding="10,5" MinHeight="0" MinWidth="0"/>
+              <Button Content="{Binding [FavClearAll], Source={StaticResource Loc}}"
+                      Command="{Binding ClearAllFavoritesCommand}"
+                      Classes="flutter-secondary"
+                      FontSize="13" Padding="10,5" MinHeight="0" MinWidth="0"/>
+            </StackPanel>
+          </Border>
+
           <!-- Vowels -->
           <Border Classes="flutter-card">
             <StackPanel>

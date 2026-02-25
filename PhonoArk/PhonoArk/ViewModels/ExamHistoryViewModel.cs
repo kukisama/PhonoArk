@@ -110,7 +110,7 @@ public partial class ExamHistoryViewModel : ViewModelBase
         _localizationService = localizationService;
         _examHistoryService.HistoryChanged += OnHistoryChanged;
         _localizationService.PropertyChanged += (_, _) =>
-            Dispatcher.UIThread.Post(() => _ = ReloadHistoryAsync(force: true));
+            Dispatcher.UIThread.Post(() => ReloadHistoryAsync(force: true).SafeFireAndForget("ReloadHistoryOnLocaleChange"));
     }
 
     public async Task EnsureHistoryLoadedAsync()
@@ -157,7 +157,7 @@ public partial class ExamHistoryViewModel : ViewModelBase
 
             _isInitialized = true;
 
-            _ = RefreshSummaryAsync(token);
+            RefreshSummaryAsync(token).SafeFireAndForget("RefreshSummary");
         }
         catch (OperationCanceledException)
         {
@@ -178,7 +178,7 @@ public partial class ExamHistoryViewModel : ViewModelBase
 
     partial void OnShowWrongOnlyChanged(bool value)
     {
-        _ = ReloadHistoryAsync(force: true);
+        ReloadHistoryAsync(force: true).SafeFireAndForget("ReloadHistoryOnFilter");
     }
 
     [RelayCommand]
@@ -374,7 +374,7 @@ public partial class ExamHistoryViewModel : ViewModelBase
 
     private void OnHistoryChanged()
     {
-        Dispatcher.UIThread.Post(() => _ = ReloadHistorySafeAsync());
+        Dispatcher.UIThread.Post(() => ReloadHistorySafeAsync().SafeFireAndForget("OnHistoryChanged"));
     }
 
     private async Task ReloadHistorySafeAsync()

@@ -4,10 +4,24 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <ReleaseNotesFile>$([MSBuild]::GetPathOfFileAbove('RELEASE_NOTES.md', '$(MSBuildProjectDirectory)'))</ReleaseNotesFile>
     <UsJennyZipPath>$(MSBuildProjectDirectory)\Data\US-Jenny.zip</UsJennyZipPath>
     <UsJennyExtractRoot>$(MSBuildProjectDirectory)\Data\Exportfile\US-Jenny</UsJennyExtractRoot>
     <UsJennyExtractManifest>$(MSBuildProjectDirectory)\Data\Exportfile\US-Jenny.manifest.json</UsJennyExtractManifest>
   </PropertyGroup>
+
+  <!-- 从 RELEASE_NOTES.md 第一行提取版本号，注入 InformationalVersion -->
+  <Target Name="SetVersionFromReleaseNotes" BeforeTargets="GetAssemblyVersion;GenerateAssemblyInfo"
+          Condition="Exists('$(ReleaseNotesFile)')">
+    <ReadLinesFromFile File="$(ReleaseNotesFile)">
+      <Output TaskParameter="Lines" ItemName="_ReleaseLines" />
+    </ReadLinesFromFile>
+    <PropertyGroup>
+      <_FirstLine>@(_ReleaseLines->'%(Identity)', '|')</_FirstLine>
+      <_ParsedVersion>$([System.Text.RegularExpressions.Regex]::Match($(_FirstLine), '[vV]?(\d+\.\d+\.\d+)').Groups[1].Value)</_ParsedVersion>
+      <InformationalVersion Condition="'$(_ParsedVersion)' != ''">$(_ParsedVersion)</InformationalVersion>
+    </PropertyGroup>
+  </Target>
 
   <UsingTask
     TaskName="EnsureVoicePackageTask"

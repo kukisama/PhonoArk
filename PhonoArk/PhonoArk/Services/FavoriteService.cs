@@ -9,28 +9,33 @@ namespace PhonoArk.Services;
 
 public class FavoriteService
 {
-    private readonly AppDbContext _context;
+    private readonly DbContextOptions<AppDbContext> _dbOptions;
 
-    public FavoriteService(AppDbContext context)
+    public FavoriteService(DbContextOptions<AppDbContext> dbOptions)
     {
-        _context = context;
+        _dbOptions = dbOptions;
     }
+
+    private AppDbContext CreateContext() => new AppDbContext(_dbOptions);
 
     public async Task<List<FavoritePhoneme>> GetAllFavoritesAsync()
     {
-        return await _context.FavoritePhonemes.ToListAsync();
+        using var context = CreateContext();
+        return await context.FavoritePhonemes.ToListAsync();
     }
 
     public async Task<List<FavoritePhoneme>> GetFavoritesByGroupAsync(string groupName)
     {
-        return await _context.FavoritePhonemes
+        using var context = CreateContext();
+        return await context.FavoritePhonemes
             .Where(f => f.GroupName == groupName)
             .ToListAsync();
     }
 
     public async Task<List<string>> GetAllGroupsAsync()
     {
-        return await _context.FavoritePhonemes
+        using var context = CreateContext();
+        return await context.FavoritePhonemes
             .Select(f => f.GroupName)
             .Distinct()
             .ToListAsync();
@@ -38,13 +43,17 @@ public class FavoriteService
 
     public async Task<bool> IsFavoriteAsync(string phonemeSymbol)
     {
-        return await _context.FavoritePhonemes
+        using var context = CreateContext();
+        return await context.FavoritePhonemes
             .AnyAsync(f => f.PhonemeSymbol == phonemeSymbol);
     }
 
     public async Task AddFavoriteAsync(string phonemeSymbol, string groupName = "Default")
     {
-        if (await IsFavoriteAsync(phonemeSymbol))
+        using var context = CreateContext();
+        var exists = await context.FavoritePhonemes
+            .AnyAsync(f => f.PhonemeSymbol == phonemeSymbol);
+        if (exists)
             return;
 
         var favorite = new FavoritePhoneme
@@ -53,33 +62,36 @@ public class FavoriteService
             GroupName = groupName
         };
 
-        _context.FavoritePhonemes.Add(favorite);
-        await _context.SaveChangesAsync();
+        context.FavoritePhonemes.Add(favorite);
+        await context.SaveChangesAsync();
     }
 
     public async Task RemoveFavoriteAsync(string phonemeSymbol)
     {
-        var favorites = await _context.FavoritePhonemes
+        using var context = CreateContext();
+        var favorites = await context.FavoritePhonemes
             .Where(f => f.PhonemeSymbol == phonemeSymbol)
             .ToListAsync();
 
-        _context.FavoritePhonemes.RemoveRange(favorites);
-        await _context.SaveChangesAsync();
+        context.FavoritePhonemes.RemoveRange(favorites);
+        await context.SaveChangesAsync();
     }
 
     public async Task ClearAllFavoritesAsync()
     {
-        _context.FavoritePhonemes.RemoveRange(_context.FavoritePhonemes);
-        await _context.SaveChangesAsync();
+        using var context = CreateContext();
+        context.FavoritePhonemes.RemoveRange(context.FavoritePhonemes);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateFavoriteGroupAsync(int favoriteId, string newGroupName)
     {
-        var favorite = await _context.FavoritePhonemes.FindAsync(favoriteId);
+        using var context = CreateContext();
+        var favorite = await context.FavoritePhonemes.FindAsync(favoriteId);
         if (favorite != null)
         {
             favorite.GroupName = newGroupName;
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

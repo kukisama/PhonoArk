@@ -4,7 +4,9 @@ using Avalonia;
 using Avalonia.Styling;
 using PhonoArk.Models;
 using PhonoArk.Services;
+using System;
 using System.Collections.ObjectModel;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace PhonoArk.ViewModels;
@@ -14,6 +16,25 @@ public partial class SettingsViewModel : ViewModelBase
     private readonly SettingsService _settingsService;
     private readonly AudioService _audioService;
     private readonly LocalizationService _localizationService;
+
+    public string GitHubUrl { get; } = "https://github.com/kukisama/PhonoArk";
+
+    public string AppVersion { get; } = GetAppVersion();
+
+    private static string GetAppVersion()
+    {
+        var version = typeof(SettingsViewModel).Assembly
+            .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
+            .InformationalVersion;
+        // Strip metadata after '+' (e.g. commit hash appended by SDK)
+        if (version != null)
+        {
+            var plusIndex = version.IndexOf('+');
+            if (plusIndex >= 0)
+                version = version[..plusIndex];
+        }
+        return version ?? "dev";
+    }
 
     public sealed class LanguageOption
     {
@@ -71,6 +92,50 @@ public partial class SettingsViewModel : ViewModelBase
 
     [ObservableProperty]
     private int _voiceDiagnosticsCount;
+
+    /// <summary>
+    /// 平台专用 URI 打开回调。Android 端在 MainActivity 中注入原生 Intent 实现，
+    /// 避免 Avalonia Launcher 在部分安卓设备上不可用导致闪退。
+    /// 桌面端不需要注入，直接走 Avalonia TopLevel.Launcher 回退路径。
+    /// </summary>
+    public static Action<Uri>? PlatformOpenUri { get; set; }
+
+    [RelayCommand]
+    private void OpenGitHub()
+    {
+        _ = OpenGitHubCoreAsync();
+    }
+
+    private async Task OpenGitHubCoreAsync()
+    {
+        try
+        {
+            var uri = new System.Uri(GitHubUrl);
+
+            // 优先使用平台原生实现（Android Intent）
+            if (PlatformOpenUri is { } handler)
+            {
+                handler(uri);
+                return;
+            }
+
+            // 回退到 Avalonia Launcher（桌面端）
+            Avalonia.Controls.TopLevel? topLevel = Avalonia.Application.Current?.ApplicationLifetime switch
+            {
+                Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop
+                    => desktop.MainWindow,
+                Avalonia.Controls.ApplicationLifetimes.ISingleViewApplicationLifetime { MainView: { } mv }
+                    => Avalonia.Controls.TopLevel.GetTopLevel(mv),
+                _ => null
+            };
+            if (topLevel?.Launcher is { } launcher)
+                await launcher.LaunchUriAsync(uri);
+        }
+        catch
+        {
+            // Best-effort; if browser cannot be opened, silently ignore.
+        }
+    }
 
     public SettingsViewModel(SettingsService settingsService, AudioService audioService, LocalizationService localizationService)
     {

@@ -14,6 +14,25 @@
       <TextBlock Text="{Binding [SettingsIntro], Source={StaticResource Loc}}" Classes="flutter-caption" Margin="0,0,0,6"/>
 
       <Border Classes="flutter-card flutter-card-lift">
+        <StackPanel Spacing="6">
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="📦" FontSize="16" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding [VersionLabel], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding AppVersion}" FontSize="16" VerticalAlignment="Center" Opacity="0.85"/>
+          </StackPanel>
+          <StackPanel Orientation="Horizontal" Spacing="8">
+            <TextBlock Text="🔗" FontSize="14" VerticalAlignment="Center"/>
+            <Button Content="GitHub"
+                    Classes="flutter-link"
+                    Command="{Binding OpenGitHubCommand}"
+                    Padding="0" Margin="0"
+                    FontSize="14"
+                    Cursor="Hand"/>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      <Border Classes="flutter-card flutter-card-lift">
         <StackPanel Spacing="10">
           <TextBlock Text="{Binding [DefaultAccent], Source={StaticResource Loc}, StringFormat='🎤 {0}'}" FontSize="16" FontWeight="SemiBold"/>
           <ComboBox Classes="flutter-input"

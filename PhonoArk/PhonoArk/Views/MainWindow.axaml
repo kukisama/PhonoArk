@@ -11,6 +11,6 @@
         Height="980"
         MinWidth="1280"
         MinHeight="780"
-        Title="PhonoArk">
+        Title="音标方舟">
         <views:MainView />
 </Window>

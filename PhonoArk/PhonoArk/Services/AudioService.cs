@@ -108,20 +108,20 @@ public class AudioService
         {
             if (_platformStopHandler != null)
             {
-                _ = _platformStopHandler();
+                _platformStopHandler().SafeFireAndForget("PlatformStopHandler");
             }
 
             return;
         }
 
-        _ = RunOnStaThreadAsync(() =>
+        RunOnStaThreadAsync(() =>
         {
             lock (_speechGate)
             {
                 StopPlaybackCore();
                 return true;
             }
-        });
+        }).SafeFireAndForget("StopPlaybackSta");
     }
 
     public async Task<VoiceDiagnosticsResult> GetVoiceDiagnosticsAsync()

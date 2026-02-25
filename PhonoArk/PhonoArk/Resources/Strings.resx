@@ -12,7 +12,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
   </resheader>
-  <data name="AppName" xml:space="preserve"><value>PhonoArk</value></data>
+  <data name="AppName" xml:space="preserve"><value>音标方舟</value></data>
   <data name="AppSubtitle" xml:space="preserve"><value>Flutter-style learning experience</value></data>
   <data name="NavIpaChart" xml:space="preserve"><value>IPA Chart</value></data>
   <data name="NavExam" xml:space="preserve"><value>Exam</value></data>
@@ -31,6 +31,7 @@
   <data name="SelectPhonemeHint" xml:space="preserve"><value>Select a phoneme to see details and example words</value></data>
   <data name="SettingsTitle" xml:space="preserve"><value>Settings</value></data>
   <data name="SettingsIntro" xml:space="preserve"><value>Personalize your learning: accent, language, volume and exam strategy.</value></data>
+  <data name="VersionLabel" xml:space="preserve"><value>Version</value></data>
   <data name="ExperienceSwitch" xml:space="preserve"><value>✨ Experience Switches</value></data>
   <data name="DefaultAccent" xml:space="preserve"><value>Default Accent:</value></data>
   <data name="AccentGenAm" xml:space="preserve"><value>American (GenAm)</value></data>
@@ -96,4 +97,8 @@
   <data name="FeedbackCorrectTemplate" xml:space="preserve"><value>✓ {0} {1}</value></data>
   <data name="FeedbackIncorrectTemplate" xml:space="preserve"><value>✗ {0} {1}</value></data>
   <data name="FeedbackExamCompletedTemplate" xml:space="preserve"><value>Exam completed! Score: {0}/{1} ({2:F1}%)</value></data>
+  <data name="FavToggleVowels" xml:space="preserve"><value>Vowels</value></data>
+  <data name="FavToggleDiphthongs" xml:space="preserve"><value>Diphthongs</value></data>
+  <data name="FavToggleConsonants" xml:space="preserve"><value>Consonants</value></data>
+  <data name="FavClearAll" xml:space="preserve"><value>Clear</value></data>
 </root>

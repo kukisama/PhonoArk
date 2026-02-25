@@ -38,6 +38,18 @@ public partial class IpaChartViewModel : ViewModelBase
     [ObservableProperty]
     private Accent _currentAccent;
 
+    /// <summary>当前元音是否全部已收藏</summary>
+    [ObservableProperty]
+    private bool _allVowelsFavorited;
+
+    /// <summary>当前双元音是否全部已收藏</summary>
+    [ObservableProperty]
+    private bool _allDiphthongsFavorited;
+
+    /// <summary>当前辅音是否全部已收藏</summary>
+    [ObservableProperty]
+    private bool _allConsonantsFavorited;
+
     public string CurrentAccentDisplay => CurrentAccent switch
     {
         Accent.USJenny => _localizationService.GetString("AccentUsJenny"),
@@ -62,7 +74,7 @@ public partial class IpaChartViewModel : ViewModelBase
         _localizationService.PropertyChanged += (_, _) => OnPropertyChanged(nameof(CurrentAccentDisplay));
 
         LoadPhonemes();
-        _ = InitializeFavoriteStatesAsync();
+        InitializeFavoriteStatesAsync().SafeFireAndForget("InitFavoriteStates");
     }
 
     private void LoadPhonemes()
@@ -90,6 +102,9 @@ public partial class IpaChartViewModel : ViewModelBase
         SelectedPhoneme = phoneme;
         phoneme.IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
         IsFavorite = phoneme.IsFavorite;
+
+        // 点击音标时自动播放发音
+        await _audioService.PlayPhonemeAsync(phoneme);
     }
 
     [RelayCommand(AllowConcurrentExecutions = true)]
@@ -123,6 +138,8 @@ public partial class IpaChartViewModel : ViewModelBase
             IsFavorite = true;
             SelectedPhoneme.IsFavorite = true;
         }
+
+        RefreshBatchFavoriteStates();
     }
 
     [RelayCommand]
@@ -228,6 +245,80 @@ public partial class IpaChartViewModel : ViewModelBase
         {
             phoneme.IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
         }
+
+        RefreshBatchFavoriteStates();
+    }
+
+    /// <summary>
+    /// 批量切换某类音标的收藏状态：若全部已收藏则全部取消，否则全部收藏。
+    /// </summary>
+    private async Task ToggleFavoriteBatchAsync(ObservableCollection<Phoneme> phonemes)
+    {
+        var allFavorited = phonemes.All(p => p.IsFavorite);
+
+        foreach (var phoneme in phonemes)
+        {
+            if (allFavorited)
+            {
+                await _favoriteService.RemoveFavoriteAsync(phoneme.Symbol);
+                phoneme.IsFavorite = false;
+            }
+            else if (!phoneme.IsFavorite)
+            {
+                await _favoriteService.AddFavoriteAsync(phoneme.Symbol);
+                phoneme.IsFavorite = true;
+            }
+        }
+
+        // 同步当前选中音标的收藏状态
+        if (SelectedPhoneme != null)
+        {
+            IsFavorite = SelectedPhoneme.IsFavorite;
+        }
+
+        RefreshBatchFavoriteStates();
+    }
+
+    [RelayCommand]
+    private async Task ToggleFavoriteVowelsAsync()
+    {
+        await ToggleFavoriteBatchAsync(Vowels);
+    }
+
+    [RelayCommand]
+    private async Task ToggleFavoriteDiphthongsAsync()
+    {
+        await ToggleFavoriteBatchAsync(Diphthongs);
+    }
+
+    [RelayCommand]
+    private async Task ToggleFavoriteConsonantsAsync()
+    {
+        await ToggleFavoriteBatchAsync(Consonants);
+    }
+
+    [RelayCommand]
+    private async Task ClearAllFavoritesAsync()
+    {
+        await _favoriteService.ClearAllFavoritesAsync();
+
+        foreach (var phoneme in Vowels) phoneme.IsFavorite = false;
+        foreach (var phoneme in Diphthongs) phoneme.IsFavorite = false;
+        foreach (var phoneme in Consonants) phoneme.IsFavorite = false;
+
+        if (SelectedPhoneme != null)
+        {
+            IsFavorite = false;
+        }
+
+        RefreshBatchFavoriteStates();
+    }
+
+    private void RefreshBatchFavoriteStates()
+    {
+        AllVowelsFavorited = Vowels.Count > 0 && Vowels.All(p => p.IsFavorite);
+        AllDiphthongsFavorited = Diphthongs.Count > 0 && Diphthongs.All(p => p.IsFavorite);
+        AllConsonantsFavorited = Consonants.Count > 0 && Consonants.All(p => p.IsFavorite);
     }
 
     private Phoneme ClonePhonemeForView(Phoneme source)

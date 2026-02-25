@@ -12,7 +12,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, ...</value>
   </resheader>
-  <data name="AppName" xml:space="preserve"><value>PhonoArk</value></data>
+  <data name="AppName" xml:space="preserve"><value>音标方舟</value></data>
   <data name="AppSubtitle" xml:space="preserve"><value>Flutter 风格学习体验</value></data>
   <data name="NavIpaChart" xml:space="preserve"><value>国际音标</value></data>
   <data name="NavExam" xml:space="preserve"><value>练习测试</value></data>
@@ -31,6 +31,7 @@
   <data name="SelectPhonemeHint" xml:space="preserve"><value>请选择一个音素查看详情与示例单词</value></data>
   <data name="SettingsTitle" xml:space="preserve"><value>设置</value></data>
   <data name="SettingsIntro" xml:space="preserve"><value>个性化你的学习体验：口音、语言、音量与练习策略。</value></data>
+  <data name="VersionLabel" xml:space="preserve"><value>版本</value></data>
   <data name="ExperienceSwitch" xml:space="preserve"><value>✨ 体验开关</value></data>
   <data name="DefaultAccent" xml:space="preserve"><value>默认口音：</value></data>
   <data name="AccentGenAm" xml:space="preserve"><value>美式（GenAm）</value></data>
@@ -96,4 +97,8 @@
   <data name="FeedbackCorrectTemplate" xml:space="preserve"><value>✓ {0} {1}</value></data>
   <data name="FeedbackIncorrectTemplate" xml:space="preserve"><value>✗ {0} {1}</value></data>
   <data name="FeedbackExamCompletedTemplate" xml:space="preserve"><value>测试完成！得分：{0}/{1}（{2:F1}%）</value></data>
+  <data name="FavToggleVowels" xml:space="preserve"><value>元音</value></data>
+  <data name="FavToggleDiphthongs" xml:space="preserve"><value>双元音</value></data>
+  <data name="FavToggleConsonants" xml:space="preserve"><value>辅音</value></data>
+  <data name="FavClearAll" xml:space="preserve"><value>清空</value></data>
 </root>

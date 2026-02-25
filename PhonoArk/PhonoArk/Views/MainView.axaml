@@ -87,17 +87,6 @@
               </StackPanel>
             </Button>
 
-            <Button Content="{Binding [NavFavorites], Source={StaticResource Loc}}"
-                    Click="OnFavoritesClick"
-                    HorizontalAlignment="Stretch"
-                  Classes="flutter-nav"
-                    Classes.active="{Binding IsFavoritesSelected}">
-              <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="⭐" Classes="flutter-icon"/>
-                <TextBlock Text="{Binding [NavFavorites], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
-              </StackPanel>
-            </Button>
-
             <Button Content="{Binding [NavHistory], Source={StaticResource Loc}}"
                     Click="OnHistoryClick"
                     HorizontalAlignment="Stretch"
@@ -137,7 +126,7 @@
                     <UniformGrid x:Name="MobileBottomNavGrid"
                            IsVisible="False"
                            Rows="1"
-                           Columns="5"
+                           Columns="4"
                            Margin="2">
                       <Button Content="{Binding [NavIpaChart], Source={StaticResource Loc}}"
                         Click="OnIpaChartClick"
@@ -147,10 +136,6 @@
                         Click="OnExamClick"
                         Classes="mobile-nav"
                         Classes.active="{Binding IsExamSelected}"/>
-                      <Button Content="{Binding [NavFavorites], Source={StaticResource Loc}}"
-                        Click="OnFavoritesClick"
-                        Classes="mobile-nav"
-                        Classes.active="{Binding IsFavoritesSelected}"/>
                       <Button Content="{Binding [NavHistory], Source={StaticResource Loc}}"
                         Click="OnHistoryClick"
                         Classes="mobile-nav"
@@ -179,12 +164,10 @@
               <DataTemplate DataType="vm:SettingsViewModel">
                 <views:SettingsView/>
               </DataTemplate>
-              <DataTemplate DataType="vm:FavoritesViewModel">
-                <views:FavoritesView/>
-              </DataTemplate>
               <DataTemplate DataType="vm:ExamHistoryViewModel">
                 <views:ExamHistoryView/>
               </DataTemplate>
+
             </TransitioningContentControl.DataTemplates>
           </TransitioningContentControl>
         </Border>

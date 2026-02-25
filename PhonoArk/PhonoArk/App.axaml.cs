@@ -52,34 +52,25 @@ public partial class App : Application
         }
         var phonemeDataService = new PhonemeDataService(localizationService);
         localizationService.PropertyChanged += (_, _) => phonemeDataService.RefreshLocalizedDescriptions();
-        var favoriteService = new FavoriteService(new AppDbContext(optionsBuilder.Options));
+        var favoriteService = new FavoriteService(optionsBuilder.Options);
         var examService = new ExamService(phonemeDataService, favoriteService);
         var examHistoryService = new ExamHistoryService(optionsBuilder.Options);
-        var settingsService = new SettingsService(new AppDbContext(optionsBuilder.Options));
+        var settingsService = new SettingsService(optionsBuilder.Options);
 
         // Initialize ViewModels
         var ipaChartViewModel = new IpaChartViewModel(phonemeDataService, audioService, favoriteService, localizationService);
         var examViewModel = new ExamViewModel(examService, examHistoryService, audioService, localizationService);
         var examHistoryViewModel = new ExamHistoryViewModel(examHistoryService, localizationService);
-        var favoritesViewModel = new FavoritesViewModel(favoriteService, phonemeDataService);
         var settingsViewModel = new SettingsViewModel(settingsService, audioService, localizationService);
 
         var mainViewModel = new MainViewModel(
             ipaChartViewModel,
             examViewModel,
             examHistoryViewModel,
-            favoritesViewModel,
             settingsViewModel);
 
         // Load settings
-        try
-        {
-            _ = settingsViewModel.LoadSettingsAsync();
-        }
-        catch (Exception ex)
-        {
-            System.Diagnostics.Debug.WriteLine($"Error loading settings: {ex.Message}");
-        }
+        settingsViewModel.LoadSettingsAsync().SafeFireAndForget("LoadSettings");
 
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {

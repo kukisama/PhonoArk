@@ -1,135 +1,107 @@
-# PhonoArk
+# ⚡ PhonoArk（音标方舟）
 
-音律方舟，将"音标法则"比作"声音的韵律"，而"方舟"是承载希望的工具。
+> 基于 **.NET 10 + Avalonia** 的跨平台 IPA 音标学习应用，覆盖桌面端与 Android。
 
-一款跨平台英语学习应用，帮助你掌握国际音标（IPA）和发音。
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![.NET 10](https://img.shields.io/badge/.NET-10.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/10.0)
+[![Avalonia UI](https://img.shields.io/badge/Avalonia-11.3-blue.svg)](https://avaloniaui.net/)
 
-## 功能特性
+PhonoArk 当前重点在于：**IPA 交互图表、真人发音播放、听音辨词测试、错题统计与收藏管理**。  
+项目采用清晰分层（Models / Services / ViewModels / Views），便于持续迭代与测试回归。
 
-### 🎯 IPA 学习
-- **交互式 IPA 图表**：按元音、双元音和辅音分类的完整音标表
-- **双口音支持**：在美式发音（GenAm）和英式发音（RP）之间切换
-- **示例单词**：每个音素配有 4-6 个带 IPA 标注的示例单词
-- **音频播放**：聆听纯音素发音和单词发音
-- **收藏系统**：收藏音素并将其整理到自定义分组中
+---
 
-### 📝 练习与考试
-- **随机考试**：通过自定义题目数量来测试你的知识
-- **范围选择**：练习所有音素或专注于收藏的音素
-- **即时反馈**：选择后立即查看正确答案
-- **进度追踪**：查看包含分数、日期和用时的考试历史
-- **统计分析**：追踪你的平均表现趋势
+## ✨ 当前能力（基于现有代码）
 
-### ⚙️ 设置
-- **默认口音**：选择美式或英式发音
-- **音量控制**：调整音频播放音量
-- **考试配置**：设置默认题目数量
-- **主题切换**：在浅色和深色模式之间切换
-- **学习提醒**：可选的学习提醒功能（即将推出）
+| 模块 | 说明 |
+| --- | --- |
+| 🗂️ IPA 音标图表 | 元音 / 双元音 / 辅音分组展示，点击即播发音，选中查看详情与示例单词 |
+| 🔊 多口音发音 | US-Jenny 真人录音优先、GenAm 美式 TTS、RP 英式 TTS，三种口音自由切换 |
+| 📝 听音辨词测试 | 可配题数与范围（全部 / 仅收藏），四选一即时反馈，1.2 秒自动跳转，round-robin 出题去重 |
+| 📊 历史记录与错题统计 | 分页加载考试记录、逐题回顾、平均分统计、按音标维度错误频次分析、仅错题筛选 |
+| ⭐ 收藏管理 | 单个音标收藏 / 取消，按类型批量收藏，一键清空，收藏已合并至 IPA 首页 |
+| 🩺 语音诊断 | 运行诊断输出平台信息、目标语言、当前语音引擎、语音条目数 |
+| ⚙️ 设置项 | 默认口音、音量调节、题目数量、深色模式、学习提醒、界面语言（中/英） |
 
-### 📖 附加功能
-- **单词学习模块**：未来词汇学习功能的占位模块
-- **本地持久化**：所有数据通过 SQLite 本地存储
-- **跨平台**：可在 Windows、Android、iOS 上运行（需安装相应工作负载）
+---
 
-## 技术栈
+## 🖥️ 平台支持
 
-- **框架**：.NET 10.0 搭配 Avalonia UI 11.3
-- **UI 渲染**：SkiaSharp 图形引擎
-- **数据库**：SQLite 搭配 Entity Framework Core
-- **架构**：MVVM 模式，使用 CommunityToolkit.Mvvm
-- **平台支持**：桌面端（Windows/Linux/macOS）、移动端（Android/iOS）、Web 端（浏览器）
+- **Desktop**：Windows（`PhonoArk/PhonoArk.Desktop`）
+- **Android**：`net10.0-android`（`PhonoArk/PhonoArk.Android`）
 
-## 快速开始
+> 说明：桌面端与 Android 端共用核心业务层，UI 层按平台做交互适配。  
+> Avalonia 框架本身支持 macOS 与 Linux，从源码构建后理论上可运行（TTS 回退在非 Windows 平台不可用，真人录音播放不受影响）。作者日常仅使用 Windows 与 Android，因此不提供 macOS / Linux 的打包与测试。
 
-### 前置条件
-- .NET 10.0 SDK 或更高版本
-- Visual Studio 2022 或 JetBrains Rider（推荐）
+---
 
-### 构建应用
+## 🚀 快速开始（使用发行包）
 
-1. 克隆仓库：
+前往 [Releases](../../releases) 下载对应平台包。
+
+桌面端启动方式：
+
+- Windows：运行 `PhonoArk.Desktop.exe`
+
+---
+
+## 🛠️ 从源码构建
+
+### 1) 通用（桌面）
+
 ```bash
 git clone https://github.com/kukisama/PhonoArk.git
 cd PhonoArk
+
+dotnet build PhonoArk/PhonoArk.sln
+dotnet run --project PhonoArk/PhonoArk.Desktop
 ```
 
-2. 还原依赖：
-```bash
-cd PhonoArk
-dotnet restore
-```
+---
 
-3. 构建桌面应用：
-```bash
-dotnet build PhonoArk.Desktop/PhonoArk.Desktop.csproj
-```
+## 🧭 主要页面
 
-4. 运行应用：
-```bash
-dotnet run --project PhonoArk.Desktop/PhonoArk.Desktop.csproj
-```
+当前主导航包含（桌面侧栏 / 移动端底栏）：
 
-### 移动端构建
+- 国际音标（IPA Chart）
+- 练习测试（Exam）
+- 历史记录（History）
+- 设置（Settings）
 
-Android 端：
-```bash
-# 首先安装 Android 工作负载
-dotnet workload install android
-dotnet build PhonoArk.Android/PhonoArk.Android.csproj
-```
+Android 端采用底部导航方式，功能分组与桌面端保持一致。
 
-iOS 端：
-```bash
-# 首先安装 iOS 工作负载（仅限 macOS）
-dotnet workload install ios
-dotnet build PhonoArk.iOS/PhonoArk.iOS.csproj
-```
+---
 
-## 项目结构
+## 🧱 架构与目录
 
-```
+```text
 PhonoArk/
-├── PhonoArk/              # 核心共享库
-│   ├── Models/            # 数据模型
-│   ├── ViewModels/        # MVVM 视图模型
-│   ├── Views/             # Avalonia XAML 视图
-│   ├── Services/          # 业务逻辑服务
-│   ├── Data/              # 数据库上下文
-│   └── Converters/        # 值转换器
-├── PhonoArk.Desktop/      # 桌面端平台项目
-├── PhonoArk.Android/      # Android 平台项目
-├── PhonoArk.iOS/          # iOS 平台项目
-└── PhonoArk.Browser/      # WebAssembly 项目
+├── PhonoArk/
+│   ├── PhonoArk/                  # 共享核心库（Models / Services / ViewModels / Views）
+│   ├── PhonoArk.Desktop/          # 桌面 UI 入口
+│   ├── PhonoArk.Android/          # Android UI 入口
+│   └── scripts/                   # 构建与联调脚本
+├── tools/
+│   └── msspeechcmd/               # Azure TTS 命令行工具
+└── docs/                          # 变更日志与文档
 ```
 
-## 数据模型
+---
 
-- **Phoneme**：包含类型、描述和示例单词的 IPA 音素符号
-- **ExampleWord**：包含 IPA 标注和音频路径的单词
-- **FavoritePhoneme**：用户收藏的音素及其分组
-- **ExamResult**：包含分数和统计信息的考试历史
-- **AppSettings**：用户偏好与配置
+## 🔊 语音包与构建
 
-## 贡献
+- 真人发音采用 US-Jenny 录音包（WAV 格式），构建期自动从 `Data/US-Jenny.zip` 解压并校验一致性。
+- Windows 端通过 `System.Speech` 提供 TTS 回退；Android 端通过系统 `TextToSpeech` API 回退。
+- 播放优先级：真人录音 WAV → 系统 TTS。
 
-欢迎贡献！请随时提交 Issue 和 Pull Request。
+---
 
-## 许可证
+## 📚 相关文档
 
-本项目基于 [MIT License](LICENSE) 许可协议发布。
+- 发布说明：[`RELEASE_NOTES.md`](RELEASE_NOTES.md)
 
-## 路线图
+---
 
-- [ ] 添加音素和单词的实际音频文件
-- [ ] 实现带闪卡功能的单词学习模块
-- [ ] 添加间隔重复算法
-- [ ] 加入发音录制与对比功能
-- [ ] 添加更全面的考试模式
-- [ ] 实现跨设备进度的云同步
-- [ ] 支持更多语言和口音
-- [ ] 添加游戏化元素（成就、连续学习天数）
+## 📝 许可证
 
-## 致谢
-
-使用 Avalonia UI 和 .NET 用 ❤️ 开发
+本项目基于 [MIT 许可证](LICENSE) 开源。

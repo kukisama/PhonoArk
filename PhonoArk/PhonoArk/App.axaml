@@ -150,6 +150,16 @@
             <Setter Property="Background" Value="#22007AFF"/>
         </Style>
 
+        <Style Selector="Button.flutter-secondary.active">
+            <Setter Property="Background" Value="#28EAB308"/>
+            <Setter Property="BorderBrush" Value="#C4A23A"/>
+            <Setter Property="Foreground" Value="#B88900"/>
+        </Style>
+
+        <Style Selector="Button.flutter-secondary.active:pointerover">
+            <Setter Property="Background" Value="#3CEAB308"/>
+        </Style>
+
         <Style Selector="Button.flutter-secondary.correct">
             <Setter Property="Background" Value="#1D8A3A"/>
             <Setter Property="BorderBrush" Value="#1D8A3A"/>

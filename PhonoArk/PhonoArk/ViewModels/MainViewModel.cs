@@ -14,9 +14,6 @@ public partial class MainViewModel : ViewModelBase
     private bool _isExamSelected;
 
     [ObservableProperty]
-    private bool _isFavoritesSelected;
-
-    [ObservableProperty]
     private bool _isHistorySelected;
 
     [ObservableProperty]
@@ -25,20 +22,17 @@ public partial class MainViewModel : ViewModelBase
     public IpaChartViewModel IpaChartViewModel { get; }
     public ExamViewModel ExamViewModel { get; }
     public ExamHistoryViewModel ExamHistoryViewModel { get; }
-    public FavoritesViewModel FavoritesViewModel { get; }
     public SettingsViewModel SettingsViewModel { get; }
 
     public MainViewModel(
         IpaChartViewModel ipaChartViewModel,
         ExamViewModel examViewModel,
         ExamHistoryViewModel examHistoryViewModel,
-        FavoritesViewModel favoritesViewModel,
         SettingsViewModel settingsViewModel)
     {
         IpaChartViewModel = ipaChartViewModel;
         ExamViewModel = examViewModel;
         ExamHistoryViewModel = examHistoryViewModel;
-        FavoritesViewModel = favoritesViewModel;
         SettingsViewModel = settingsViewModel;
 
         // Default to IPA Chart view
@@ -53,7 +47,6 @@ public partial class MainViewModel : ViewModelBase
     }
     public void NavigateToExam() => SwitchTo(ExamViewModel);
     public void NavigateToHistory() => SwitchTo(ExamHistoryViewModel);
-    public void NavigateToFavorites() => SwitchTo(FavoritesViewModel);
     public void NavigateToSettings() => SwitchTo(SettingsViewModel);
 
     private void SwitchTo(ViewModelBase target)
@@ -80,7 +73,6 @@ public partial class MainViewModel : ViewModelBase
     {
         IsIpaChartSelected = ReferenceEquals(CurrentView, IpaChartViewModel);
         IsExamSelected = ReferenceEquals(CurrentView, ExamViewModel);
-        IsFavoritesSelected = ReferenceEquals(CurrentView, FavoritesViewModel);
         IsHistorySelected = ReferenceEquals(CurrentView, ExamHistoryViewModel);
         IsSettingsSelected = ReferenceEquals(CurrentView, SettingsViewModel);
     }

@@ -9,27 +9,30 @@ namespace PhonoArk.Services;
 
 public class SettingsService
 {
-    private readonly AppDbContext _context;
+    private readonly DbContextOptions<AppDbContext> _dbOptions;
     private AppSettings? _cachedSettings;
     private const string UsJennyDefaultMigrationMarkerFileName = "settings-usjenny-default-v1.marker";
 
-    public SettingsService(AppDbContext context)
+    public SettingsService(DbContextOptions<AppDbContext> dbOptions)
     {
-        _context = context;
+        _dbOptions = dbOptions;
     }
+
+    private AppDbContext CreateContext() => new AppDbContext(_dbOptions);
 
     public async Task<AppSettings> GetSettingsAsync()
     {
         if (_cachedSettings != null)
             return _cachedSettings;
 
-        _cachedSettings = await _context.Settings.FirstOrDefaultAsync();
+        using var context = CreateContext();
+        _cachedSettings = await context.Settings.FirstOrDefaultAsync();
         
         if (_cachedSettings == null)
         {
             _cachedSettings = new AppSettings();
-            _context.Settings.Add(_cachedSettings);
-            await _context.SaveChangesAsync();
+            context.Settings.Add(_cachedSettings);
+            await context.SaveChangesAsync();
         }
 
         await ApplyUsJennyDefaultMigrationIfNeededAsync(_cachedSettings);
@@ -39,7 +42,8 @@ public class SettingsService
 
     public async Task UpdateSettingsAsync(AppSettings settings)
     {
-        var existing = await _context.Settings.FirstOrDefaultAsync();
+        using var context = CreateContext();
+        var existing = await context.Settings.FirstOrDefaultAsync();
         if (existing != null)
         {
             existing.DefaultAccent = settings.DefaultAccent;
@@ -51,11 +55,11 @@ public class SettingsService
         }
         else
         {
-            _context.Settings.Add(settings);
+            context.Settings.Add(settings);
             _cachedSettings = settings;
         }
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
     }
 
     public void ClearCache()
@@ -76,7 +80,9 @@ public class SettingsService
             if (settings.DefaultAccent != Accent.USJenny)
             {
                 settings.DefaultAccent = Accent.USJenny;
-                await _context.SaveChangesAsync();
+                using var context = CreateContext();
+                context.Settings.Update(settings);
+                await context.SaveChangesAsync();
                 _cachedSettings = settings;
             }
 

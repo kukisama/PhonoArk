@@ -90,12 +90,6 @@ public partial class MainView : UserControl
             vm.NavigateToExam();
     }
 
-    private void OnFavoritesClick(object? sender, RoutedEventArgs e)
-    {
-        if (DataContext is MainViewModel vm)
-            vm.NavigateToFavorites();
-    }
-
     private void OnHistoryClick(object? sender, RoutedEventArgs e)
     {
         if (DataContext is MainViewModel vm)
