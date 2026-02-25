@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PhonoArk</string>
+    <string name="app_subtitle">Flutter 风格学习体验</string>
+
+    <!-- Navigation -->
+    <string name="nav_ipa_chart">国际音标图</string>
+    <string name="nav_exam">练习测试</string>
+    <string name="nav_favorites">收藏</string>
+    <string name="nav_history">历史记录</string>
+    <string name="nav_settings">设置</string>
+    <string name="nav_word_learning">单词学习</string>
+    <string name="coming_soon">即将上线</string>
+
+    <!-- IPA Chart -->
+    <string name="ipa_title">国际音标（IPA）</string>
+    <string name="accent_switch_tooltip">在美式发音（GenAm）与英式发音（RP）之间切换</string>
+    <string name="vowels">元音</string>
+    <string name="diphthongs">双元音</string>
+    <string name="consonants">辅音</string>
+    <string name="play_sound">🔊 播放发音</string>
+    <string name="example_words">示例单词：</string>
+    <string name="select_phoneme_hint">请选择一个音素查看详情与示例单词</string>
+    <string name="accent_genam">美式（GenAm）</string>
+    <string name="accent_rp">英式（RP）</string>
+
+    <!-- Settings -->
+    <string name="settings_title">设置</string>
+    <string name="settings_intro">个性化你的学习体验：口音、语言、音量与练习策略。</string>
+    <string name="experience_switch">✨ 体验开关</string>
+    <string name="default_accent">默认口音：</string>
+    <string name="volume">音量：</string>
+    <string name="default_exam_questions">默认题目数量：</string>
+    <string name="appearance">外观：</string>
+    <string name="dark_mode">深色模式</string>
+    <string name="learning">学习：</string>
+    <string name="enable_study_reminders">启用学习提醒</string>
+    <string name="save_settings">保存设置</string>
+    <string name="settings_saved">✓ 设置已保存</string>
+    <string name="voice_diagnostics">语音诊断</string>
+    <string name="run_voice_diagnostics">运行诊断</string>
+    <string name="language">界面语言：</string>
+
+    <!-- Exam -->
+    <string name="practice_exam">练习测试</string>
+    <string name="number_of_questions">题目数量：</string>
+    <string name="exam_scope">测试范围：</string>
+    <string name="all_phonemes">全部音素</string>
+    <string name="favorites_only">仅收藏</string>
+    <string name="start_exam">开始测试</string>
+    <string name="question_label">第</string>
+    <string name="of_label">共</string>
+    <string name="correct_label">答对：</string>
+    <string name="listen_and_select_word">请听音素发音并选择正确单词：</string>
+    <string name="play_phoneme">🔊 播放音素</string>
+    <string name="target_phoneme_label">当前考核音标：</string>
+    <string name="select_word">请选择单词：</string>
+    <string name="next_question">下一题</string>
+    <string name="end_exam">结束测试</string>
+
+    <!-- Favorites -->
+    <string name="favorite_phonemes">收藏音素</string>
+    <string name="group">分组：</string>
+    <string name="clear_all">全部清空</string>
+    <string name="remove">移除</string>
+    <string name="added">添加于：</string>
+    <string name="no_favorites_hint">还没有收藏，去 IPA 图表里添加一些吧！</string>
+
+    <!-- History -->
+    <string name="exam_history">测试历史</string>
+    <string name="average_score">平均分：</string>
+    <string name="scope">范围：</string>
+    <string name="duration">用时：</string>
+    <string name="no_exam_history_hint">还没有历史记录，先来做一次测试吧！</string>
+    <string name="exam_session_title_template">第 %1$d 次考试</string>
+    <string name="result_correct">正确</string>
+    <string name="result_wrong">错误</string>
+    <string name="close">关闭</string>
+    <string name="attempt_summary">总作答数：</string>
+    <string name="wrong_attempts">错误数：</string>
+    <string name="wrong_rate">错误率：</string>
+    <string name="show_wrong_only">只显示错题</string>
+    <string name="clear_history">清空历史记录</string>
+    <string name="phoneme_error_stats">音标错误统计</string>
+    <string name="no_error_stats_hint">暂无错题，继续保持！</string>
+    <string name="times">次</string>
+    <string name="phoneme">音标：</string>
+    <string name="your_answer">你的答案：</string>
+    <string name="correct_answer_label">正确答案：</string>
+
+    <!-- Feedback templates -->
+    <string name="feedback_no_questions">当前范围下暂无可用题目。</string>
+    <string name="feedback_correct_template">✓ 回答正确！答案是"%1$s" %2$s</string>
+    <string name="feedback_incorrect_template">✗ 回答错误。正确答案是"%1$s" %2$s</string>
+    <string name="feedback_exam_completed_template">测试完成！得分：%1$d/%2$d（%3$.1f%%）</string>
+</resources>
