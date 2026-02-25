@@ -1,0 +1,30 @@
+{
+  "description": "PhonoArk 仓库常用运维任务",
+  "tasks": [
+    {
+      "name": "clean",
+      "description": "清理 Desktop 构建产物",
+      "command": "dotnet",
+      "arguments": "clean ../PhonoArk/PhonoArk.Desktop/PhonoArk.Desktop.csproj",
+      "useShell": false,
+      "timeoutSeconds": 60
+    },
+    {
+      "name": "build-desktop",
+      "description": "构建 Desktop 项目",
+      "command": "dotnet",
+      "arguments": "build ../PhonoArk/PhonoArk.Desktop/PhonoArk.Desktop.csproj --configuration Release",
+      "dependsOn": ["clean"],
+      "useShell": false,
+      "timeoutSeconds": 120
+    },
+    {
+      "name": "info",
+      "description": "显示 .NET SDK 信息",
+      "command": "dotnet",
+      "arguments": "--info",
+      "useShell": false,
+      "timeoutSeconds": 30
+    }
+  ]
+}
