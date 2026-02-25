@@ -36,6 +36,7 @@
     <string name="learning">Learning:</string>
     <string name="enable_study_reminders">Enable Study Reminders</string>
     <string name="save_settings">Save Settings</string>
+    <string name="settings_saved">✓ Settings saved</string>
     <string name="voice_diagnostics">Voice Diagnostics</string>
     <string name="run_voice_diagnostics">Run Diagnostics</string>
     <string name="language">Language:</string>
@@ -91,5 +92,5 @@
     <string name="feedback_no_questions">No questions available for the selected scope.</string>
     <string name="feedback_correct_template">✓ Correct! The answer is \'%1$s\' %2$s</string>
     <string name="feedback_incorrect_template">✗ Incorrect. The correct answer is \'%1$s\' %2$s</string>
-    <string name="feedback_exam_completed_template">Exam completed! Score: %1$d/%2$d (%.1f%%)</string>
+    <string name="feedback_exam_completed_template">Exam completed! Score: %1$d/%2$d (%3$.1f%%)</string>
 </resources>

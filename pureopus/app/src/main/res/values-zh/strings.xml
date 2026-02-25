@@ -36,6 +36,7 @@
     <string name="learning">学习：</string>
     <string name="enable_study_reminders">启用学习提醒</string>
     <string name="save_settings">保存设置</string>
+    <string name="settings_saved">✓ 设置已保存</string>
     <string name="voice_diagnostics">语音诊断</string>
     <string name="run_voice_diagnostics">运行诊断</string>
     <string name="language">界面语言：</string>
@@ -91,5 +92,5 @@
     <string name="feedback_no_questions">当前范围下暂无可用题目。</string>
     <string name="feedback_correct_template">✓ 回答正确！答案是"%1$s" %2$s</string>
     <string name="feedback_incorrect_template">✗ 回答错误。正确答案是"%1$s" %2$s</string>
-    <string name="feedback_exam_completed_template">测试完成！得分：%1$d/%2$d（%.1f%%）</string>
+    <string name="feedback_exam_completed_template">测试完成！得分：%1$d/%2$d（%3$.1f%%）</string>
 </resources>

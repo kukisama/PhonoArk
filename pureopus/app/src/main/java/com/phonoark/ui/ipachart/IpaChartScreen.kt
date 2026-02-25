@@ -52,8 +52,6 @@ import com.phonoark.data.model.Accent
 import com.phonoark.data.model.Phoneme
 import java.util.Locale
 
-private const val MAX_EXAMPLE_WORDS = 10
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun IpaChartScreen(
@@ -62,10 +60,11 @@ fun IpaChartScreen(
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
 
-    DisposableEffect(Unit) {
+    DisposableEffect(state.currentAccent) {
+        val locale = if (state.currentAccent == Accent.RP) Locale.UK else Locale.US
         viewModel.tts = TextToSpeech(context) { status ->
             if (status == TextToSpeech.SUCCESS) {
-                viewModel.tts?.language = Locale.US
+                viewModel.tts?.language = locale
             }
         }
         onDispose { viewModel.tts?.shutdown() }
@@ -262,7 +261,7 @@ private fun PhonemeDetailPanel(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            phoneme.exampleWords.take(MAX_EXAMPLE_WORDS).forEach { word ->
+            phoneme.exampleWords.forEach { word ->
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()

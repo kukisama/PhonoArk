@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 data class IpaChartUiState(
@@ -36,6 +37,7 @@ class IpaChartViewModel @Inject constructor(
     val uiState: StateFlow<IpaChartUiState> = _uiState.asStateFlow()
 
     var tts: TextToSpeech? = null
+    private var currentVolume: Int = 80
 
     init {
         loadData()
@@ -44,6 +46,7 @@ class IpaChartViewModel @Inject constructor(
     private fun loadData() {
         viewModelScope.launch {
             val settings = settingsRepository.getSettings()
+            currentVolume = settings.volume
             _uiState.value = _uiState.value.copy(
                 vowels = phonemeRepository.vowels,
                 diphthongs = phonemeRepository.diphthongs,
@@ -78,16 +81,30 @@ class IpaChartViewModel @Inject constructor(
     fun switchAccent() {
         val newAccent = if (_uiState.value.currentAccent == Accent.GEN_AM) Accent.RP else Accent.GEN_AM
         _uiState.value = _uiState.value.copy(currentAccent = newAccent)
+        applyTtsLocale()
     }
 
     fun speakWord(word: ExampleWord) {
-        tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, null, "word_${word.word}")
+        applyTtsLocale()
+        val params = android.os.Bundle().apply {
+            putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, currentVolume / 100f)
+        }
+        tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, params, "word_${word.word}")
     }
 
     fun speakPhoneme() {
         val phoneme = _uiState.value.selectedPhoneme ?: return
         val word = phoneme.exampleWords.firstOrNull() ?: return
-        tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, null, "phoneme_${phoneme.symbol}")
+        applyTtsLocale()
+        val params = android.os.Bundle().apply {
+            putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, currentVolume / 100f)
+        }
+        tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, params, "phoneme_${phoneme.symbol}")
+    }
+
+    private fun applyTtsLocale() {
+        val locale = if (_uiState.value.currentAccent == Accent.RP) Locale.UK else Locale.US
+        tts?.language = locale
     }
 
     override fun onCleared() {

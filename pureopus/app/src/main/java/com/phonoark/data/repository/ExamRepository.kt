@@ -23,8 +23,11 @@ class ExamRepository @Inject constructor(
         val questions = mutableListOf<ExamQuestion>()
         val usedWords = mutableSetOf<String>()
 
-        repeat(count) {
-            val phoneme = usablePhonemes.random()
+        // Round-robin through shuffled phonemes (matching original C# logic)
+        val shuffledPhonemes = usablePhonemes.shuffled()
+
+        repeat(count) { i ->
+            val phoneme = shuffledPhonemes[i % shuffledPhonemes.size]
             val availableCorrect = phoneme.exampleWords.filter { it.word !in usedWords }
             val correctAnswer = if (availableCorrect.isNotEmpty()) {
                 availableCorrect.random()
@@ -33,7 +36,8 @@ class ExamRepository @Inject constructor(
             }
             usedWords.add(correctAnswer.word)
 
-            val wrongOptions = generateWrongOptions(phoneme, correctAnswer, 3)
+            val wrongOptions = generateWrongOptions(phoneme, correctAnswer, usedWords, 3)
+            wrongOptions.forEach { usedWords.add(it.word) }
             val allOptions = (wrongOptions + correctAnswer).shuffled()
 
             questions.add(
@@ -51,30 +55,45 @@ class ExamRepository @Inject constructor(
     private fun generateWrongOptions(
         targetPhoneme: Phoneme,
         correctAnswer: ExampleWord,
+        usedWords: Set<String>,
         count: Int
     ): List<ExampleWord> {
         val otherPhonemes = phonemeRepository.phonemes.filter { it.symbol != targetPhoneme.symbol }
-        val wrongPool = otherPhonemes
+
+        // First try: strict exclusion of words containing target phoneme
+        val strictWrongPool = otherPhonemes
             .flatMap { it.exampleWords }
             .filter { word ->
                 word.word != correctAnswer.word &&
+                !usedWords.contains(word.word) &&
                 !containsPhoneme(word.ipaTranscription, targetPhoneme.symbol)
             }
-            .distinctBy { it.word }
+            .distinctBy { it.word.lowercase() }
 
-        return if (wrongPool.size >= count) {
-            wrongPool.shuffled().take(count)
-        } else {
-            val fallback = otherPhonemes
-                .flatMap { it.exampleWords }
-                .filter { it.word != correctAnswer.word }
-                .distinctBy { it.word }
-            fallback.shuffled().take(count)
+        if (strictWrongPool.size >= count) {
+            return strictWrongPool.shuffled().take(count)
         }
+
+        // Fallback: allow words that may contain the target phoneme
+        val result = strictWrongPool.toMutableList()
+        val fallback = otherPhonemes
+            .flatMap { it.exampleWords }
+            .filter { word ->
+                word.word != correctAnswer.word &&
+                !usedWords.contains(word.word) &&
+                result.none { it.word.equals(word.word, ignoreCase = true) }
+            }
+            .distinctBy { it.word.lowercase() }
+            .shuffled()
+
+        for (w in fallback) {
+            if (result.size >= count) break
+            result.add(w)
+        }
+        return result.take(count)
     }
 
     private fun containsPhoneme(ipa: String, symbol: String): Boolean {
-        val cleaned = ipa.replace("/", "").replace("ˈ", "").replace("ˌ", "")
-        return cleaned.contains(symbol)
+        return ipa.contains(symbol)
     }
 }

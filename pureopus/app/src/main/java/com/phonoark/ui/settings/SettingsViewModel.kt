@@ -1,5 +1,7 @@
 package com.phonoark.ui.settings
 
+import android.content.Context
+import android.content.res.Configuration
 import android.speech.tts.TextToSpeech
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,10 +9,12 @@ import com.phonoark.data.model.Accent
 import com.phonoark.data.model.AppSettings
 import com.phonoark.data.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
 
 data class SettingsUiState(
@@ -21,7 +25,8 @@ data class SettingsUiState(
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    @ApplicationContext private val appContext: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -91,8 +96,30 @@ class SettingsViewModel @Inject constructor(
             settingsRepository.updateDarkMode(s.darkMode)
             settingsRepository.updateReminders(s.remindersEnabled)
             settingsRepository.updateLanguage(s.language)
+
+            // Apply locale change
+            applyLocale(s.language)
+
             _uiState.value = _uiState.value.copy(isSaved = true)
         }
+    }
+
+    private fun applyLocale(language: String) {
+        val locale = when {
+            language.startsWith("zh") -> Locale.SIMPLIFIED_CHINESE
+            else -> Locale.US
+        }
+        Locale.setDefault(locale)
+        val config = Configuration(appContext.resources.configuration)
+        config.setLocale(locale)
+        @Suppress("DEPRECATION")
+        appContext.resources.updateConfiguration(config, appContext.resources.displayMetrics)
+
+        // Persist locale for attachBaseContext on restart
+        appContext.getSharedPreferences("phonoark_locale", Context.MODE_PRIVATE)
+            .edit()
+            .putString("language", language)
+            .apply()
     }
 
     fun runVoiceDiagnostics() {
@@ -108,13 +135,15 @@ class SettingsViewModel @Inject constructor(
 
         val voices = ttsEngine.voices
         if (voices != null) {
-            sb.appendLine("Available voices: ${voices.size}")
-            voices.take(5).forEach { voice ->
+            val enVoices = voices.filter { it.locale.language == "en" }
+            sb.appendLine("English voices: ${enVoices.size}")
+            enVoices.take(10).forEach { voice ->
                 sb.appendLine("  - ${voice.name} (${voice.locale})")
             }
-            if (voices.size > 5) {
-                sb.appendLine("  ... and ${voices.size - 5} more")
+            if (enVoices.size > 10) {
+                sb.appendLine("  ... and ${enVoices.size - 10} more")
             }
+            sb.appendLine("Total available voices: ${voices.size}")
         }
 
         _uiState.value = _uiState.value.copy(voiceDiagnostics = sb.toString())

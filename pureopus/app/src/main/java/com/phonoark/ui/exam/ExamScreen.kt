@@ -56,6 +56,17 @@ import com.phonoark.ui.theme.Green500
 import com.phonoark.ui.theme.Red500
 import java.util.Locale
 
+@Composable
+private fun formatFeedback(feedback: FeedbackType): String {
+    return when (feedback) {
+        is FeedbackType.None -> ""
+        is FeedbackType.Correct -> stringResource(R.string.feedback_correct_template, feedback.word, feedback.ipa)
+        is FeedbackType.Incorrect -> stringResource(R.string.feedback_incorrect_template, feedback.correctWord, feedback.correctIpa)
+        is FeedbackType.Completed -> stringResource(R.string.feedback_exam_completed_template, feedback.correct, feedback.total, feedback.score)
+        is FeedbackType.NoQuestions -> stringResource(R.string.feedback_no_questions)
+    }
+}
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ExamScreen(
@@ -109,7 +120,7 @@ fun ExamScreen(
             ) {
                 Column(modifier = Modifier.padding(24.dp)) {
                     Text(
-                        text = state.feedbackMessage,
+                        text = formatFeedback(state.feedback),
                         style = MaterialTheme.typography.titleLarge,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth()
@@ -125,10 +136,10 @@ fun ExamScreen(
             }
         }
 
-        if (state.feedbackMessage.isNotEmpty() && !state.examCompleted && !state.isExamActive) {
+        if (state.feedback is FeedbackType.NoQuestions && !state.examCompleted && !state.isExamActive) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = state.feedbackMessage,
+                text = formatFeedback(state.feedback),
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium
             )
@@ -339,18 +350,19 @@ private fun ActiveExam(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    if (state.feedbackMessage.isNotEmpty()) {
+    if (state.feedback !is FeedbackType.None) {
+        val feedbackText = formatFeedback(state.feedback)
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
-                containerColor = if (state.feedbackMessage.startsWith("✓"))
+                containerColor = if (state.feedback is FeedbackType.Correct)
                     Green500.copy(alpha = 0.15f)
                 else
                     Red500.copy(alpha = 0.15f)
             )
         ) {
             Text(
-                text = state.feedbackMessage,
+                text = feedbackText,
                 modifier = Modifier.padding(12.dp),
                 style = MaterialTheme.typography.bodyLarge
             )

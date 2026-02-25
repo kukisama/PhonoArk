@@ -3,6 +3,7 @@ package com.phonoark.ui.exam
 import android.speech.tts.TextToSpeech
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.phonoark.data.model.Accent
 import com.phonoark.data.model.ExamQuestion
 import com.phonoark.data.model.ExamQuestionAttempt
 import com.phonoark.data.model.ExamResult
@@ -13,11 +14,21 @@ import com.phonoark.data.repository.HistoryRepository
 import com.phonoark.data.repository.PhonemeRepository
 import com.phonoark.data.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 import javax.inject.Inject
+
+sealed class FeedbackType {
+    data object None : FeedbackType()
+    data class Correct(val word: String, val ipa: String) : FeedbackType()
+    data class Incorrect(val correctWord: String, val correctIpa: String) : FeedbackType()
+    data class Completed(val correct: Int, val total: Int, val score: Double) : FeedbackType()
+    data class NoQuestions(val message: String = "") : FeedbackType()
+}
 
 data class ExamUiState(
     val isExamActive: Boolean = false,
@@ -26,7 +37,7 @@ data class ExamUiState(
     val correctAnswers: Int = 0,
     val questionCount: Int = 10,
     val examScope: String = "All",
-    val feedbackMessage: String = "",
+    val feedback: FeedbackType = FeedbackType.None,
     val isAnswered: Boolean = false,
     val examCompleted: Boolean = false
 ) {
@@ -51,11 +62,19 @@ class ExamViewModel @Inject constructor(
 
     var tts: TextToSpeech? = null
     private var examStartTime: Long = 0
+    private var currentAccent: Accent = Accent.GEN_AM
+    private var currentVolume: Int = 80
+
+    companion object {
+        private const val AUTO_ADVANCE_DELAY_MS = 1200L
+    }
 
     init {
         viewModelScope.launch {
             val settings = settingsRepository.getSettings()
             _uiState.value = _uiState.value.copy(questionCount = settings.examQuestionCount)
+            currentAccent = settings.defaultAccent
+            currentVolume = settings.volume
         }
     }
 
@@ -78,9 +97,7 @@ class ExamViewModel @Inject constructor(
 
             val questions = examRepository.generateQuestions(_uiState.value.questionCount, pool)
             if (questions.isEmpty()) {
-                _uiState.value = _uiState.value.copy(
-                    feedbackMessage = "No questions available for the selected scope."
-                )
+                _uiState.value = _uiState.value.copy(feedback = FeedbackType.NoQuestions())
                 return@launch
             }
 
@@ -90,17 +107,25 @@ class ExamViewModel @Inject constructor(
                 questions = questions,
                 currentQuestionIndex = 0,
                 correctAnswers = 0,
-                feedbackMessage = "",
+                feedback = FeedbackType.None,
                 isAnswered = false,
                 examCompleted = false
             )
+            playCurrentPhoneme()
         }
     }
 
     fun playCurrentPhoneme() {
         val question = _uiState.value.currentQuestion ?: return
         val word = question.correctAnswer
-        tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, null, "exam_phoneme")
+        val locale = if (currentAccent == Accent.RP) Locale.UK else Locale.US
+        tts?.language = locale
+        tts?.setSpeechRate(1.0f)
+        val volume = currentVolume / 100f
+        val params = android.os.Bundle().apply {
+            putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume)
+        }
+        tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, params, "exam_phoneme")
     }
 
     fun selectAnswer(answer: ExampleWord) {
@@ -116,30 +141,38 @@ class ExamViewModel @Inject constructor(
         val newCorrectCount = if (isCorrect) state.correctAnswers + 1 else state.correctAnswers
 
         val feedback = if (isCorrect) {
-            "✓ Correct! The answer is '${question.correctAnswer.word}' ${question.correctAnswer.ipaTranscription}"
+            FeedbackType.Correct(question.correctAnswer.word, question.correctAnswer.ipaTranscription)
         } else {
-            "✗ Incorrect. The correct answer is '${question.correctAnswer.word}' ${question.correctAnswer.ipaTranscription}"
+            FeedbackType.Incorrect(question.correctAnswer.word, question.correctAnswer.ipaTranscription)
         }
 
         _uiState.value = state.copy(
             questions = updatedQuestions,
             correctAnswers = newCorrectCount,
-            feedbackMessage = feedback,
+            feedback = feedback,
             isAnswered = true
         )
+
+        // Auto advance after delay (matching original 1.2s behavior)
+        viewModelScope.launch {
+            delay(AUTO_ADVANCE_DELAY_MS)
+            nextQuestion()
+        }
     }
 
     fun nextQuestion() {
         val state = _uiState.value
+        if (!state.isAnswered) return
         val nextIndex = state.currentQuestionIndex + 1
         if (nextIndex >= state.totalQuestions) {
             endExam()
         } else {
             _uiState.value = state.copy(
                 currentQuestionIndex = nextIndex,
-                feedbackMessage = "",
+                feedback = FeedbackType.None,
                 isAnswered = false
             )
+            playCurrentPhoneme()
         }
     }
 
@@ -149,8 +182,6 @@ class ExamViewModel @Inject constructor(
         val score = if (state.totalQuestions > 0) {
             state.correctAnswers.toDouble() / state.totalQuestions * 100
         } else 0.0
-
-        val feedback = "Exam completed! Score: ${state.correctAnswers}/${state.totalQuestions} (${"%.1f".format(score)}%)"
 
         val attempts = state.questions.mapIndexed { index, q ->
             ExamQuestionAttempt(
@@ -178,7 +209,7 @@ class ExamViewModel @Inject constructor(
 
         _uiState.value = state.copy(
             isExamActive = false,
-            feedbackMessage = feedback,
+            feedback = FeedbackType.Completed(state.correctAnswers, state.totalQuestions, score),
             examCompleted = true
         )
     }

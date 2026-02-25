@@ -31,7 +31,7 @@ class FavoriteRepository @Inject constructor(
 
     suspend fun isFavorite(symbol: String): Boolean = favoriteDao.isFavorite(symbol)
 
-    suspend fun addFavorite(symbol: String, groupName: String = "") {
+    suspend fun addFavorite(symbol: String, groupName: String = "Default") {
         if (!isFavorite(symbol)) {
             favoriteDao.insert(FavoriteEntity(symbol = symbol, groupName = groupName))
         }

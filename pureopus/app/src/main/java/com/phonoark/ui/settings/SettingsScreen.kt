@@ -1,5 +1,6 @@
 package com.phonoark.ui.settings
 
+import android.app.Activity
 import android.speech.tts.TextToSpeech
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -257,7 +258,11 @@ fun SettingsScreen(
 
         // Save button
         Button(
-            onClick = { viewModel.saveSettings() },
+            onClick = {
+                viewModel.saveSettings()
+                // Recreate activity to apply locale change
+                (context as? Activity)?.recreate()
+            },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(8.dp)
         ) {
@@ -268,7 +273,7 @@ fun SettingsScreen(
 
         if (state.isSaved) {
             Text(
-                text = "✓ Settings saved",
+                text = stringResource(R.string.settings_saved),
                 color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier.padding(top = 4.dp)
             )

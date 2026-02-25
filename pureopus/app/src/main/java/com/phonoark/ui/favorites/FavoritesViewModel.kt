@@ -14,7 +14,7 @@ import javax.inject.Inject
 data class FavoritesUiState(
     val favorites: List<FavoritePhoneme> = emptyList(),
     val groups: List<String> = emptyList(),
-    val selectedGroup: String = ""
+    val selectedGroup: String = "All"
 )
 
 @HiltViewModel
@@ -33,7 +33,7 @@ class FavoritesViewModel @Inject constructor(
     private fun loadFavorites() {
         viewModelScope.launch {
             favoriteRepository.getAll().collect { favorites ->
-                val filtered = if (_uiState.value.selectedGroup.isNotEmpty()) {
+                val filtered = if (_uiState.value.selectedGroup != "All") {
                     favorites.filter { it.groupName == _uiState.value.selectedGroup }
                 } else {
                     favorites

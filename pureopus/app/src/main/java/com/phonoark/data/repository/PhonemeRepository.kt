@@ -34,8 +34,8 @@ class PhonemeRepository @Inject constructor(
                 .bufferedReader().use { it.readText() }
             val data = Gson().fromJson(json, WordBankData::class.java)
 
-            val allWords = data.globalWords.map { ExampleWord(it.word, it.ipaTranscription) }
-            val targetCount = data.targetWordsPerPhoneme
+            val allGlobalWords = data.globalWords.map { ExampleWord(it.word, it.ipaTranscription) }
+            val targetCount = Math.max(4, data.targetWordsPerPhoneme)
 
             _phonemes = data.phonemes.map { p ->
                 val type = when (p.type.lowercase()) {
@@ -45,14 +45,23 @@ class PhonemeRepository @Inject constructor(
                     else -> PhonemeType.CONSONANT
                 }
 
-                val matchingWords = allWords.filter { word ->
+                // Merge phoneme-specific words with global matching words
+                val phonemeSpecificWords = (p.words ?: emptyList()).map {
+                    ExampleWord(it.word, it.ipaTranscription)
+                }
+                val globalMatchingWords = allGlobalWords.filter { word ->
                     containsPhoneme(word.ipaTranscription, p.symbol)
                 }
 
-                val selectedWords = if (matchingWords.size > targetCount) {
-                    matchingWords.shuffled().take(targetCount)
+                // Deduplicate by lowercase word (matching original C# logic)
+                val mergedWords = (phonemeSpecificWords + globalMatchingWords)
+                    .filter { it.word.isNotBlank() && it.ipaTranscription.isNotBlank() }
+                    .distinctBy { it.word.trim().lowercase() }
+
+                val selectedWords = if (mergedWords.size > targetCount) {
+                    mergedWords.shuffled().take(targetCount)
                 } else {
-                    matchingWords
+                    mergedWords
                 }
 
                 Phoneme(
@@ -69,8 +78,7 @@ class PhonemeRepository @Inject constructor(
     }
 
     private fun containsPhoneme(ipa: String, symbol: String): Boolean {
-        val cleaned = ipa.replace("/", "").replace("ˈ", "").replace("ˌ", "")
-        return cleaned.contains(symbol)
+        return ipa.contains(symbol)
     }
 
     fun getPhonemeBySymbol(symbol: String): Phoneme? {
