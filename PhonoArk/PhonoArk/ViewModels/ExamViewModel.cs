@@ -48,6 +48,9 @@ public partial class ExamViewModel : ViewModelBase
     private string _examScope = "All";
 
     [ObservableProperty]
+    private int _selectedExamScopeIndex;
+
+    [ObservableProperty]
     private int _questionCount = 10;
 
     [ObservableProperty]
@@ -67,6 +70,7 @@ public partial class ExamViewModel : ViewModelBase
         _examHistoryService = examHistoryService;
         _audioService = audioService;
         _localizationService = localizationService;
+        SelectedExamScopeIndex = 0;
     }
 
     [RelayCommand]
@@ -205,5 +209,19 @@ public partial class ExamViewModel : ViewModelBase
     partial void OnCurrentQuestionIndexChanged(int value)
     {
         OnPropertyChanged(nameof(CurrentQuestionNumber));
+    }
+
+    partial void OnSelectedExamScopeIndexChanged(int value)
+    {
+        ExamScope = value == 1 ? "Favorites" : "All";
+    }
+
+    partial void OnExamScopeChanged(string value)
+    {
+        var targetIndex = value == "Favorites" ? 1 : 0;
+        if (SelectedExamScopeIndex != targetIndex)
+        {
+            SelectedExamScopeIndex = targetIndex;
+        }
     }
 }

@@ -12,8 +12,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AndroidResource Include="Icon.png">
-      <Link>Resources\drawable\Icon.png</Link>
+    <AndroidResource Include="..\PhonoArk\Assets\app.png">
+      <Link>Resources\drawable\icon.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\PhonoArk\Assets\app.png">
+      <Link>Resources\mipmap\ic_launcher.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="..\PhonoArk\Assets\app.png">
+      <Link>Resources\mipmap\ic_launcher_round.png</Link>
+    </AndroidResource>
+    <AndroidResource Include="Assets\logo.jpg" Condition="Exists('Assets\\logo.jpg')">
+      <Link>Resources\drawable-nodpi\logo.jpg</Link>
+    </AndroidResource>
+    <AndroidResource Include="Assets\logo.png" Condition="!Exists('Assets\\logo.jpg') and Exists('Assets\\logo.png')">
+      <Link>Resources\drawable-nodpi\logo.png</Link>
     </AndroidResource>
   </ItemGroup>
 

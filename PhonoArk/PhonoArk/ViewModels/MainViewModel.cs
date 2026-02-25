@@ -46,11 +46,30 @@ public partial class MainViewModel : ViewModelBase
         UpdateNavigationState();
     }
 
-    public void NavigateToIpaChart() => CurrentView = IpaChartViewModel;
-    public void NavigateToExam() => CurrentView = ExamViewModel;
-    public void NavigateToHistory() => CurrentView = ExamHistoryViewModel;
-    public void NavigateToFavorites() => CurrentView = FavoritesViewModel;
-    public void NavigateToSettings() => CurrentView = SettingsViewModel;
+    public void NavigateToIpaChart()
+    {
+        IpaChartViewModel.PrepareForDisplay();
+        SwitchTo(IpaChartViewModel);
+    }
+    public void NavigateToExam() => SwitchTo(ExamViewModel);
+    public void NavigateToHistory() => SwitchTo(ExamHistoryViewModel);
+    public void NavigateToFavorites() => SwitchTo(FavoritesViewModel);
+    public void NavigateToSettings() => SwitchTo(SettingsViewModel);
+
+    private void SwitchTo(ViewModelBase target)
+    {
+        if (ReferenceEquals(CurrentView, target))
+        {
+            return;
+        }
+
+        if (ReferenceEquals(CurrentView, ExamHistoryViewModel))
+        {
+            ExamHistoryViewModel.OnViewDeactivated();
+        }
+
+        CurrentView = target;
+    }
 
     partial void OnCurrentViewChanged(ViewModelBase value)
     {

@@ -1,8 +1,13 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Threading;
 using PhonoArk.Models;
 using PhonoArk.Services;
 using System.Collections.ObjectModel;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace PhonoArk.ViewModels;
@@ -12,6 +17,8 @@ public partial class IpaChartViewModel : ViewModelBase
     private readonly PhonemeDataService _phonemeDataService;
     private readonly AudioService _audioService;
     private readonly FavoriteService _favoriteService;
+    private readonly LocalizationService _localizationService;
+    private readonly bool _isMobile;
 
     [ObservableProperty]
     private ObservableCollection<Phoneme> _vowels = new();
@@ -31,36 +38,58 @@ public partial class IpaChartViewModel : ViewModelBase
     [ObservableProperty]
     private Accent _currentAccent;
 
+    public string CurrentAccentDisplay => CurrentAccent switch
+    {
+        Accent.USJenny => _localizationService.GetString("AccentUsJenny"),
+        Accent.RP => _localizationService.GetString("AccentRp"),
+        _ => _localizationService.GetString("AccentGenAm")
+    };
+
     public IpaChartViewModel(
         PhonemeDataService phonemeDataService,
         AudioService audioService,
-        FavoriteService favoriteService)
+        FavoriteService favoriteService,
+        LocalizationService localizationService)
     {
         _phonemeDataService = phonemeDataService;
         _audioService = audioService;
         _favoriteService = favoriteService;
+        _localizationService = localizationService;
         _currentAccent = _audioService.CurrentAccent;
+        _isMobile = Application.Current?.ApplicationLifetime is ISingleViewApplicationLifetime;
+
+        _audioService.AccentChanged += OnAudioServiceAccentChanged;
+        _localizationService.PropertyChanged += (_, _) => OnPropertyChanged(nameof(CurrentAccentDisplay));
 
         LoadPhonemes();
+        _ = InitializeFavoriteStatesAsync();
     }
 
     private void LoadPhonemes()
     {
-        var vowels = _phonemeDataService.GetPhonemesByType(PhonemeType.Vowel);
-        var diphthongs = _phonemeDataService.GetPhonemesByType(PhonemeType.Diphthong);
-        var consonants = _phonemeDataService.GetPhonemesByType(PhonemeType.Consonant);
+        var vowels = _phonemeDataService.GetPhonemesByType(PhonemeType.Vowel).Select(ClonePhonemeForView).ToList();
+        var diphthongs = _phonemeDataService.GetPhonemesByType(PhonemeType.Diphthong).Select(ClonePhonemeForView).ToList();
+        var consonants = _phonemeDataService.GetPhonemesByType(PhonemeType.Consonant).Select(ClonePhonemeForView).ToList();
 
         Vowels = new ObservableCollection<Phoneme>(vowels);
         Diphthongs = new ObservableCollection<Phoneme>(diphthongs);
         Consonants = new ObservableCollection<Phoneme>(consonants);
     }
 
-    [RelayCommand]
+    [RelayCommand(AllowConcurrentExecutions = true)]
     private async Task SelectPhonemeAsync(Phoneme phoneme)
     {
+        UpdateSelectedPhonemeState(phoneme);
         ClearPlayingWords();
+
+        if (_isMobile && phoneme.ExampleWords.Count == 0)
+        {
+            phoneme.ExampleWords = _phonemeDataService.GetExampleWordsBySymbol(phoneme.Symbol);
+        }
+
         SelectedPhoneme = phoneme;
-        IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
+        phoneme.IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
+        IsFavorite = phoneme.IsFavorite;
     }
 
     [RelayCommand(AllowConcurrentExecutions = true)]
@@ -86,19 +115,50 @@ public partial class IpaChartViewModel : ViewModelBase
         {
             await _favoriteService.RemoveFavoriteAsync(SelectedPhoneme.Symbol);
             IsFavorite = false;
+            SelectedPhoneme.IsFavorite = false;
         }
         else
         {
             await _favoriteService.AddFavoriteAsync(SelectedPhoneme.Symbol);
             IsFavorite = true;
+            SelectedPhoneme.IsFavorite = true;
         }
     }
 
     [RelayCommand]
     private void SwitchAccent()
     {
-        CurrentAccent = CurrentAccent == Accent.GenAm ? Accent.RP : Accent.GenAm;
+        CurrentAccent = CurrentAccent switch
+        {
+            Accent.USJenny => Accent.GenAm,
+            Accent.GenAm => Accent.RP,
+            _ => Accent.USJenny
+        };
+
         _audioService.CurrentAccent = CurrentAccent;
+    }
+
+    partial void OnCurrentAccentChanged(Accent value)
+    {
+        OnPropertyChanged(nameof(CurrentAccentDisplay));
+    }
+
+    private void OnAudioServiceAccentChanged(object? sender, Accent accent)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            if (CurrentAccent != accent)
+            {
+                CurrentAccent = accent;
+            }
+        });
+    }
+
+    public void PrepareForDisplay()
+    {
+        // 保持音标区与已加载单词区常驻内存：
+        // 切回页面时仅清理播放态，不清空选中项与词表缓存。
+        ClearPlayingWords();
     }
 
     private void MarkPlayingWord(ExampleWord activeWord)
@@ -132,5 +192,66 @@ public partial class IpaChartViewModel : ViewModelBase
                 word.IsPlaying = false;
             }
         }
+    }
+
+    private void UpdateSelectedPhonemeState(Phoneme selected)
+    {
+        foreach (var phoneme in Vowels)
+        {
+            phoneme.IsSelected = ReferenceEquals(phoneme, selected);
+        }
+
+        foreach (var phoneme in Diphthongs)
+        {
+            phoneme.IsSelected = ReferenceEquals(phoneme, selected);
+        }
+
+        foreach (var phoneme in Consonants)
+        {
+            phoneme.IsSelected = ReferenceEquals(phoneme, selected);
+        }
+    }
+
+    private async Task InitializeFavoriteStatesAsync()
+    {
+        foreach (var phoneme in Vowels)
+        {
+            phoneme.IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
+        }
+
+        foreach (var phoneme in Diphthongs)
+        {
+            phoneme.IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
+        }
+
+        foreach (var phoneme in Consonants)
+        {
+            phoneme.IsFavorite = await _favoriteService.IsFavoriteAsync(phoneme.Symbol);
+        }
+    }
+
+    private Phoneme ClonePhonemeForView(Phoneme source)
+    {
+        var phoneme = new Phoneme
+        {
+            Symbol = source.Symbol,
+            Type = source.Type,
+            Description = source.Description,
+            GenAmAudioPath = source.GenAmAudioPath,
+            RpAudioPath = source.RpAudioPath,
+            VoiceAudioPaths = new Dictionary<string, string>(source.VoiceAudioPaths, System.StringComparer.OrdinalIgnoreCase),
+            ExampleWords = _isMobile
+                ? new List<ExampleWord>()
+                : source.ExampleWords.Select(word => new ExampleWord
+                {
+                    Word = word.Word,
+                    IpaTranscription = word.IpaTranscription,
+                    GenAmAudioPath = word.GenAmAudioPath,
+                    RpAudioPath = word.RpAudioPath,
+                    VoiceAudioPaths = new Dictionary<string, string>(word.VoiceAudioPaths, System.StringComparer.OrdinalIgnoreCase)
+                }).ToList()
+        };
+
+        return phoneme;
     }
 }

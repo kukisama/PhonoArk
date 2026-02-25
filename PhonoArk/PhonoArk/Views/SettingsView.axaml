@@ -94,18 +94,42 @@
           <TextBlock Text="{Binding [VoiceDiagnostics], Source={StaticResource Loc}}" FontSize="16" FontWeight="SemiBold"/>
           <TextBlock Text="{Binding VoiceDiagnosticsSummary}" TextWrapping="Wrap" Classes="flutter-caption"/>
 
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto" ColumnSpacing="10" RowSpacing="6" Margin="0,2,0,4">
+            <TextBlock Grid.Row="0" Grid.Column="0"
+                       Text="{Binding [VoicePlatformLabel], Source={StaticResource Loc}}"
+                       FontWeight="SemiBold"/>
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding VoiceDiagnosticsPlatform}" TextWrapping="Wrap"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0"
+                       Text="{Binding [VoiceRequestedCultureLabel], Source={StaticResource Loc}}"
+                       FontWeight="SemiBold"/>
+            <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding VoiceDiagnosticsRequestedCulture}" TextWrapping="Wrap"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0"
+                       Text="{Binding [VoiceSelectedVoiceLabel], Source={StaticResource Loc}}"
+                       FontWeight="SemiBold"/>
+            <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding VoiceDiagnosticsSelectedVoice}" TextWrapping="Wrap"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0"
+                       Text="{Binding [VoiceDetailCountLabel], Source={StaticResource Loc}}"
+                       FontWeight="SemiBold"/>
+            <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding VoiceDiagnosticsCount}"/>
+          </Grid>
+
           <Button Content="{Binding [RunVoiceDiagnostics], Source={StaticResource Loc}}"
                   Classes="flutter-secondary"
                   Command="{Binding RunVoiceDiagnosticsCommand}"
                   HorizontalAlignment="Left"/>
 
-          <ItemsControl ItemsSource="{Binding VoiceDiagnostics}">
-            <ItemsControl.ItemTemplate>
-              <DataTemplate>
-                <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12" Opacity="0.8"/>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
+          <Expander Header="{Binding [VoiceDiagnosticsDetails], Source={StaticResource Loc}}">
+            <ItemsControl ItemsSource="{Binding VoiceDiagnostics}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding}" TextWrapping="Wrap" FontSize="12" Opacity="0.8"/>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </Expander>
         </StackPanel>
       </Border>
 

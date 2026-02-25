@@ -10,45 +10,37 @@
              x:CompileBindings="False"
              x:DataType="vm:MainViewModel">
   <UserControl.Styles>
-    <Style Selector="UserControl.mobile Grid.main-layout">
-      <Setter Property="Margin" Value="10"/>
-      <Setter Property="ColumnDefinitions" Value="*"/>
-      <Setter Property="RowDefinitions" Value="Auto,*"/>
-      <Setter Property="RowSpacing" Value="10"/>
-      <Setter Property="ColumnSpacing" Value="0"/>
-    </Style>
-
-    <Style Selector="UserControl.mobile Border.nav-panel">
-      <Setter Property="Grid.Column" Value="0"/>
-      <Setter Property="Grid.Row" Value="0"/>
-      <Setter Property="Padding" Value="10"/>
-    </Style>
-
-    <Style Selector="UserControl.mobile Border.content-panel">
-      <Setter Property="Grid.Column" Value="0"/>
-      <Setter Property="Grid.Row" Value="1"/>
-      <Setter Property="Padding" Value="8"/>
-    </Style>
-
-    <Style Selector="UserControl.mobile ScrollViewer.nav-scroll">
-      <Setter Property="HorizontalScrollBarVisibility" Value="Auto"/>
-      <Setter Property="VerticalScrollBarVisibility" Value="Disabled"/>
-    </Style>
-
-    <Style Selector="UserControl.mobile StackPanel.nav-stack">
-      <Setter Property="Orientation" Value="Horizontal"/>
-      <Setter Property="Spacing" Value="8"/>
-    </Style>
-
-    <Style Selector="UserControl.mobile Button.flutter-nav">
-      <Setter Property="HorizontalAlignment" Value="Left"/>
+    <Style Selector="Button.mobile-nav">
+      <Setter Property="CornerRadius" Value="12"/>
+      <Setter Property="Padding" Value="8,10"/>
+      <Setter Property="FontSize" Value="13"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Background" Value="#00000000"/>
+      <Setter Property="BorderBrush" Value="#00000000"/>
       <Setter Property="HorizontalContentAlignment" Value="Center"/>
-      <Setter Property="MinWidth" Value="108"/>
-      <Setter Property="Margin" Value="0"/>
+      <Setter Property="Transitions">
+        <Transitions>
+          <BrushTransition Property="Background" Duration="0:0:0.06"/>
+          <BrushTransition Property="BorderBrush" Duration="0:0:0.06"/>
+        </Transitions>
+      </Setter>
     </Style>
 
-    <Style Selector="UserControl.mobile Button.flutter-nav:last-child">
-      <Setter Property="Margin" Value="0"/>
+    <Style Selector="Button.mobile-nav:pressed">
+      <Setter Property="Background" Value="{DynamicResource AppAccentSoftBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource AppAccentBorderBrush}"/>
+    </Style>
+
+    <Style Selector="Button.mobile-nav.active">
+      <Setter Property="Background" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AppNavActiveTextBrush}"/>
+    </Style>
+
+    <Style Selector="Button.mobile-nav.active:pressed">
+      <Setter Property="Background" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AppNavActiveTextBrush}"/>
     </Style>
   </UserControl.Styles>
 
@@ -58,17 +50,18 @@
 
   <Grid Background="{DynamicResource AppPageBackgroundBrush}">
     <Border Background="#FFF7FBFF" Margin="0,0,0,0">
-      <Grid Margin="20" ColumnDefinitions="260,*" ColumnSpacing="18" Classes="main-layout">
+      <Grid x:Name="MainLayoutGrid" Margin="20" ColumnDefinitions="260,*" ColumnSpacing="18" Classes="main-layout">
         <!-- Navigation Sidebar -->
-        <Border Grid.Column="0" Classes="flutter-card flutter-card-lift nav-panel">
-          <ScrollViewer Classes="nav-scroll"
+        <Border x:Name="NavPanelBorder" Grid.Column="0" Classes="flutter-card flutter-card-lift nav-panel">
+          <Grid>
+          <ScrollViewer x:Name="DesktopNavScroll" Classes="nav-scroll"
                         HorizontalScrollBarVisibility="Disabled"
                         VerticalScrollBarVisibility="Auto">
-          <StackPanel Spacing="6" Classes="nav-stack">
-            <TextBlock Text="{Binding [AppName], Source={StaticResource Loc}}"
+          <StackPanel x:Name="DesktopNavStack" Spacing="6" Classes="nav-stack">
+            <TextBlock x:Name="BrandTitleText" Text="{Binding [AppName], Source={StaticResource Loc}}"
                        Classes="flutter-title"
                        Margin="4,4,4,2"/>
-            <TextBlock Text="{Binding [AppSubtitle], Source={StaticResource Loc}}"
+            <TextBlock x:Name="BrandSubtitleText" Text="{Binding [AppSubtitle], Source={StaticResource Loc}}"
                        Classes="flutter-caption"
                        Margin="4,0,4,14"/>
 
@@ -78,7 +71,7 @@
                   Classes="flutter-nav"
                     Classes.active="{Binding IsIpaChartSelected}">
               <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="&#xE8D4;" Classes="flutter-icon"/>
+                <TextBlock Text="🔤" Classes="flutter-icon"/>
                 <TextBlock Text="{Binding [NavIpaChart], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
@@ -89,7 +82,7 @@
                   Classes="flutter-nav"
                     Classes.active="{Binding IsExamSelected}">
               <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="&#xE7BE;" Classes="flutter-icon"/>
+                <TextBlock Text="🧪" Classes="flutter-icon"/>
                 <TextBlock Text="{Binding [NavExam], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
@@ -100,7 +93,7 @@
                   Classes="flutter-nav"
                     Classes.active="{Binding IsFavoritesSelected}">
               <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="&#xE735;" Classes="flutter-icon"/>
+                <TextBlock Text="⭐" Classes="flutter-icon"/>
                 <TextBlock Text="{Binding [NavFavorites], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
@@ -111,18 +104,18 @@
                   Classes="flutter-nav"
                     Classes.active="{Binding IsHistorySelected}">
               <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="&#xE9D2;" Classes="flutter-icon"/>
+                <TextBlock Text="🕘" Classes="flutter-icon"/>
                 <TextBlock Text="{Binding [NavHistory], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
 
-            <Button Content="{Binding [NavWordLearning], Source={StaticResource Loc}}"
+            <Button x:Name="DesktopComingSoonButton" Content="{Binding [NavWordLearning], Source={StaticResource Loc}}"
                     IsEnabled="False"
                     HorizontalAlignment="Stretch"
                     Classes="flutter-nav"
                     ToolTip.Tip="{Binding [ComingSoon], Source={StaticResource Loc}}">
               <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="&#xE8A5;" Classes="flutter-icon"/>
+                <TextBlock Text="📚" Classes="flutter-icon"/>
                 <TextBlock Text="{Binding [NavWordLearning], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
@@ -130,21 +123,49 @@
             <Button Content="{Binding [NavSettings], Source={StaticResource Loc}}"
                     Click="OnSettingsClick"
                     HorizontalAlignment="Stretch"
-                    Classes="flutter-nav"
+                        Classes="flutter-nav"
                   Classes.active="{Binding IsSettingsSelected}"
                     Margin="0,14,0,0">
               <StackPanel Orientation="Horizontal" Spacing="10">
-                <TextBlock Text="&#xE713;" Classes="flutter-icon"/>
-                <TextBlock Text="{Binding [NavSettings], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
+                    <TextBlock Text="⚙️" Classes="flutter-icon"/>
+                    <TextBlock Text="{Binding [NavSettings], Source={StaticResource Loc}}" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
           </StackPanel>
           </ScrollViewer>
+
+                    <UniformGrid x:Name="MobileBottomNavGrid"
+                           IsVisible="False"
+                           Rows="1"
+                           Columns="5"
+                           Margin="2">
+                      <Button Content="{Binding [NavIpaChart], Source={StaticResource Loc}}"
+                        Click="OnIpaChartClick"
+                        Classes="mobile-nav"
+                        Classes.active="{Binding IsIpaChartSelected}"/>
+                      <Button Content="{Binding [NavExam], Source={StaticResource Loc}}"
+                        Click="OnExamClick"
+                        Classes="mobile-nav"
+                        Classes.active="{Binding IsExamSelected}"/>
+                      <Button Content="{Binding [NavFavorites], Source={StaticResource Loc}}"
+                        Click="OnFavoritesClick"
+                        Classes="mobile-nav"
+                        Classes.active="{Binding IsFavoritesSelected}"/>
+                      <Button Content="{Binding [NavHistory], Source={StaticResource Loc}}"
+                        Click="OnHistoryClick"
+                        Classes="mobile-nav"
+                        Classes.active="{Binding IsHistorySelected}"/>
+                      <Button Content="{Binding [NavSettings], Source={StaticResource Loc}}"
+                        Click="OnSettingsClick"
+                        Classes="mobile-nav"
+                        Classes.active="{Binding IsSettingsSelected}"/>
+                    </UniformGrid>
+                    </Grid>
         </Border>
 
         <!-- Content Area -->
-        <Border Grid.Column="1" Classes="flutter-card content-panel" Padding="12">
-          <TransitioningContentControl Content="{Binding CurrentView}">
+        <Border x:Name="ContentPanelBorder" Grid.Column="1" Classes="flutter-card content-panel" Padding="12">
+          <TransitioningContentControl x:Name="MainContentHost" Content="{Binding CurrentView}">
             <TransitioningContentControl.PageTransition>
               <animation:CrossFade Duration="0:0:0.22"/>
             </TransitioningContentControl.PageTransition>

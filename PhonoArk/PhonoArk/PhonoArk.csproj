@@ -4,10 +4,181 @@
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <UsJennyZipPath>$(MSBuildProjectDirectory)\Data\US-Jenny.zip</UsJennyZipPath>
+    <UsJennyExtractRoot>$(MSBuildProjectDirectory)\Data\Exportfile\US-Jenny</UsJennyExtractRoot>
+    <UsJennyExtractManifest>$(MSBuildProjectDirectory)\Data\Exportfile\US-Jenny.manifest.json</UsJennyExtractManifest>
   </PropertyGroup>
+
+  <UsingTask
+    TaskName="EnsureVoicePackageTask"
+    TaskFactory="RoslynCodeTaskFactory"
+    AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <ZipPath ParameterType="System.String" Required="true" />
+      <DestinationPath ParameterType="System.String" Required="true" />
+      <ManifestPath ParameterType="System.String" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System" />
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.IO.Compression" />
+      <Using Namespace="System.Linq" />
+      <Using Namespace="System.Security.Cryptography" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+        static string EscapeJson(string value)
+        {
+            return (value ?? string.Empty)
+                .Replace("\\", "\\\\")
+                .Replace("\"", "\\\"");
+        }
+
+        if (!File.Exists(ZipPath))
+        {
+          Log.LogMessage(MessageImportance.High, $"Voice package zip not found, skip extraction: {ZipPath}");
+        }
+        else
+        {
+          var destinationParent = Path.GetDirectoryName(DestinationPath);
+          if (!string.IsNullOrWhiteSpace(destinationParent))
+          {
+            Directory.CreateDirectory(destinationParent);
+          }
+
+          var zipInfo = new FileInfo(ZipPath);
+          using var archive = ZipFile.OpenRead(ZipPath);
+
+          var fileEntries = archive.Entries
+            .Where(entry => !string.IsNullOrWhiteSpace(entry.Name))
+            .OrderBy(entry => entry.FullName, StringComparer.Ordinal)
+            .ToList();
+
+          var zipFileCount = fileEntries.Count;
+          var contentFingerprint = string.Join("\n", fileEntries.Select(entry =>
+            $"{entry.FullName}|{entry.Length}|{entry.LastWriteTime.UtcDateTime.Ticks}"));
+
+          string entryHash;
+          using (var sha = SHA256.Create())
+          {
+            var bytes = System.Text.Encoding.UTF8.GetBytes(contentFingerprint);
+            var hashBytes = sha.ComputeHash(bytes);
+            entryHash = BitConverter.ToString(hashBytes).Replace("-", string.Empty);
+          }
+
+          var signature = $"{zipInfo.Length}|{zipInfo.LastWriteTimeUtc.Ticks}|{zipFileCount}|{entryHash}";
+          var manifestEntries = fileEntries
+            .Select(entry =>
+              $"{{\"path\":\"{EscapeJson(entry.FullName.Replace('\\', '/'))}\",\"size\":{entry.Length},\"ticks\":{entry.LastWriteTime.UtcDateTime.Ticks}}}")
+            .ToList();
+          var manifestContent =
+            $"{{\"package\":\"US-Jenny\",\"zipFile\":\"{EscapeJson(Path.GetFileName(ZipPath))}\",\"signature\":\"{signature}\",\"zipFileCount\":{zipFileCount},\"entries\":[{string.Join(",", manifestEntries)}]}}";
+
+          var hasDestination = Directory.Exists(DestinationPath);
+          var hasManifest = File.Exists(ManifestPath);
+          var existingFileCount = hasDestination
+            ? Directory.EnumerateFiles(DestinationPath, "*", SearchOption.AllDirectories).Count()
+            : 0;
+          var hasExpectedLayout = Directory.Exists(Path.Combine(DestinationPath, "phonemes")) &&
+            Directory.Exists(Path.Combine(DestinationPath, "words"));
+
+          var shouldSkipExtraction = false;
+          if (hasDestination && hasManifest)
+          {
+            var currentManifest = File.ReadAllText(ManifestPath);
+            shouldSkipExtraction = string.Equals(currentManifest, manifestContent, StringComparison.Ordinal) &&
+              existingFileCount == zipFileCount &&
+              hasExpectedLayout;
+          }
+
+          if (shouldSkipExtraction)
+          {
+            Log.LogMessage(MessageImportance.High, $"Voice package up-to-date, skip extraction: {ZipPath}");
+          }
+          else
+          {
+            if (Directory.Exists(DestinationPath))
+            {
+              Directory.Delete(DestinationPath, recursive: true);
+            }
+
+            Directory.CreateDirectory(DestinationPath);
+            ZipFile.ExtractToDirectory(ZipPath, DestinationPath);
+
+            var rootFiles = Directory.GetFiles(DestinationPath);
+            var rootDirectories = Directory.GetDirectories(DestinationPath);
+            if (rootFiles.Length == 0 && rootDirectories.Length == 1)
+            {
+              var nestedRoot = rootDirectories[0];
+              var nestedFileCount = Directory.EnumerateFiles(nestedRoot, "*", SearchOption.AllDirectories).Count();
+
+              if (nestedFileCount == zipFileCount)
+              {
+                foreach (var nestedDirectory in Directory.GetDirectories(nestedRoot))
+                {
+                  var destinationDirectory = Path.Combine(DestinationPath, Path.GetFileName(nestedDirectory));
+                  Directory.Move(nestedDirectory, destinationDirectory);
+                }
+
+                foreach (var nestedFile in Directory.GetFiles(nestedRoot))
+                {
+                  var destinationFile = Path.Combine(DestinationPath, Path.GetFileName(nestedFile));
+                  File.Move(nestedFile, destinationFile);
+                }
+
+                Directory.Delete(nestedRoot, recursive: true);
+              }
+            }
+
+            var extractedFileCount = Directory.EnumerateFiles(DestinationPath, "*", SearchOption.AllDirectories).Count();
+            if (extractedFileCount != zipFileCount)
+            {
+              Log.LogError($"Voice package extraction verification failed. Zip entries: {zipFileCount}, extracted files: {extractedFileCount}");
+            }
+            else
+            {
+              File.WriteAllText(ManifestPath, manifestContent);
+              Log.LogMessage(MessageImportance.High, $"Voice package extracted to: {DestinationPath}");
+            }
+          }
+        }
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <Target Name="EnsureUsJennyVoicePackage" BeforeTargets="PrepareForBuild">
+    <EnsureVoicePackageTask
+      ZipPath="$(UsJennyZipPath)"
+      DestinationPath="$(UsJennyExtractRoot)"
+      ManifestPath="$(UsJennyExtractManifest)" />
+    <ItemGroup Condition="Exists('$(UsJennyExtractRoot)')">
+      <AvaloniaResource Include="Data\Exportfile\US-Jenny\**" />
+    </ItemGroup>
+  </Target>
+
+  <Target Name="CopyUsJennyToOutput" AfterTargets="Build" Condition="Exists('$(UsJennyExtractRoot)')">
+    <ItemGroup>
+      <UsJennyExtractedFiles Include="$(UsJennyExtractRoot)\**\*.*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(UsJennyExtractedFiles)"
+      DestinationFiles="@(UsJennyExtractedFiles->'$(OutDir)Data\\Exportfile\\US-Jenny\\%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyUsJennyToPublish" AfterTargets="Publish" Condition="Exists('$(UsJennyExtractRoot)') and '$(PublishDir)' != ''">
+    <ItemGroup>
+      <UsJennyExtractedFiles Include="$(UsJennyExtractRoot)\**\*.*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(UsJennyExtractedFiles)"
+      DestinationFiles="@(UsJennyExtractedFiles->'$(PublishDir)Data\\Exportfile\\US-Jenny\\%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
   
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
+    <AvaloniaResource Include="Data\**" Exclude="Data\*.zip;Data\Exportfile\**" />
   </ItemGroup>
 
   <ItemGroup>

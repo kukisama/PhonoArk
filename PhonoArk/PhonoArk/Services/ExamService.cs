@@ -204,7 +204,8 @@ public class ExamService
             Word = source.Word,
             IpaTranscription = source.IpaTranscription,
             GenAmAudioPath = source.GenAmAudioPath,
-            RpAudioPath = source.RpAudioPath
+            RpAudioPath = source.RpAudioPath,
+            VoiceAudioPaths = new Dictionary<string, string>(source.VoiceAudioPaths, StringComparer.OrdinalIgnoreCase)
         };
     }
 }

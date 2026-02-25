@@ -60,6 +60,18 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty]
     private ObservableCollection<string> _voiceDiagnostics = new();
 
+    [ObservableProperty]
+    private string _voiceDiagnosticsPlatform = "-";
+
+    [ObservableProperty]
+    private string _voiceDiagnosticsRequestedCulture = "-";
+
+    [ObservableProperty]
+    private string _voiceDiagnosticsSelectedVoice = "-";
+
+    [ObservableProperty]
+    private int _voiceDiagnosticsCount;
+
     public SettingsViewModel(SettingsService settingsService, AudioService audioService, LocalizationService localizationService)
     {
         _settingsService = settingsService;
@@ -74,6 +86,7 @@ public partial class SettingsViewModel : ViewModelBase
 
         AccentOptions = new ObservableCollection<AccentOption>
         {
+            new() { Value = Accent.USJenny, DisplayName = _localizationService.GetString("AccentUsJenny") },
             new() { Value = Accent.GenAm, DisplayName = _localizationService.GetString("AccentGenAm") },
             new() { Value = Accent.RP, DisplayName = _localizationService.GetString("AccentRp") }
         };
@@ -165,6 +178,14 @@ public partial class SettingsViewModel : ViewModelBase
         var diagnostics = await _audioService.GetVoiceDiagnosticsAsync();
         VoiceDiagnosticsSummary = diagnostics.Summary;
         VoiceDiagnostics = new ObservableCollection<string>(diagnostics.Details);
+        VoiceDiagnosticsPlatform = diagnostics.IsWindows ? "Windows" : "Android/Other";
+        VoiceDiagnosticsRequestedCulture = string.IsNullOrWhiteSpace(diagnostics.RequestedCulture)
+            ? "-"
+            : diagnostics.RequestedCulture;
+        VoiceDiagnosticsSelectedVoice = string.IsNullOrWhiteSpace(diagnostics.SelectedVoice)
+            ? "-"
+            : diagnostics.SelectedVoice;
+        VoiceDiagnosticsCount = diagnostics.Details?.Length ?? 0;
     }
 
     private static void ApplyThemeVariant(bool darkMode)
@@ -208,6 +229,7 @@ public partial class SettingsViewModel : ViewModelBase
         var currentAccent = SelectedAccent;
         AccentOptions = new ObservableCollection<AccentOption>
         {
+            new() { Value = Accent.USJenny, DisplayName = _localizationService.GetString("AccentUsJenny") },
             new() { Value = Accent.GenAm, DisplayName = _localizationService.GetString("AccentGenAm") },
             new() { Value = Accent.RP, DisplayName = _localizationService.GetString("AccentRp") }
         };

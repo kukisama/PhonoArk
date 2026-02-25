@@ -114,6 +114,8 @@
             <Setter Property="Padding" Value="14,12"/>
             <Setter Property="FontSize" Value="15"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Background" Value="{DynamicResource AppPrimaryBrush}"/>
             <Setter Property="Foreground" Value="White"/>
             <Setter Property="BorderBrush" Value="{DynamicResource AppPrimaryBrush}"/>
@@ -177,6 +179,8 @@
             <Setter Property="Padding" Value="12,9"/>
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="BorderThickness" Value="1"/>
             <Setter Property="Opacity" Value="1"/>
             <Setter Property="Transitions">
@@ -287,8 +291,23 @@
 
         <Style Selector="TextBlock.flutter-icon">
             <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontFamily" Value="Segoe Fluent Icons, Segoe MDL2 Assets, Inter, Microsoft YaHei"/>
+            <Setter Property="FontFamily" Value="sans-serif, Noto Sans CJK SC, Microsoft YaHei, Segoe UI Emoji"/>
             <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+
+        <Style Selector="Button.ipa-symbol-button">
+            <Setter Property="FontFamily" Value="Noto Sans, Noto Sans Symbols, Segoe UI Symbol, Arial Unicode MS, sans-serif"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+        </Style>
+
+        <Style Selector="TextBlock.ipa-symbol">
+            <Setter Property="FontFamily" Value="Noto Sans, Noto Sans Symbols, Segoe UI Symbol, Arial Unicode MS, sans-serif"/>
+            <Setter Property="FontWeight" Value="Normal"/>
+        </Style>
+
+        <Style Selector="TextBlock.ipa-transcription">
+            <Setter Property="FontFamily" Value="Noto Sans, Noto Sans Symbols, Segoe UI Symbol, Arial Unicode MS, sans-serif"/>
+            <Setter Property="FontWeight" Value="Normal"/>
         </Style>
     </Application.Styles>
 </Application>

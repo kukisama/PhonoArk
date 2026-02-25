@@ -1,4 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
+using System;
+using System.Collections.Generic;
 
 namespace PhonoArk.Models;
 
@@ -10,6 +12,7 @@ public partial class ExampleWord : ObservableObject
     // Audio file paths for each accent
     public string GenAmAudioPath { get; set; } = string.Empty;
     public string RpAudioPath { get; set; } = string.Empty;
+    public Dictionary<string, string> VoiceAudioPaths { get; set; } = new(StringComparer.OrdinalIgnoreCase);
 
     [ObservableProperty]
     private bool _isPlaying;

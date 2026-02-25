@@ -6,7 +6,11 @@
         xmlns:views="using:PhonoArk.Views"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
         x:Class="PhonoArk.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/app.ico"
+        Width="1600"
+        Height="980"
+        MinWidth="1280"
+        MinHeight="780"
         Title="PhonoArk">
         <views:MainView />
 </Window>

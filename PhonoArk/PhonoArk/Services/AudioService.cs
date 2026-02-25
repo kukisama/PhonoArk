@@ -1,17 +1,22 @@
 using PhonoArk.Models;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Avalonia.Platform;
 
 namespace PhonoArk.Services;
 
 public class AudioService
 {
+    public event EventHandler<Accent>? AccentChanged;
+
     public sealed class VoiceDiagnosticsResult
     {
         public bool IsWindows { get; init; }
@@ -33,11 +38,38 @@ public class AudioService
     private double _volume = 0.8;
     private readonly object _speechGate = new();
     private object? _activeSynthesizer;
+    private object? _activeSoundPlayer;
+    private readonly ConcurrentDictionary<string, string> _assetExtractedFileCache = new(StringComparer.OrdinalIgnoreCase);
+    private static Func<string, Accent, double, Task<bool>>? _platformSpeakHandler;
+    private static Func<string, double, Task<bool>>? _platformPlayAudioFileHandler;
+    private static Func<Task>? _platformStopHandler;
+    private static Func<Accent, Task<VoiceDiagnosticsResult>>? _platformDiagnosticsHandler;
+
+    public static void ConfigurePlatformSpeechHandlers(
+        Func<string, Accent, double, Task<bool>>? speakHandler = null,
+        Func<string, double, Task<bool>>? playAudioFileHandler = null,
+        Func<Task>? stopHandler = null,
+        Func<Accent, Task<VoiceDiagnosticsResult>>? diagnosticsHandler = null)
+    {
+        _platformSpeakHandler = speakHandler;
+        _platformPlayAudioFileHandler = playAudioFileHandler;
+        _platformStopHandler = stopHandler;
+        _platformDiagnosticsHandler = diagnosticsHandler;
+    }
 
     public Accent CurrentAccent
     {
         get => _currentAccent;
-        set => _currentAccent = value;
+        set
+        {
+            if (_currentAccent == value)
+            {
+                return;
+            }
+
+            _currentAccent = value;
+            AccentChanged?.Invoke(this, _currentAccent);
+        }
     }
 
     public double Volume
@@ -48,6 +80,12 @@ public class AudioService
 
     public async Task PlayPhonemeAsync(Phoneme phoneme)
     {
+        if (phoneme.VoiceAudioPaths.TryGetValue(_currentAccent.ToString(), out var mappedAudioPath) &&
+            await TryPlayRecordedAudioAsync(mappedAudioPath))
+        {
+            return;
+        }
+
         var fallbackWord = phoneme.ExampleWords.FirstOrDefault()?.Word;
         var ttsText = string.IsNullOrWhiteSpace(fallbackWord) ? phoneme.Symbol : fallbackWord;
         await PlayAudioAsync(ttsText);
@@ -55,6 +93,12 @@ public class AudioService
 
     public async Task PlayWordAsync(ExampleWord word)
     {
+        if (word.VoiceAudioPaths.TryGetValue(_currentAccent.ToString(), out var mappedAudioPath) &&
+            await TryPlayRecordedAudioAsync(mappedAudioPath))
+        {
+            return;
+        }
+
         await PlayAudioAsync(word.Word);
     }
 
@@ -62,6 +106,11 @@ public class AudioService
     {
         if (!OperatingSystem.IsWindows())
         {
+            if (_platformStopHandler != null)
+            {
+                _ = _platformStopHandler();
+            }
+
             return;
         }
 
@@ -79,6 +128,26 @@ public class AudioService
     {
         if (!OperatingSystem.IsWindows())
         {
+            if (_platformDiagnosticsHandler != null)
+            {
+                try
+                {
+                    return await _platformDiagnosticsHandler(_currentAccent);
+                }
+                catch (Exception ex)
+                {
+                    return new VoiceDiagnosticsResult
+                    {
+                        IsWindows = false,
+                        SystemSpeechAvailable = false,
+                        RequestedCulture = _currentAccent == Accent.RP ? "en-GB" : "en-US",
+                        Summary = $"平台语音诊断失败：{ex.Message}",
+                        SelectedVoice = "",
+                        Details = new[] { ex.ToString() }
+                    };
+                }
+            }
+
             return new VoiceDiagnosticsResult
             {
                 IsWindows = false,
@@ -108,16 +177,179 @@ public class AudioService
         }
     }
 
-    private async Task PlayAudioAsync(string ttsText)
+    private async Task<bool> TryPlayRecordedAudioAsync(string mappedPath)
+    {
+        if (string.IsNullOrWhiteSpace(mappedPath))
+        {
+            return false;
+        }
+
+        var playablePath = ResolvePlayableAudioPath(mappedPath);
+        if (string.IsNullOrWhiteSpace(playablePath) || !File.Exists(playablePath))
+        {
+            return false;
+        }
+
+        if (!OperatingSystem.IsWindows())
+        {
+            if (_platformPlayAudioFileHandler == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                return await _platformPlayAudioFileHandler(playablePath, _volume);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"AudioService: platform file playback failed: {ex.Message}");
+                return false;
+            }
+        }
+
+        return await TryPlayWindowsWavAsync(playablePath);
+    }
+
+    private string? ResolvePlayableAudioPath(string mappedPath)
+    {
+        try
+        {
+            if (Path.IsPathRooted(mappedPath) && File.Exists(mappedPath))
+            {
+                return mappedPath;
+            }
+
+            var normalizedRelative = mappedPath
+                .Replace('/', Path.DirectorySeparatorChar)
+                .Replace('\\', Path.DirectorySeparatorChar)
+                .TrimStart(Path.DirectorySeparatorChar);
+
+            var diskPath = Path.Combine(AppContext.BaseDirectory, normalizedRelative);
+            if (File.Exists(diskPath))
+            {
+                return diskPath;
+            }
+
+            var assetPath = normalizedRelative.Replace(Path.DirectorySeparatorChar, '/');
+            var assetUri = new Uri($"avares://PhonoArk/{assetPath}");
+
+            if (!AssetLoader.Exists(assetUri))
+            {
+                return null;
+            }
+
+            return _assetExtractedFileCache.GetOrAdd(assetPath, _ =>
+            {
+                var tempRoot = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "PhonoArk",
+                    "audio-cache");
+
+                Directory.CreateDirectory(tempRoot);
+
+                var extension = Path.GetExtension(assetPath);
+                var tempFile = Path.Combine(tempRoot, $"{Guid.NewGuid():N}{extension}");
+
+                using var source = AssetLoader.Open(assetUri);
+                using var target = File.Create(tempFile);
+                source.CopyTo(target);
+
+                return tempFile;
+            });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"ResolvePlayableAudioPath failed: {ex.Message}");
+            return null;
+        }
+    }
+
+    private async Task<bool> TryPlayWindowsWavAsync(string filePath)
     {
         if (!OperatingSystem.IsWindows())
         {
-            Debug.WriteLine("AudioService: current platform is not Windows, speech playback skipped.");
+            return false;
+        }
+
+        try
+        {
+            return await RunOnStaThreadAsync(() => TryPlayWindowsWavCore(filePath));
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"TryPlayWindowsWavAsync failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    private bool TryPlayWindowsWavCore(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            return false;
+        }
+
+        try
+        {
+            var soundPlayerType = Type.GetType("System.Media.SoundPlayer, System.Windows.Extensions", throwOnError: false)
+                ?? Type.GetType("System.Media.SoundPlayer, System");
+
+            if (soundPlayerType == null)
+            {
+                return false;
+            }
+
+            var soundPlayer = Activator.CreateInstance(soundPlayerType, filePath);
+            if (soundPlayer == null)
+            {
+                return false;
+            }
+
+            lock (_speechGate)
+            {
+                StopPlaybackCore();
+
+                soundPlayerType.GetMethod("Play", Type.EmptyTypes)?.Invoke(soundPlayer, null);
+                _activeSoundPlayer = soundPlayer;
+                return true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Windows wav playback failed: {ex.Message}");
+            return false;
+        }
+    }
+
+    private async Task PlayAudioAsync(string ttsText)
+    {
+        if (string.IsNullOrWhiteSpace(ttsText))
+        {
             return;
         }
 
-        if (string.IsNullOrWhiteSpace(ttsText))
+        if (!OperatingSystem.IsWindows())
         {
+            if (_platformSpeakHandler == null)
+            {
+                Debug.WriteLine("AudioService: no platform speech handler is registered for non-Windows runtime.");
+                return;
+            }
+
+            try
+            {
+                var handled = await _platformSpeakHandler(ttsText, _currentAccent, _volume);
+                if (!handled)
+                {
+                    Debug.WriteLine("AudioService: platform speech handler returned false.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"AudioService: platform speech handler failed: {ex.Message}");
+            }
+
             return;
         }
 
@@ -327,6 +559,28 @@ public class AudioService
 
     private void StopPlaybackCore()
     {
+        if (_activeSoundPlayer != null)
+        {
+            try
+            {
+                var soundPlayerType = _activeSoundPlayer.GetType();
+                soundPlayerType.GetMethod("Stop", Type.EmptyTypes)?.Invoke(_activeSoundPlayer, null);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Failed to stop wav playback: {ex.Message}");
+            }
+            finally
+            {
+                if (_activeSoundPlayer is IDisposable soundDisposable)
+                {
+                    soundDisposable.Dispose();
+                }
+
+                _activeSoundPlayer = null;
+            }
+        }
+
         if (_activeSynthesizer == null)
         {
             return;

@@ -9,31 +9,33 @@
              x:CompileBindings="False"
              x:DataType="vm:FavoritesViewModel">
 
-  <Grid Margin="20" RowDefinitions="Auto,*,Auto" RowSpacing="10">
-    <StackPanel Grid.Row="0" Spacing="10" Margin="0,0,0,4">
+  <Grid x:Name="FavoritesRootGrid" Margin="20" RowDefinitions="Auto,*" ColumnDefinitions="*" RowSpacing="10" ColumnSpacing="12">
+    <StackPanel x:Name="FavoritesFilterPanel" Grid.Row="0" Grid.Column="0" Spacing="10" Margin="0,0,0,4">
       <TextBlock Text="{Binding [FavoritePhonemes], Source={StaticResource Loc}}" Classes="flutter-title"/>
 
-      <Border Classes="flutter-card">
-      <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
-        <TextBlock Grid.Column="0" 
-                   Text="{Binding [Group], Source={StaticResource Loc}}" 
+      <Border x:Name="GroupFilterBorder" Classes="flutter-card">
+      <Grid ColumnDefinitions="Auto,*" ColumnSpacing="8">
+        <TextBlock Grid.Column="0"
+                   Text="{Binding [Group], Source={StaticResource Loc}}"
                    VerticalAlignment="Center"
                    Margin="0,0,10,0"/>
-        <ComboBox Grid.Column="1" 
+        <ComboBox Grid.Column="1"
                   Classes="flutter-input"
                   ItemsSource="{Binding Groups}"
                   SelectedItem="{Binding SelectedGroup}"
                   HorizontalAlignment="Stretch"/>
-        <Button Grid.Column="2"
-          Content="{Binding [ClearAll], Source={StaticResource Loc}}"
+      </Grid>
+      </Border>
+
+      <Border x:Name="ClearAllBorder" Classes="flutter-card" Margin="0,0,0,2">
+        <Button Content="{Binding [ClearAll], Source={StaticResource Loc}}"
                 Classes="flutter-secondary"
                 Command="{Binding ClearAllCommand}"
-                Margin="10,0,0,0"/>
-      </Grid>
+                HorizontalAlignment="Stretch"/>
       </Border>
     </StackPanel>
 
-    <ScrollViewer Grid.Row="1">
+    <ScrollViewer x:Name="FavoritesListScrollViewer" Grid.Row="1" Grid.Column="0">
       <ItemsControl ItemsSource="{Binding Favorites}">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
@@ -71,7 +73,9 @@
       </ItemsControl>
     </ScrollViewer>
 
-    <TextBlock Grid.Row="1"
+    <TextBlock x:Name="NoFavoritesText"
+           Grid.Row="1"
+           Grid.Column="0"
                Text="{Binding [NoFavoritesHint], Source={StaticResource Loc}}"
                IsVisible="{Binding !Favorites.Count}"
                HorizontalAlignment="Center"

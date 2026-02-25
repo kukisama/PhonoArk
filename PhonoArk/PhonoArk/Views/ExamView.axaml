@@ -9,155 +9,245 @@
              x:CompileBindings="False"
              x:DataType="vm:ExamViewModel">
 
-  <Grid Margin="20">
+  <UserControl.Styles>
+    <Style Selector="Button.exam-option">
+      <Setter Property="Width" Value="560"/>
+      <Setter Property="MinWidth" Value="560"/>
+      <Setter Property="MaxWidth" Value="560"/>
+      <Setter Property="Margin" Value="0,5"/>
+    </Style>
+
+    <Style Selector="#Root.mobile Button.exam-option">
+      <Setter Property="Width" Value="NaN"/>
+      <Setter Property="MinWidth" Value="0"/>
+      <Setter Property="MaxWidth" Value="10000"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="Margin" Value="20,4"/>
+      <Setter Property="CornerRadius" Value="18"/>
+    </Style>
+
+    <Style Selector="#Root.phone-landscape Button.exam-option">
+      <Setter Property="FontSize" Value="16"/>
+      <Setter Property="MinHeight" Value="34"/>
+      <Setter Property="Padding" Value="12,6"/>
+      <Setter Property="Width" Value="NaN"/>
+      <Setter Property="MinWidth" Value="0"/>
+      <Setter Property="MaxWidth" Value="10000"/>
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="Margin" Value="16,4"/>
+      <Setter Property="CornerRadius" Value="18"/>
+    </Style>
+  </UserControl.Styles>
+
+  <Grid Margin="20" x:Name="ExamRootGrid">
     <!-- Exam Setup -->
-    <Border IsVisible="{Binding !IsExamActive}" Classes="flutter-card" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="460">
-      <StackPanel Spacing="16">
-      <TextBlock Text="{Binding [PracticeExam], Source={StaticResource Loc}}"
+    <Border IsVisible="{Binding !IsExamActive}" Classes="flutter-card" VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="760" MinHeight="440" x:Name="SetupBorder">
+      <Grid RowDefinitions="Auto,*" RowSpacing="20">
+      <TextBlock x:Name="SetupTitleText" Text="{Binding [PracticeExam], Source={StaticResource Loc}}"
                  Classes="flutter-title"
                  HorizontalAlignment="Center"/>
 
-      <Border Classes="flutter-card">
-      <StackPanel Spacing="10">
+        <Grid x:Name="SetupFieldsGrid" Grid.Row="1" ColumnDefinitions="*" RowDefinitions="Auto,Auto,Auto" RowSpacing="12" ColumnSpacing="12">
+          <Border Classes="flutter-card" x:Name="QuestionCountCard" Grid.Row="0" Grid.Column="0" Width="360">
+            <StackPanel Spacing="10">
         <TextBlock Text="{Binding [NumberOfQuestions], Source={StaticResource Loc}}" FontSize="16"/>
         <NumericUpDown Classes="flutter-input" Value="{Binding QuestionCount}"
                       Minimum="5"
                       Maximum="50"
                       Increment="5"/>
-      </StackPanel>
-      </Border>
+            </StackPanel>
+          </Border>
 
-      <Border Classes="flutter-card">
-      <StackPanel Spacing="10">
+          <Border Classes="flutter-card" x:Name="ExamScopeCard" Grid.Row="1" Grid.Column="0" Width="360">
+            <StackPanel Spacing="10">
         <TextBlock Text="{Binding [ExamScope], Source={StaticResource Loc}}" FontSize="16"/>
-        <ComboBox SelectedItem="{Binding ExamScope}" HorizontalAlignment="Stretch">
+        <ComboBox SelectedIndex="{Binding SelectedExamScopeIndex}" HorizontalAlignment="Stretch">
           <ComboBoxItem Content="{Binding [AllPhonemes], Source={StaticResource Loc}}" Tag="All"/>
           <ComboBoxItem Content="{Binding [FavoritesOnly], Source={StaticResource Loc}}" Tag="Favorites"/>
         </ComboBox>
-      </StackPanel>
-      </Border>
+            </StackPanel>
+          </Border>
 
-      <Button Content="{Binding [StartExam], Source={StaticResource Loc}}"
+          <Button x:Name="StartExamButton"
+                  Grid.Row="2"
+                  Grid.Column="0"
+                  Content="{Binding [StartExam], Source={StaticResource Loc}}"
               Classes="flutter-primary"
               Command="{Binding StartExamCommand}"
-              HorizontalAlignment="Stretch"/>
-      </StackPanel>
+              HorizontalAlignment="Center"/>
+
+        </Grid>
+      </Grid>
     </Border>
 
     <!-- Exam Active -->
-    <Grid IsVisible="{Binding IsExamActive}" RowDefinitions="Auto,*,Auto">
-      <!-- Progress Header -->
-      <Border Grid.Row="0" Classes="flutter-card" Margin="0,0,0,10">
-        <Grid ColumnDefinitions="*,Auto">
-          <StackPanel Grid.Column="0">
-            <StackPanel Orientation="Horizontal" Spacing="4">
-              <TextBlock Text="{Binding [QuestionLabel], Source={StaticResource Loc}}"
-                         FontSize="18"
-                         FontWeight="SemiBold"/>
-              <TextBlock Text="{Binding CurrentQuestionNumber}"
-                         FontSize="18"
-                         FontWeight="SemiBold"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="4">
-              <TextBlock Text="{Binding [OfLabel], Source={StaticResource Loc}}"
-                         FontSize="14"
-                         Opacity="0.7"/>
-              <TextBlock Text="{Binding TotalQuestions}"
-                         FontSize="14"
-                         Opacity="0.7"/>
-            </StackPanel>
-          </StackPanel>
-          <StackPanel Grid.Column="1" HorizontalAlignment="Right">
-            <StackPanel Orientation="Horizontal" Spacing="4">
-              <TextBlock Text="{Binding [CorrectLabel], Source={StaticResource Loc}}"
-                         FontSize="16"
-                         FontWeight="SemiBold"/>
-              <TextBlock Text="{Binding CorrectAnswers}"
-                         FontSize="16"
-                         FontWeight="SemiBold"/>
-            </StackPanel>
-          </StackPanel>
-        </Grid>
-      </Border>
-
-      <!-- Question Content -->
-      <Border Grid.Row="1" Classes="flutter-card">
-      <StackPanel 
-                  VerticalAlignment="Center" 
-                  Spacing="20"
-                  MaxWidth="600">
-        
-        <TextBlock Text="{Binding [ListenAndSelectWord], Source={StaticResource Loc}}"
-                   FontSize="18"
-                   TextWrapping="Wrap"
-                   HorizontalAlignment="Center"/>
-
-        <Button Content="{Binding [PlayPhoneme], Source={StaticResource Loc}}"
-          Classes="flutter-primary"
-                Command="{Binding PlayCurrentQuestionCommand}"
-                HorizontalAlignment="Center"
-          FontSize="20"/>
-
-        <TextBlock FontSize="16"
-                   HorizontalAlignment="Center"
-                   Margin="0,4,0,0">
-          <Run Text="{Binding [TargetPhonemeLabel], Source={StaticResource Loc}}"/>
-          <Run Text=" "/>
-          <Run Text="{Binding CurrentQuestion.Phoneme.Symbol}"/>
-        </TextBlock>
-
-        <TextBlock Text="{Binding [SelectWord], Source={StaticResource Loc}}"
-                   FontSize="16"
-                   Margin="0,10,0,0"/>
-
-        <!-- Answer Options -->
-        <ItemsControl ItemsSource="{Binding CurrentQuestion.Options}">
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <Button Content="{Binding ExamDisplayWord}"
-                      Classes="exam-option"
-                      Background="{Binding ExamBackground}"
-                      BorderBrush="{Binding ExamBorderBrush}"
-                      Foreground="{Binding ExamForeground}"
-                      IsHitTestVisible="{Binding #Root.DataContext.AreOptionsInteractive}"
-                      Command="{Binding #Root.DataContext.SelectAnswerCommand}"
-                      CommandParameter="{Binding}"
-                      HorizontalAlignment="Stretch"
-                      Margin="0,5"
-                      FontSize="18"/>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-
-          <!-- Feedback (fixed space to avoid layout jump) -->
-          <Border Classes="flutter-card"
-              Margin="0,10,0,0"
-                MinHeight="56">
-            <TextBlock Text="{Binding FeedbackMessage}"
-               FontSize="16"
-               TextWrapping="Wrap"
-               HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 IsVisible="{Binding ShowFeedback}"/>
+    <Grid x:Name="ActiveExamGrid" IsVisible="{Binding IsExamActive}" RowDefinitions="Auto,*" ColumnDefinitions="*" RowSpacing="12">
+      <!-- Left/Top: Progress + Question Info + Controls -->
+      <ScrollViewer x:Name="ExamLeftScroll" Grid.Row="0" Grid.Column="0"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalScrollBarVisibility="Auto">
+        <StackPanel x:Name="ExamLeftPanel" Spacing="10">
+          <!-- Progress Header -->
+          <Border Classes="flutter-card" Padding="10,6">
+            <Grid ColumnDefinitions="*,Auto">
+              <StackPanel Grid.Column="0">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                  <TextBlock x:Name="QuestionLabelText" Text="{Binding [QuestionLabel], Source={StaticResource Loc}}"
+                             FontSize="18"
+                             FontWeight="SemiBold"/>
+                  <TextBlock x:Name="QuestionNumberText" Text="{Binding CurrentQuestionNumber}"
+                             FontSize="18"
+                             FontWeight="SemiBold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                  <TextBlock x:Name="OfLabelText" Text="{Binding [OfLabel], Source={StaticResource Loc}}"
+                             FontSize="14"
+                             Opacity="0.7"/>
+                  <TextBlock x:Name="TotalQuestionsText" Text="{Binding TotalQuestions}"
+                             FontSize="14"
+                             Opacity="0.7"/>
+                </StackPanel>
+              </StackPanel>
+              <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                <StackPanel Orientation="Horizontal" Spacing="4">
+                  <TextBlock x:Name="CorrectLabelText" Text="{Binding [CorrectLabel], Source={StaticResource Loc}}"
+                             FontSize="16"
+                             FontWeight="SemiBold"/>
+                  <TextBlock x:Name="CorrectCountText" Text="{Binding CorrectAnswers}"
+                             FontSize="16"
+                             FontWeight="SemiBold"/>
+                </StackPanel>
+              </StackPanel>
+            </Grid>
           </Border>
-      </StackPanel>
-            </Border>
 
-      <!-- Control Buttons -->
-      <StackPanel Grid.Row="2" 
-                  Orientation="Horizontal" 
-                  HorizontalAlignment="Center"
-                  Spacing="10"
-                  Margin="0,20,0,0">
-        <Button Content="{Binding [NextQuestion], Source={StaticResource Loc}}"
-          Classes="flutter-secondary"
-                Command="{Binding NextQuestionCommand}"
-                IsVisible="{Binding CurrentQuestion.IsAnswered}"/>
-        <Button Content="{Binding [EndExam], Source={StaticResource Loc}}"
-          Classes="flutter-primary"
-                Command="{Binding EndExamCommand}"
-          />
-      </StackPanel>
+          <!-- Landscape only: Question Info -->
+          <Border x:Name="LandscapeQuestionInfoCard" Classes="flutter-card" Padding="10,8" IsVisible="False">
+            <StackPanel VerticalAlignment="Center" Spacing="10">
+              <Button x:Name="LandscapePlayPhonemeBtn" Content="{Binding [PlayPhoneme], Source={StaticResource Loc}}"
+                      Classes="flutter-primary"
+                      Command="{Binding PlayCurrentQuestionCommand}"
+                      HorizontalAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      Padding="16,10"
+                      FontSize="17"/>
+
+              <StackPanel Spacing="3" HorizontalAlignment="Center" Margin="0,2,0,0">
+                <TextBlock x:Name="LandscapeTargetPhonemeLabelText"
+                           Text="{Binding [TargetPhonemeLabel], Source={StaticResource Loc}}"
+                           FontSize="13"
+                           Opacity="0.82"
+                           HorizontalAlignment="Center"/>
+                <TextBlock x:Name="LandscapeTargetPhonemeSymbolText"
+                           Text="{Binding CurrentQuestion.Phoneme.Symbol}"
+                           Classes="ipa-symbol"
+                           FontFamily="sans-serif, Noto Sans, Noto Sans Symbols2, Noto Sans Symbols, Segoe UI Symbol, Arial Unicode MS"
+                           FontSize="34"
+                           FontWeight="Normal"
+                           HorizontalAlignment="Center"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+
+          <!-- Landscape only: End Exam in separate card -->
+          <Border x:Name="LandscapeEndExamCard" Classes="flutter-card" IsVisible="False" Padding="10,8">
+            <Button Content="{Binding [EndExam], Source={StaticResource Loc}}"
+                    Classes="flutter-primary"
+                    Command="{Binding EndExamCommand}"
+                    HorizontalAlignment="Stretch"/>
+          </Border>
+        </StackPanel>
+      </ScrollViewer>
+
+      <!-- Right/Bottom: Answer Options -->
+      <ScrollViewer x:Name="ExamAnswerScroll" Grid.Row="1" Grid.Column="0"
+                    HorizontalScrollBarVisibility="Disabled"
+                    VerticalAlignment="Center">
+        <StackPanel x:Name="ExamAnswerContentPanel" Spacing="8" MinWidth="600" MaxWidth="600" HorizontalAlignment="Center">
+          <Border Classes="flutter-card" Padding="12,10">
+            <StackPanel Spacing="8">
+            <StackPanel x:Name="PortraitQuestionInfoPanel" Spacing="10">
+              <Button x:Name="PlayPhonemeBtn" Content="{Binding [PlayPhoneme], Source={StaticResource Loc}}"
+                      Classes="flutter-primary"
+                      Command="{Binding PlayCurrentQuestionCommand}"
+                      HorizontalAlignment="Center"
+                      HorizontalContentAlignment="Center"
+                      VerticalContentAlignment="Center"
+                      Padding="16,10"
+                      FontSize="20"/>
+
+              <StackPanel Spacing="4" HorizontalAlignment="Center" Margin="0,2,0,0">
+                <TextBlock x:Name="TargetPhonemeLabelText"
+                           Text="{Binding [TargetPhonemeLabel], Source={StaticResource Loc}}"
+                           FontSize="14"
+                           Opacity="0.84"
+                           HorizontalAlignment="Center"/>
+                <TextBlock x:Name="TargetPhonemeSymbolText"
+                           Text="{Binding CurrentQuestion.Phoneme.Symbol}"
+                           Classes="ipa-symbol"
+                           FontFamily="sans-serif, Noto Sans, Noto Sans Symbols2, Noto Sans Symbols, Segoe UI Symbol, Arial Unicode MS"
+                           FontSize="44"
+                           FontWeight="Normal"
+                           HorizontalAlignment="Center"/>
+              </StackPanel>
+            </StackPanel>
+
+              <TextBlock x:Name="SelectWordText" Text="{Binding [SelectWord], Source={StaticResource Loc}}"
+                         FontSize="16"
+                         Margin="0,6,0,0"/>
+
+              <!-- Answer Options -->
+              <ItemsControl ItemsSource="{Binding CurrentQuestion.Options}">
+                <ItemsControl.ItemTemplate>
+                  <DataTemplate>
+                    <Button Content="{Binding ExamDisplayWord}"
+                            Classes="exam-option"
+                            Background="{Binding ExamBackground}"
+                            BorderBrush="{Binding ExamBorderBrush}"
+                            Foreground="{Binding ExamForeground}"
+                            IsHitTestVisible="{Binding #Root.DataContext.AreOptionsInteractive}"
+                            Command="{Binding #Root.DataContext.SelectAnswerCommand}"
+                            CommandParameter="{Binding}"
+                            FontSize="18"/>
+                  </DataTemplate>
+                </ItemsControl.ItemTemplate>
+              </ItemsControl>
+
+              <!-- Feedback -->
+                    <Border x:Name="FeedbackBorder" Classes="flutter-card"
+                      Margin="0,6,0,0"
+                      Width="NaN"
+                    Height="52"
+                    MinHeight="52"
+                    MaxHeight="52">
+                <TextBlock x:Name="FeedbackText" Text="{Binding FeedbackMessage}"
+                           FontSize="16"
+                     TextWrapping="NoWrap"
+                     TextTrimming="CharacterEllipsis"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           IsVisible="{Binding ShowFeedback}"/>
+              </Border>
+
+              <!-- Control Buttons (move to bottom) -->
+              <StackPanel Orientation="Horizontal"
+                          x:Name="BottomControlsPanel"
+                          HorizontalAlignment="Center"
+                          Spacing="10"
+                          Margin="0,8,0,0">
+                <Button Content="{Binding [NextQuestion], Source={StaticResource Loc}}"
+                        Classes="flutter-secondary"
+                        Command="{Binding NextQuestionCommand}"
+                        IsVisible="{Binding CurrentQuestion.IsAnswered}"/>
+                <Button x:Name="PortraitEndExamButton" Content="{Binding [EndExam], Source={StaticResource Loc}}"
+                        Classes="flutter-primary"
+                        Command="{Binding EndExamCommand}"/>
+              </StackPanel>
+            </StackPanel>
+          </Border>
+        </StackPanel>
+      </ScrollViewer>
     </Grid>
   </Grid>
 </UserControl>

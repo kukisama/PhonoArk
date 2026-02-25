@@ -107,6 +107,93 @@ public class ExamHistoryService
             .ToListAsync();
     }
 
+    public async Task<List<ExamQuestionAttempt>> GetAllQuestionAttemptsSummaryAsync()
+    {
+        return await _context.ExamQuestionAttempts
+            .OrderByDescending(a => a.ExamDate)
+            .ThenBy(a => a.QuestionOrder)
+            .Select(a => new ExamQuestionAttempt
+            {
+                Id = a.Id,
+                ExamResultId = a.ExamResultId,
+                QuestionOrder = a.QuestionOrder,
+                ExamDate = a.ExamDate,
+                PhonemeSymbol = a.PhonemeSymbol,
+                IsCorrect = a.IsCorrect
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<int>> GetExamResultIdPageAsync(int skip, int take)
+    {
+        return await _context.ExamResults
+            .OrderByDescending(r => r.Id)
+            .ThenByDescending(r => r.ExamDate)
+            .Skip(skip)
+            .Take(take)
+            .Select(r => r.Id)
+            .ToListAsync();
+    }
+
+    public async Task<List<ExamQuestionAttempt>> GetQuestionAttemptsSummaryByResultIdsAsync(
+        IReadOnlyCollection<int> examResultIds,
+        bool wrongOnly)
+    {
+        if (examResultIds.Count == 0)
+        {
+            return new List<ExamQuestionAttempt>();
+        }
+
+        var query = _context.ExamQuestionAttempts
+            .Where(a => examResultIds.Contains(a.ExamResultId));
+
+        if (wrongOnly)
+        {
+            query = query.Where(a => !a.IsCorrect);
+        }
+
+        return await query
+            .OrderByDescending(a => a.ExamDate)
+            .ThenBy(a => a.QuestionOrder)
+            .Select(a => new ExamQuestionAttempt
+            {
+                Id = a.Id,
+                ExamResultId = a.ExamResultId,
+                QuestionOrder = a.QuestionOrder,
+                ExamDate = a.ExamDate,
+                PhonemeSymbol = a.PhonemeSymbol,
+                IsCorrect = a.IsCorrect
+            })
+            .ToListAsync();
+    }
+
+    public async Task<(int TotalAttempts, int WrongAttempts)> GetAttemptMetricsAsync()
+    {
+        var total = await _context.ExamQuestionAttempts.CountAsync();
+        var wrong = await _context.ExamQuestionAttempts.CountAsync(a => !a.IsCorrect);
+        return (total, wrong);
+    }
+
+    public async Task<ExamQuestionAttempt?> GetQuestionAttemptDetailByIdAsync(int id)
+    {
+        return await _context.ExamQuestionAttempts
+            .Where(a => a.Id == id)
+            .Select(a => new ExamQuestionAttempt
+            {
+                Id = a.Id,
+                ExamResultId = a.ExamResultId,
+                QuestionOrder = a.QuestionOrder,
+                ExamDate = a.ExamDate,
+                PhonemeSymbol = a.PhonemeSymbol,
+                CorrectWord = a.CorrectWord,
+                CorrectIpa = a.CorrectIpa,
+                UserWord = a.UserWord,
+                UserIpa = a.UserIpa,
+                IsCorrect = a.IsCorrect
+            })
+            .FirstOrDefaultAsync();
+    }
+
     public async Task<List<PhonemeErrorStat>> GetPhonemeErrorStatsAsync()
     {
         return await _context.ExamQuestionAttempts

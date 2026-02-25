@@ -10,9 +10,9 @@ public class FavoriteButtonConverter : IValueConverter
     {
         if (value is bool isFavorite)
         {
-            return isFavorite ? "⭐ Remove from Favorites" : "☆ Add to Favorites";
+            return isFavorite ? "★" : "☆";
         }
-        return "☆ Add to Favorites";
+        return "☆";
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

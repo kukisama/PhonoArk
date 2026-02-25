@@ -9,6 +9,80 @@
              x:CompileBindings="False"
              x:DataType="vm:IpaChartViewModel">
 
+  <UserControl.Styles>
+    <Style Selector="UserControl.mobile Button.flutter-tile">
+      <Setter Property="MinWidth" Value="72"/>
+      <Setter Property="MinHeight" Value="60"/>
+      <Setter Property="FontSize" Value="26"/>
+      <Setter Property="Padding" Value="14,10"/>
+    </Style>
+
+    <Style Selector="UserControl.mobile Button.flutter-word">
+      <Setter Property="Padding" Value="12"/>
+      <Setter Property="MinHeight" Value="54"/>
+    </Style>
+
+    <Style Selector="Button.favorite-toggle">
+      <Setter Property="MinWidth" Value="40"/>
+      <Setter Property="MinHeight" Value="40"/>
+      <Setter Property="Padding" Value="0"/>
+      <Setter Property="FontSize" Value="26"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="CornerRadius" Value="12"/>
+      <Setter Property="Background" Value="#00000000"/>
+      <Setter Property="BorderBrush" Value="#00000000"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="FontFamily" Value="Segoe UI Symbol, Segoe UI Emoji, Noto Sans Symbols, Arial Unicode MS, sans-serif"/>
+      <Setter Property="Foreground" Value="#B88900"/>
+    </Style>
+
+    <Style Selector="Button.favorite-toggle.active">
+      <Setter Property="Foreground" Value="#EAB308"/>
+      <Setter Property="Background" Value="#1AF59E0B"/>
+      <Setter Property="BorderBrush" Value="#44F59E0B"/>
+    </Style>
+
+    <Style Selector="Button.phoneme-hero">
+      <Setter Property="Background" Value="#00000000"/>
+      <Setter Property="BorderBrush" Value="#00000000"/>
+      <Setter Property="Padding" Value="6"/>
+      <Setter Property="HorizontalAlignment" Value="Center"/>
+      <Setter Property="HorizontalContentAlignment" Value="Center"/>
+      <Setter Property="VerticalContentAlignment" Value="Center"/>
+      <Setter Property="MinWidth" Value="110"/>
+      <Setter Property="MinHeight" Value="86"/>
+    </Style>
+
+    <Style Selector="Button.word-chip">
+      <Setter Property="HorizontalAlignment" Value="Left"/>
+      <Setter Property="Padding" Value="12,8"/>
+      <Setter Property="Margin" Value="0,0,8,8"/>
+      <Setter Property="MinHeight" Value="0"/>
+    </Style>
+
+    <Style Selector="Button.flutter-tile.active">
+      <Setter Property="Background" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AppNavActiveTextBrush}"/>
+    </Style>
+
+    <Style Selector="Button.flutter-tile.active:pointerover">
+      <Setter Property="Background" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="BorderBrush" Value="{DynamicResource AppNavActiveBrush}"/>
+      <Setter Property="Foreground" Value="{DynamicResource AppNavActiveTextBrush}"/>
+    </Style>
+
+    <Style Selector="Button.flutter-tile.favorite">
+      <Setter Property="BorderBrush" Value="#C4A23A"/>
+      <Setter Property="BorderThickness" Value="1.5"/>
+    </Style>
+
+    <Style Selector="Button.flutter-tile.favorite:pointerover">
+      <Setter Property="BorderBrush" Value="#D4AF37"/>
+    </Style>
+  </UserControl.Styles>
+
   <Grid RowDefinitions="Auto,*" Margin="10" RowSpacing="10">
     <!-- Header -->
     <Border Grid.Row="0" Classes="flutter-card">
@@ -17,7 +91,7 @@
                    FontSize="24"
                    FontWeight="Bold"
                    VerticalAlignment="Center"/>
-      <Button Content="{Binding CurrentAccent}"
+      <Button Content="{Binding CurrentAccentDisplay}"
               Grid.Column="1"
               Command="{Binding SwitchAccentCommand}"
               Classes="flutter-secondary"
@@ -26,9 +100,9 @@
     </Border>
 
     <!-- Main Content -->
-    <Grid Grid.Row="1" ColumnDefinitions="2*,*" ColumnSpacing="10">
+    <Grid x:Name="IpaMainContentGrid" Grid.Row="1" ColumnDefinitions="2*,*" ColumnSpacing="10" Classes="ipa-main-content">
       <!-- Phoneme Lists -->
-      <ScrollViewer Grid.Column="0">
+      <ScrollViewer x:Name="PhonemeListScrollViewer" Grid.Column="0" Classes="phoneme-list-panel" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
         <StackPanel Spacing="12">
           <!-- Vowels -->
           <Border Classes="flutter-card">
@@ -43,7 +117,9 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Symbol}"
-                      Classes="flutter-tile"
+                      Classes="flutter-tile ipa-symbol-button"
+                      Classes.active="{Binding IsSelected}"
+                      Classes.favorite="{Binding IsFavorite}"
                       Command="{Binding #Root.DataContext.SelectPhonemeCommand}"
                           CommandParameter="{Binding}"
                           FontSize="24"
@@ -68,7 +144,9 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Symbol}"
-                      Classes="flutter-tile"
+                      Classes="flutter-tile ipa-symbol-button"
+                      Classes.active="{Binding IsSelected}"
+                      Classes.favorite="{Binding IsFavorite}"
                       Command="{Binding #Root.DataContext.SelectPhonemeCommand}"
                           CommandParameter="{Binding}"
                           FontSize="24"
@@ -93,7 +171,9 @@
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
                     <Button Content="{Binding Symbol}"
-                      Classes="flutter-tile"
+                      Classes="flutter-tile ipa-symbol-button"
+                      Classes.active="{Binding IsSelected}"
+                      Classes.favorite="{Binding IsFavorite}"
                       Command="{Binding #Root.DataContext.SelectPhonemeCommand}"
                           CommandParameter="{Binding}"
                           FontSize="24"
@@ -108,31 +188,32 @@
       </ScrollViewer>
 
       <!-- Phoneme Detail Panel -->
-      <Border Grid.Column="1" 
-              Classes="flutter-card"
+            <Border x:Name="DetailPanelBorder" Grid.Column="1" 
+              Classes="flutter-card ipa-detail-panel"
               IsVisible="{Binding SelectedPhoneme, Converter={x:Static ObjectConverters.IsNotNull}}">
         <ScrollViewer>
           <StackPanel Spacing="10">
-            <TextBlock Text="{Binding SelectedPhoneme.Symbol}" 
-                       FontSize="48" 
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"/>
-            
-                <Button Content="{Binding [PlaySound], Source={StaticResource Loc}}"
-                  Classes="flutter-primary"
-                    Command="{Binding PlayPhonemeCommand}"
-                    CommandParameter="{Binding SelectedPhoneme}"
-                    HorizontalAlignment="Stretch"
-                  />
+            <Grid>
+                    <Button Classes="phoneme-hero ipa-symbol-button"
+                      Command="{Binding PlayPhonemeCommand}"
+                      CommandParameter="{Binding SelectedPhoneme}">
+                <TextBlock Text="{Binding SelectedPhoneme.Symbol}"
+                     FontSize="56"
+                       FontWeight="Normal"
+                           Classes="ipa-symbol"/>
+              </Button>
+
+                    <Button Content="{Binding IsFavorite, Converter={StaticResource FavoriteButtonConverter}}"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Top"
+                      Classes="favorite-toggle"
+                      Classes.active="{Binding IsFavorite}"
+                      Command="{Binding ToggleFavoriteCommand}"/>
+            </Grid>
 
             <TextBlock Text="{Binding SelectedPhoneme.Description}" 
                        TextWrapping="Wrap"
                        FontSize="14"/>
-
-            <Button Content="{Binding IsFavorite, Converter={StaticResource FavoriteButtonConverter}}"
-                  Classes="flutter-secondary"
-                    Command="{Binding ToggleFavoriteCommand}"
-                  HorizontalAlignment="Stretch"/>
 
             <TextBlock Text="{Binding [ExampleWords], Source={StaticResource Loc}}" 
                        FontSize="16" 
@@ -140,17 +221,20 @@
                        Margin="0,10,0,5"/>
 
             <ItemsControl ItemsSource="{Binding SelectedPhoneme.ExampleWords}">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                  <WrapPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
               <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button HorizontalAlignment="Stretch"
-                        Margin="0,3"
-                      Classes="flutter-word"
+                    <Button Classes="flutter-word word-chip"
                       Classes.playing="{Binding IsPlaying}"
                       Command="{Binding #Root.DataContext.PlayWordCommand}"
                           CommandParameter="{Binding}">
-                    <StackPanel>
-                      <TextBlock Text="{Binding Word}" FontSize="16" FontWeight="SemiBold"/>
-                      <TextBlock Text="{Binding IpaTranscription}" FontSize="14" Opacity="0.7"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                      <TextBlock Text="{Binding Word}" FontSize="15" FontWeight="SemiBold"/>
+                      <TextBlock Text="{Binding IpaTranscription}" Classes="ipa-symbol ipa-transcription" FontSize="13" Opacity="0.76"/>
                     </StackPanel>
                   </Button>
                 </DataTemplate>
@@ -158,18 +242,6 @@
             </ItemsControl>
           </StackPanel>
         </ScrollViewer>
-      </Border>
-
-      <!-- Placeholder when no phoneme selected -->
-      <Border Grid.Column="1" 
-              Classes="flutter-card"
-              IsVisible="{Binding SelectedPhoneme, Converter={x:Static ObjectConverters.IsNull}}">
-        <TextBlock Text="{Binding [SelectPhonemeHint], Source={StaticResource Loc}}"
-                   TextAlignment="Center"
-                   VerticalAlignment="Center"
-                   FontSize="16"
-                   Opacity="0.6"
-                   TextWrapping="Wrap"/>
       </Border>
     </Grid>
   </Grid>

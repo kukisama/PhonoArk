@@ -27,6 +27,7 @@
 
         <!-- Windows TTS -->
         <PackageVersion Include="System.Speech" Version="9.0.10" />
+        <PackageVersion Include="System.Windows.Extensions" Version="9.0.10" />
 
         <PackageVersion Include="Xamarin.AndroidX.Core.SplashScreen" Version="1.0.1.15" />
     </ItemGroup>

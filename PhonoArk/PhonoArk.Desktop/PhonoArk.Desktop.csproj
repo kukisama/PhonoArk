@@ -9,11 +9,36 @@
 
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\PhonoArk\Assets\app.ico</ApplicationIcon>
+    <UsJennyExtractRoot>..\PhonoArk\Data\Exportfile\US-Jenny</UsJennyExtractRoot>
   </PropertyGroup>
+
+  <Target Name="CopyUsJennyToDesktopOutput" AfterTargets="Build" Condition="Exists('$(UsJennyExtractRoot)')">
+    <ItemGroup>
+      <UsJennyDesktopFiles Include="$(UsJennyExtractRoot)\**\*.*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(UsJennyDesktopFiles)"
+      DestinationFiles="@(UsJennyDesktopFiles->'$(OutDir)Data\\Exportfile\\US-Jenny\\%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
+
+  <Target Name="CopyUsJennyToDesktopPublish" AfterTargets="Publish" Condition="Exists('$(UsJennyExtractRoot)') and '$(PublishDir)' != ''">
+    <ItemGroup>
+      <UsJennyDesktopFiles Include="$(UsJennyExtractRoot)\**\*.*" />
+    </ItemGroup>
+
+    <Copy
+      SourceFiles="@(UsJennyDesktopFiles)"
+      DestinationFiles="@(UsJennyDesktopFiles->'$(PublishDir)Data\\Exportfile\\US-Jenny\\%(RecursiveDir)%(Filename)%(Extension)')"
+      SkipUnchangedFiles="true" />
+  </Target>
 
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" />
     <PackageReference Include="System.Speech" />
+    <PackageReference Include="System.Windows.Extensions" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Include="Avalonia.Diagnostics" >
       <IncludeAssets Condition="'$(Configuration)' != 'Debug'">None</IncludeAssets>

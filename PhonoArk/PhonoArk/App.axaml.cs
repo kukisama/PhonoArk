@@ -43,7 +43,6 @@ public partial class App : Application
         dbContext.Database.EnsureCreated();
 
         // Initialize services
-        var phonemeDataService = new PhonemeDataService();
         var audioService = new AudioService();
         var localizationService = Resources["Loc"] as LocalizationService;
         if (localizationService == null)
@@ -51,13 +50,15 @@ public partial class App : Application
             localizationService = new LocalizationService();
             Resources["Loc"] = localizationService;
         }
-        var favoriteService = new FavoriteService(dbContext);
+        var phonemeDataService = new PhonemeDataService(localizationService);
+        localizationService.PropertyChanged += (_, _) => phonemeDataService.RefreshLocalizedDescriptions();
+        var favoriteService = new FavoriteService(new AppDbContext(optionsBuilder.Options));
         var examService = new ExamService(phonemeDataService, favoriteService);
-        var examHistoryService = new ExamHistoryService(dbContext);
-        var settingsService = new SettingsService(dbContext);
+        var examHistoryService = new ExamHistoryService(new AppDbContext(optionsBuilder.Options));
+        var settingsService = new SettingsService(new AppDbContext(optionsBuilder.Options));
 
         // Initialize ViewModels
-        var ipaChartViewModel = new IpaChartViewModel(phonemeDataService, audioService, favoriteService);
+        var ipaChartViewModel = new IpaChartViewModel(phonemeDataService, audioService, favoriteService, localizationService);
         var examViewModel = new ExamViewModel(examService, examHistoryService, audioService, localizationService);
         var examHistoryViewModel = new ExamHistoryViewModel(examHistoryService, localizationService);
         var favoritesViewModel = new FavoritesViewModel(favoriteService, phonemeDataService);
