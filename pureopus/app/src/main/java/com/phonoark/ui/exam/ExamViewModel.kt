@@ -1,13 +1,12 @@
 package com.phonoark.ui.exam
 
-import android.speech.tts.TextToSpeech
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.phonoark.data.model.Accent
 import com.phonoark.data.model.ExamQuestion
 import com.phonoark.data.model.ExamQuestionAttempt
 import com.phonoark.data.model.ExamResult
 import com.phonoark.data.model.ExampleWord
+import com.phonoark.data.repository.AudioRepository
 import com.phonoark.data.repository.ExamRepository
 import com.phonoark.data.repository.FavoriteRepository
 import com.phonoark.data.repository.HistoryRepository
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.util.Locale
 import javax.inject.Inject
 
 sealed class FeedbackType {
@@ -54,16 +52,14 @@ class ExamViewModel @Inject constructor(
     private val phonemeRepository: PhonemeRepository,
     private val favoriteRepository: FavoriteRepository,
     private val historyRepository: HistoryRepository,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val audioRepository: AudioRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ExamUiState())
     val uiState: StateFlow<ExamUiState> = _uiState.asStateFlow()
 
-    var tts: TextToSpeech? = null
     private var examStartTime: Long = 0
-    private var currentAccent: Accent = Accent.GEN_AM
-    private var currentVolume: Int = 80
 
     companion object {
         private const val AUTO_ADVANCE_DELAY_MS = 1200L
@@ -73,8 +69,9 @@ class ExamViewModel @Inject constructor(
         viewModelScope.launch {
             val settings = settingsRepository.getSettings()
             _uiState.value = _uiState.value.copy(questionCount = settings.examQuestionCount)
-            currentAccent = settings.defaultAccent
-            currentVolume = settings.volume
+            audioRepository.initialize()
+            audioRepository.updateAccent(settings.defaultAccent)
+            audioRepository.updateVolume(settings.volume)
         }
     }
 
@@ -117,15 +114,12 @@ class ExamViewModel @Inject constructor(
 
     fun playCurrentPhoneme() {
         val question = _uiState.value.currentQuestion ?: return
+        val phoneme = phonemeRepository.getPhonemeBySymbol(question.phoneme.symbol)
         val word = question.correctAnswer
-        val locale = if (currentAccent == Accent.RP) Locale.UK else Locale.US
-        tts?.language = locale
-        tts?.setSpeechRate(1.0f)
-        val volume = currentVolume / 100f
-        val params = android.os.Bundle().apply {
-            putFloat(TextToSpeech.Engine.KEY_PARAM_VOLUME, volume)
-        }
-        tts?.speak(word.word, TextToSpeech.QUEUE_FLUSH, params, "exam_phoneme")
+        audioRepository.playPhoneme(
+            phoneme?.voiceAudioPaths ?: emptyMap(),
+            word.word
+        )
     }
 
     fun selectAnswer(answer: ExampleWord) {
@@ -153,7 +147,6 @@ class ExamViewModel @Inject constructor(
             isAnswered = true
         )
 
-        // Auto advance after delay (matching original 1.2s behavior)
         viewModelScope.launch {
             delay(AUTO_ADVANCE_DELAY_MS)
             nextQuestion()
@@ -219,7 +212,6 @@ class ExamViewModel @Inject constructor(
     }
 
     override fun onCleared() {
-        tts?.shutdown()
         super.onCleared()
     }
 }

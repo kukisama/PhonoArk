@@ -2,7 +2,6 @@ package com.phonoark.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.LibraryMusic
 import androidx.compose.material.icons.filled.Quiz
@@ -25,7 +24,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.phonoark.R
 import com.phonoark.ui.exam.ExamScreen
-import com.phonoark.ui.favorites.FavoritesScreen
 import com.phonoark.ui.history.HistoryScreen
 import com.phonoark.ui.ipachart.IpaChartScreen
 import com.phonoark.ui.settings.SettingsScreen
@@ -33,7 +31,6 @@ import com.phonoark.ui.settings.SettingsScreen
 sealed class Screen(val route: String, val labelResId: Int, val icon: ImageVector) {
     data object IpaChart : Screen("ipa_chart", R.string.nav_ipa_chart, Icons.Default.LibraryMusic)
     data object Exam : Screen("exam", R.string.nav_exam, Icons.Default.Quiz)
-    data object Favorites : Screen("favorites", R.string.nav_favorites, Icons.Default.Favorite)
     data object History : Screen("history", R.string.nav_history, Icons.Default.History)
     data object Settings : Screen("settings", R.string.nav_settings, Icons.Default.Settings)
 }
@@ -41,7 +38,6 @@ sealed class Screen(val route: String, val labelResId: Int, val icon: ImageVecto
 val bottomNavItems = listOf(
     Screen.IpaChart,
     Screen.Exam,
-    Screen.Favorites,
     Screen.History,
     Screen.Settings
 )
@@ -81,7 +77,6 @@ fun AppNavigation(darkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
         ) {
             composable(Screen.IpaChart.route) { IpaChartScreen() }
             composable(Screen.Exam.route) { ExamScreen() }
-            composable(Screen.Favorites.route) { FavoritesScreen() }
             composable(Screen.History.route) { HistoryScreen() }
             composable(Screen.Settings.route) {
                 SettingsScreen(

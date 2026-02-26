@@ -40,6 +40,26 @@ android {
     }
 }
 
+// Voice pack extraction: extract US-Jenny WAV files from shared PhonoArk Data zip
+val voiceZip = rootProject.file("../PhonoArk/PhonoArk/Data/US-Jenny.zip")
+val voiceAssetsDir = file("src/main/assets/US-Jenny")
+
+tasks.register<Copy>("extractVoicePack") {
+    from(zipTree(voiceZip))
+    into(voiceAssetsDir)
+    eachFile {
+        // Flatten nested root directory if present
+        val segments = relativePath.segments
+        if (segments.size > 1 && segments[0].equals("US-Jenny", ignoreCase = true)) {
+            relativePath = RelativePath(true, *segments.drop(1).toTypedArray())
+        }
+    }
+    includeEmptyDirs = false
+    onlyIf { voiceZip.exists() && (!voiceAssetsDir.exists() || voiceAssetsDir.listFiles()?.isEmpty() == true) }
+}
+
+tasks.named("preBuild") { dependsOn("extractVoicePack") }
+
 dependencies {
     // Compose BOM
     val composeBom = platform("androidx.compose:compose-bom:2024.12.01")

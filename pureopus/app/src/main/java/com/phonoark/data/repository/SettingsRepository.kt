@@ -4,6 +4,9 @@ import com.phonoark.data.local.SettingsDao
 import com.phonoark.data.local.SettingsEntity
 import com.phonoark.data.model.Accent
 import com.phonoark.data.model.AppSettings
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -12,6 +15,9 @@ class SettingsRepository @Inject constructor(
     private val settingsDao: SettingsDao
 ) {
     private var cachedSettings: AppSettings? = null
+
+    private val _accentChanged = MutableSharedFlow<Accent>(replay = 1)
+    val accentChanged: SharedFlow<Accent> = _accentChanged.asSharedFlow()
 
     suspend fun getSettings(): AppSettings {
         cachedSettings?.let { return it }
@@ -32,6 +38,7 @@ class SettingsRepository @Inject constructor(
         ensureExists()
         settingsDao.updateAccent(accent.name)
         cachedSettings = cachedSettings?.copy(defaultAccent = accent)
+        _accentChanged.emit(accent)
     }
 
     suspend fun updateVolume(volume: Int) {
@@ -72,7 +79,7 @@ class SettingsRepository @Inject constructor(
 
     private fun SettingsEntity.toDomain() = AppSettings(
         id = id,
-        defaultAccent = try { Accent.valueOf(defaultAccent) } catch (_: IllegalArgumentException) { Accent.GEN_AM },
+        defaultAccent = try { Accent.valueOf(defaultAccent) } catch (_: IllegalArgumentException) { Accent.US_JENNY },
         volume = volume,
         examQuestionCount = examQuestionCount,
         darkMode = darkMode,
