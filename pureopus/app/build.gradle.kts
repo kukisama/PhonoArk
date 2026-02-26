@@ -55,7 +55,7 @@ tasks.register<Copy>("extractVoicePack") {
         }
     }
     includeEmptyDirs = false
-    onlyIf { voiceZip.exists() && (!voiceAssetsDir.exists() || voiceAssetsDir.listFiles()?.isEmpty() != false) }
+    onlyIf { voiceZip.exists() && (!voiceAssetsDir.exists() || voiceAssetsDir.listFiles()?.isEmpty() == true) }
 }
 
 tasks.named("preBuild") { dependsOn("extractVoicePack") }

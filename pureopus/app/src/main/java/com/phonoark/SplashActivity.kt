@@ -3,10 +3,11 @@ package com.phonoark
 import android.content.Intent
 import android.graphics.Matrix
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageView
 import androidx.activity.ComponentActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SplashActivity : ComponentActivity() {
 
@@ -43,12 +44,13 @@ class SplashActivity : ComponentActivity() {
 
         setContentView(splashImage)
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, MainActivity::class.java).apply {
+        lifecycleScope.launch {
+            delay(SPLASH_DELAY_MS)
+            startActivity(Intent(this@SplashActivity, MainActivity::class.java).apply {
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             })
             finish()
-        }, SPLASH_DELAY_MS)
+        }
     }
 
     private fun applyCrop() {

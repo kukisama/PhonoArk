@@ -48,7 +48,7 @@ class PhonemeRepository @Inject constructor(
                     else -> PhonemeType.CONSONANT
                 }
 
-                // Build phoneme-level voice audio paths
+                // WAV naming: phonemes01.wav..phonemesNN.wav (1-based, matches PhonoArk C# convention)
                 val phonemeWavName = "phonemes${String.format("%02d", index + 1)}.wav"
                 val phonemeVoicePaths = mutableMapOf<String, String>()
                 if (phonemeWavName in usJennyPhonemeAssets) {

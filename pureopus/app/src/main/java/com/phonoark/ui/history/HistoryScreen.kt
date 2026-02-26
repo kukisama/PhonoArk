@@ -277,7 +277,7 @@ private fun StatItem(label: String, value: String) {
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SessionCard(session: ExamResult, index: Int, attempts: List<com.phonoark.data.model.ExamQuestionAttempt>?, onClick: () -> Unit) {
+private fun SessionCard(session: ExamResult, index: Int, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -326,21 +326,25 @@ private fun SessionCard(session: ExamResult, index: Int, attempts: List<com.phon
                     )
                 }
             }
-            // Colored result dots row
+            // Colored result dots - approximate overview (green = correct count, red = remaining)
             Spacer(modifier = Modifier.height(6.dp))
             FlowRow(
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                repeat(session.totalQuestions) { i ->
-                    val isCorrect = i < session.correctAnswers
+                // Show correct answers first (green), then wrong answers (red)
+                repeat(session.correctAnswers) {
                     Box(
                         modifier = Modifier
                             .size(12.dp)
-                            .background(
-                                color = if (isCorrect) Green500 else Red500,
-                                shape = CircleShape
-                            )
+                            .background(color = Green500, shape = CircleShape)
+                    )
+                }
+                repeat(session.totalQuestions - session.correctAnswers) {
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .background(color = Red500, shape = CircleShape)
                     )
                 }
             }
