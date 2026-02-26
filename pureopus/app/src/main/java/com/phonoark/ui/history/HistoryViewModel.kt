@@ -20,7 +20,9 @@ data class HistoryUiState(
     val errorStats: List<Pair<String, Int>> = emptyList(),
     val showWrongOnly: Boolean = false,
     val selectedSessionAttempts: List<ExamQuestionAttempt>? = null,
-    val selectedSessionId: Long? = null
+    val selectedSessionId: Long? = null,
+    val hasMore: Boolean = true,
+    val isLoading: Boolean = false
 ) {
     val wrongRate: Double
         get() = if (totalAttempts > 0) wrongAttempts.toDouble() / totalAttempts * 100 else 0.0
@@ -37,6 +39,14 @@ class HistoryViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(HistoryUiState())
     val uiState: StateFlow<HistoryUiState> = _uiState.asStateFlow()
 
+    private var allSessions: List<ExamResult> = emptyList()
+    private var displayedCount: Int = 0
+
+    companion object {
+        private const val INITIAL_LOAD = 2
+        private const val PAGE_SIZE = 3
+    }
+
     init {
         loadHistory()
     }
@@ -44,20 +54,34 @@ class HistoryViewModel @Inject constructor(
     private fun loadHistory() {
         viewModelScope.launch {
             historyRepository.getAllResults().collect { results ->
+                allSessions = results
+                displayedCount = minOf(INITIAL_LOAD, results.size)
                 val avgScore = historyRepository.getAverageScore()
                 val totalAttempts = historyRepository.getTotalAttempts()
                 val wrongAttempts = historyRepository.getWrongAttempts()
                 val errorStats = historyRepository.getPhonemeErrorStats()
 
                 _uiState.value = _uiState.value.copy(
-                    sessions = results,
+                    sessions = allSessions.take(displayedCount),
                     averageScore = avgScore,
                     totalAttempts = totalAttempts,
                     wrongAttempts = wrongAttempts,
-                    errorStats = errorStats
+                    errorStats = errorStats,
+                    hasMore = displayedCount < allSessions.size
                 )
             }
         }
+    }
+
+    fun loadMore() {
+        if (!_uiState.value.hasMore || _uiState.value.isLoading) return
+        _uiState.value = _uiState.value.copy(isLoading = true)
+        displayedCount = minOf(displayedCount + PAGE_SIZE, allSessions.size)
+        _uiState.value = _uiState.value.copy(
+            sessions = allSessions.take(displayedCount),
+            hasMore = displayedCount < allSessions.size,
+            isLoading = false
+        )
     }
 
     fun toggleShowWrongOnly() {

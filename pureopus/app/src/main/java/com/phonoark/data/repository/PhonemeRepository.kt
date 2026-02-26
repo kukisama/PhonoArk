@@ -24,6 +24,9 @@ class PhonemeRepository @Inject constructor(
     var loadError: String? = null
         private set
 
+    private val usJennyPhonemeAssets: Set<String> by lazy { listUsJennyAssets("US-Jenny/phonemes") }
+    private val usJennyWordAssets: Set<String> by lazy { listUsJennyAssets("US-Jenny/words") }
+
     init {
         loadPhonemes()
     }
@@ -37,12 +40,19 @@ class PhonemeRepository @Inject constructor(
             val allGlobalWords = data.globalWords.map { ExampleWord(it.word, it.ipaTranscription) }
             val targetCount = Math.max(4, data.targetWordsPerPhoneme)
 
-            _phonemes = data.phonemes.map { p ->
+            _phonemes = data.phonemes.mapIndexed { index, p ->
                 val type = when (p.type.lowercase()) {
                     "vowel" -> PhonemeType.VOWEL
                     "diphthong" -> PhonemeType.DIPHTHONG
                     "consonant" -> PhonemeType.CONSONANT
                     else -> PhonemeType.CONSONANT
+                }
+
+                // Build phoneme-level voice audio paths
+                val phonemeWavName = "phonemes${String.format("%02d", index + 1)}.wav"
+                val phonemeVoicePaths = mutableMapOf<String, String>()
+                if (phonemeWavName in usJennyPhonemeAssets) {
+                    phonemeVoicePaths["US_JENNY"] = "US-Jenny/phonemes/$phonemeWavName"
                 }
 
                 // Merge phoneme-specific words with global matching words
@@ -64,16 +74,35 @@ class PhonemeRepository @Inject constructor(
                     mergedWords
                 }
 
+                // Inject word-level voice audio paths
+                val wordsWithAudio = selectedWords.map { word ->
+                    val wordWavName = "${word.word.lowercase().trim()}.wav"
+                    val wordVoicePaths = mutableMapOf<String, String>()
+                    if (wordWavName in usJennyWordAssets) {
+                        wordVoicePaths["US_JENNY"] = "US-Jenny/words/$wordWavName"
+                    }
+                    word.copy(voiceAudioPaths = wordVoicePaths)
+                }
+
                 Phoneme(
                     symbol = p.symbol,
                     type = type,
                     description = p.description,
-                    exampleWords = selectedWords
+                    exampleWords = wordsWithAudio,
+                    voiceAudioPaths = phonemeVoicePaths
                 )
             }
         } catch (e: Exception) {
             loadError = e.message
             _phonemes = emptyList()
+        }
+    }
+
+    private fun listUsJennyAssets(path: String): Set<String> {
+        return try {
+            context.assets.list(path)?.toSet() ?: emptySet()
+        } catch (_: Exception) {
+            emptySet()
         }
     }
 

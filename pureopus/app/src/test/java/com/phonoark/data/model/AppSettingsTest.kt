@@ -7,9 +7,9 @@ import org.junit.Test
 class AppSettingsTest {
 
     @Test
-    fun `default settings have GenAm accent`() {
+    fun `default settings have USJenny accent`() {
         val settings = AppSettings()
-        assertEquals(Accent.GEN_AM, settings.defaultAccent)
+        assertEquals(Accent.US_JENNY, settings.defaultAccent)
     }
 
     @Test

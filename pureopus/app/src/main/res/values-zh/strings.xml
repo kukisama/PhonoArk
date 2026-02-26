@@ -23,6 +23,7 @@
     <string name="select_phoneme_hint">请选择一个音素查看详情与示例单词</string>
     <string name="accent_genam">美式（GenAm）</string>
     <string name="accent_rp">英式（RP）</string>
+    <string name="accent_usjenny">US-Jenny ★</string>
 
     <!-- Settings -->
     <string name="settings_title">设置</string>
@@ -93,4 +94,11 @@
     <string name="feedback_correct_template">✓ 回答正确！答案是"%1$s" %2$s</string>
     <string name="feedback_incorrect_template">✗ 回答错误。正确答案是"%1$s" %2$s</string>
     <string name="feedback_exam_completed_template">测试完成！得分：%1$d/%2$d（%3$.1f%%）</string>
+
+    <!-- About -->
+    <string name="about">关于</string>
+    <string name="version">版本</string>
+
+    <!-- History -->
+    <string name="load_more">加载更多</string>
 </resources>

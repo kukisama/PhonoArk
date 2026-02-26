@@ -1,6 +1,8 @@
 package com.phonoark.ui.exam
 
-import android.speech.tts.TextToSpeech
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -34,7 +36,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +44,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -54,7 +54,6 @@ import com.phonoark.R
 import com.phonoark.data.model.ExampleWord
 import com.phonoark.ui.theme.Green500
 import com.phonoark.ui.theme.Red500
-import java.util.Locale
 
 @Composable
 private fun formatFeedback(feedback: FeedbackType): String {
@@ -73,16 +72,6 @@ fun ExamScreen(
     viewModel: ExamViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
-    val context = LocalContext.current
-
-    DisposableEffect(Unit) {
-        viewModel.tts = TextToSpeech(context) { status ->
-            if (status == TextToSpeech.SUCCESS) {
-                viewModel.tts?.language = Locale.US
-            }
-        }
-        onDispose { }
-    }
 
     Column(
         modifier = Modifier
@@ -279,14 +268,28 @@ private fun ActiveExam(
             modifier = Modifier.padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val interactionSource = remember { MutableInteractionSource() }
+            val isPressed by interactionSource.collectIsPressedAsState()
+            val buttonColor by animateColorAsState(
+                targetValue = if (isPressed)
+                    MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                else
+                    MaterialTheme.colorScheme.primary,
+                label = "playButtonColor"
+            )
+
             Button(
                 onClick = onPlayPhoneme,
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                interactionSource = interactionSource,
+                modifier = Modifier
+                    .fillMaxWidth(0.7f)
+                    .height(56.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
             ) {
-                Icon(Icons.Default.VolumeUp, contentDescription = null, modifier = Modifier.size(24.dp))
+                Icon(Icons.Default.VolumeUp, contentDescription = null, modifier = Modifier.size(28.dp))
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.play_phoneme), fontSize = 16.sp)
+                Text(stringResource(R.string.play_phoneme), fontSize = 18.sp)
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -340,10 +343,7 @@ private fun ActiveExam(
                     .fillMaxWidth(0.47f)
                     .height(56.dp)
             ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(text = option.word, fontWeight = FontWeight.Bold)
-                    Text(text = option.ipaTranscription, fontSize = 11.sp)
-                }
+                Text(text = option.word, fontWeight = FontWeight.Bold)
             }
         }
     }

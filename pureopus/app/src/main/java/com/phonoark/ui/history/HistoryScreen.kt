@@ -1,18 +1,24 @@
 package com.phonoark.ui.history
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
@@ -195,8 +201,21 @@ fun HistoryScreen(
                     SessionCard(
                         session = session,
                         index = index + 1,
+                        attempts = null,
                         onClick = { viewModel.openAttemptDetails(session.id) }
                     )
+                }
+                if (state.hasMore) {
+                    item {
+                        OutlinedButton(
+                            onClick = { viewModel.loadMore() },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp)
+                        ) {
+                            Text(stringResource(R.string.load_more))
+                        }
+                    }
                 }
             }
         }
@@ -256,8 +275,9 @@ private fun StatItem(label: String, value: String) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun SessionCard(session: ExamResult, index: Int, onClick: () -> Unit) {
+private fun SessionCard(session: ExamResult, index: Int, attempts: List<com.phonoark.data.model.ExamQuestionAttempt>?, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -265,42 +285,64 @@ private fun SessionCard(session: ExamResult, index: Int, onClick: () -> Unit) {
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(12.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
+                .padding(12.dp)
         ) {
-            Column {
-                Text(
-                    text = stringResource(R.string.exam_session_title_template, index),
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = session.examDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "${stringResource(R.string.scope)} ${session.examScope}",
-                    style = MaterialTheme.typography.bodySmall
-                )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column {
+                    Text(
+                        text = stringResource(R.string.exam_session_title_template, index),
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = session.examDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = "${stringResource(R.string.scope)} ${session.examScope}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Column(horizontalAlignment = Alignment.End) {
+                    Text(
+                        text = "${session.correctAnswers}/${session.totalQuestions}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = "${"%.1f".format(session.scorePercentage)}%",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        text = "${stringResource(R.string.duration)} ${session.durationSeconds}s",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = "${session.correctAnswers}/${session.totalQuestions}",
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 20.sp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Text(
-                    text = "${"%.1f".format(session.scorePercentage)}%",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = "${stringResource(R.string.duration)} ${session.durationSeconds}s",
-                    style = MaterialTheme.typography.bodySmall
-                )
+            // Colored result dots row
+            Spacer(modifier = Modifier.height(6.dp))
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                repeat(session.totalQuestions) { i ->
+                    val isCorrect = i < session.correctAnswers
+                    Box(
+                        modifier = Modifier
+                            .size(12.dp)
+                            .background(
+                                color = if (isCorrect) Green500 else Red500,
+                                shape = CircleShape
+                            )
+                    )
+                }
             }
         }
     }

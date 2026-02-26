@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class SettingsEntity(
     @PrimaryKey
     val id: Long = 1,
-    val defaultAccent: String = "GEN_AM",
+    val defaultAccent: String = "US_JENNY",
     val volume: Int = 80,
     val examQuestionCount: Int = 10,
     val darkMode: Boolean = false,

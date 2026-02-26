@@ -23,6 +23,7 @@
     <string name="select_phoneme_hint">Select a phoneme to see details and example words</string>
     <string name="accent_genam">American (GenAm)</string>
     <string name="accent_rp">British (RP)</string>
+    <string name="accent_usjenny">US-Jenny ★</string>
 
     <!-- Settings -->
     <string name="settings_title">Settings</string>
@@ -93,4 +94,11 @@
     <string name="feedback_correct_template">✓ Correct! The answer is \'%1$s\' %2$s</string>
     <string name="feedback_incorrect_template">✗ Incorrect. The correct answer is \'%1$s\' %2$s</string>
     <string name="feedback_exam_completed_template">Exam completed! Score: %1$d/%2$d (%3$.1f%%)</string>
+
+    <!-- About -->
+    <string name="about">About</string>
+    <string name="version">Version</string>
+
+    <!-- History -->
+    <string name="load_more">Load More</string>
 </resources>

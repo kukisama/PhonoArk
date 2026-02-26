@@ -1,7 +1,8 @@
 package com.phonoark.ui.settings
 
 import android.app.Activity
-import android.speech.tts.TextToSpeech
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.OpenInNew
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -32,7 +34,6 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +49,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.phonoark.R
 import com.phonoark.data.model.Accent
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,11 +59,6 @@ fun SettingsScreen(
 ) {
     val state by viewModel.uiState.collectAsState()
     val context = LocalContext.current
-
-    DisposableEffect(Unit) {
-        viewModel.tts = TextToSpeech(context) { _ -> }
-        onDispose { }
-    }
 
     Column(
         modifier = Modifier
@@ -106,10 +101,11 @@ fun SettingsScreen(
                     onExpandedChange = { accentExpanded = it }
                 ) {
                     OutlinedTextField(
-                        value = if (state.settings.defaultAccent == Accent.GEN_AM)
-                            stringResource(R.string.accent_genam)
-                        else
-                            stringResource(R.string.accent_rp),
+                        value = when (state.settings.defaultAccent) {
+                            Accent.US_JENNY -> stringResource(R.string.accent_usjenny)
+                            Accent.GEN_AM -> stringResource(R.string.accent_genam)
+                            Accent.RP -> stringResource(R.string.accent_rp)
+                        },
                         onValueChange = {},
                         readOnly = true,
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = accentExpanded) },
@@ -121,6 +117,13 @@ fun SettingsScreen(
                         expanded = accentExpanded,
                         onDismissRequest = { accentExpanded = false }
                     ) {
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.accent_usjenny)) },
+                            onClick = {
+                                viewModel.updateAccent(Accent.US_JENNY)
+                                accentExpanded = false
+                            }
+                        )
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.accent_genam)) },
                             onClick = {
@@ -260,7 +263,6 @@ fun SettingsScreen(
         Button(
             onClick = {
                 viewModel.saveSettings()
-                // Recreate activity to apply locale change
                 (context as? Activity)?.recreate()
             },
             modifier = Modifier.fillMaxWidth(),
@@ -307,6 +309,40 @@ fun SettingsScreen(
                         style = MaterialTheme.typography.bodySmall,
                         fontFamily = androidx.compose.ui.text.font.FontFamily.Monospace
                     )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // About section: version + GitHub link
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(12.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(
+                    text = stringResource(R.string.about),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = "${stringResource(R.string.version)} 1.0.0",
+                    style = MaterialTheme.typography.bodyMedium
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedButton(
+                    onClick = {
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/kukisama/PhonoArk"))
+                        context.startActivity(intent)
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Icon(Icons.Default.OpenInNew, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("GitHub")
                 }
             }
         }
