@@ -201,7 +201,6 @@ fun HistoryScreen(
                     SessionCard(
                         session = session,
                         index = index + 1,
-                        attempts = null,
                         onClick = { viewModel.openAttemptDetails(session.id) }
                     )
                 }

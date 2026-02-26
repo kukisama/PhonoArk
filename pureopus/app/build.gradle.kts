@@ -42,7 +42,7 @@ android {
 
 // Voice pack extraction: extract US-Jenny WAV files from shared PhonoArk Data zip
 val voiceZip = rootProject.file("../PhonoArk/PhonoArk/Data/US-Jenny.zip")
-val voiceAssetsDir = file("src/main/assets/US-Jenny")
+val voiceAssetsDir = file("src/main/assets/Exportfile/US-Jenny")
 
 tasks.register<Copy>("extractVoicePack") {
     from(zipTree(voiceZip))

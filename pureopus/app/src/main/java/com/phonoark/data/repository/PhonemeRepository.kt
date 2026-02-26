@@ -24,8 +24,8 @@ class PhonemeRepository @Inject constructor(
     var loadError: String? = null
         private set
 
-    private val usJennyPhonemeAssets: Set<String> by lazy { listUsJennyAssets("US-Jenny/phonemes") }
-    private val usJennyWordAssets: Set<String> by lazy { listUsJennyAssets("US-Jenny/words") }
+    private val usJennyPhonemeAssets: Set<String> by lazy { listUsJennyAssets("Exportfile/US-Jenny/phonemes") }
+    private val usJennyWordAssets: Set<String> by lazy { listUsJennyAssets("Exportfile/US-Jenny/words") }
 
     init {
         loadPhonemes()
@@ -52,7 +52,7 @@ class PhonemeRepository @Inject constructor(
                 val phonemeWavName = "phonemes${String.format("%02d", index + 1)}.wav"
                 val phonemeVoicePaths = mutableMapOf<String, String>()
                 if (phonemeWavName in usJennyPhonemeAssets) {
-                    phonemeVoicePaths["US_JENNY"] = "US-Jenny/phonemes/$phonemeWavName"
+                    phonemeVoicePaths["US_JENNY"] = "Exportfile/US-Jenny/phonemes/$phonemeWavName"
                 }
 
                 // Merge phoneme-specific words with global matching words
@@ -79,7 +79,7 @@ class PhonemeRepository @Inject constructor(
                     val wordWavName = "${word.word.lowercase().trim()}.wav"
                     val wordVoicePaths = mutableMapOf<String, String>()
                     if (wordWavName in usJennyWordAssets) {
-                        wordVoicePaths["US_JENNY"] = "US-Jenny/words/$wordWavName"
+                        wordVoicePaths["US_JENNY"] = "Exportfile/US-Jenny/words/$wordWavName"
                     }
                     word.copy(voiceAudioPaths = wordVoicePaths)
                 }

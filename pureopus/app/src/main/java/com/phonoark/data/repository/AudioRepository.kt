@@ -109,7 +109,7 @@ class AudioRepository @Inject constructor(
 
     private fun hasUsJennyAssets(): Boolean {
         return try {
-            val files = context.assets.list("US-Jenny/phonemes")
+            val files = context.assets.list("Exportfile/US-Jenny/phonemes")
             files != null && files.isNotEmpty()
         } catch (_: Exception) {
             false
