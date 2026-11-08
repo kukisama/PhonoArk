@@ -4,6 +4,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -260,45 +261,54 @@ private fun ActiveExam(
 
     Spacer(modifier = Modifier.height(16.dp))
 
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+    // 播放音素的框体居中显示（视觉焦点更明确）。
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth(0.85f)
+                .align(Alignment.Center),
+            shape = RoundedCornerShape(12.dp)
         ) {
-            val interactionSource = remember { MutableInteractionSource() }
-            val isPressed by interactionSource.collectIsPressedAsState()
-            val buttonColor by animateColorAsState(
-                targetValue = if (isPressed)
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                else
-                    MaterialTheme.colorScheme.primary,
-                label = "playButtonColor"
-            )
-
-            Button(
-                onClick = onPlayPhoneme,
-                interactionSource = interactionSource,
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.7f)
-                    .height(56.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .padding(16.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                Icon(Icons.Default.VolumeUp, contentDescription = null, modifier = Modifier.size(28.dp))
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.play_phoneme), fontSize = 18.sp)
+                val interactionSource = remember { MutableInteractionSource() }
+                val isPressed by interactionSource.collectIsPressedAsState()
+                val buttonColor by animateColorAsState(
+                    targetValue = if (isPressed)
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                    else
+                        MaterialTheme.colorScheme.primary,
+                    label = "playButtonColor"
+                )
+
+                Button(
+                    onClick = onPlayPhoneme,
+                    interactionSource = interactionSource,
+                    modifier = Modifier
+                        .fillMaxWidth(0.7f)
+                        .height(56.dp),
+                    shape = RoundedCornerShape(8.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = buttonColor)
+                ) {
+                    Icon(Icons.Default.VolumeUp, contentDescription = null, modifier = Modifier.size(28.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(stringResource(R.string.play_phoneme), fontSize = 18.sp)
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "${stringResource(R.string.target_phoneme_label)} ${question.phoneme.symbol}",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "${stringResource(R.string.target_phoneme_label)} ${question.phoneme.symbol}",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
         }
     }
 

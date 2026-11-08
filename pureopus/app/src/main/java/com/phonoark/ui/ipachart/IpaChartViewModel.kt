@@ -25,7 +25,8 @@ data class IpaChartUiState(
     val isFavorite: Boolean = false,
     val currentAccent: Accent = Accent.US_JENNY,
     val favoriteSymbols: Set<String> = emptySet(),
-    val playingWordId: String? = null
+    val playingWordId: String? = null,
+    val loadError: String? = null
 ) {
     val allVowelsFavorited: Boolean
         get() = vowels.isNotEmpty() && vowels.all { it.symbol in favoriteSymbols }
@@ -63,7 +64,8 @@ class IpaChartViewModel @Inject constructor(
                 diphthongs = phonemeRepository.diphthongs,
                 consonants = phonemeRepository.consonants,
                 currentAccent = settings.defaultAccent,
-                favoriteSymbols = favSymbols
+                favoriteSymbols = favSymbols,
+                loadError = phonemeRepository.loadError
             )
         }
     }

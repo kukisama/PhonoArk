@@ -39,7 +39,21 @@ class SettingsViewModel @Inject constructor(
 
     private fun loadSettings() {
         viewModelScope.launch {
-            val settings = settingsRepository.getSettings()
+            var settings = settingsRepository.getSettings()
+
+            // 首次启动：如果 DB 里还是默认值，则跟随系统语言。
+            // 这里采用最小规则：系统为 zh-* 则用 zh，否则用 en。
+            // （避免默认固定英文导致“首次打开”体验与系统不一致）
+            if (settings.language == "en") {
+                val sys = Locale.getDefault().toLanguageTag()
+                val desired = if (sys.startsWith("zh")) "zh" else "en"
+                if (desired != settings.language) {
+                    settingsRepository.updateLanguage(desired)
+                    settings = settings.copy(language = desired)
+                    // 也写入 attachBaseContext 读取的 locale 存储，保证下次启动一致。
+                    persistLocale(desired)
+                }
+            }
             _uiState.value = _uiState.value.copy(settings = settings)
             audioRepository.initialize()
         }
@@ -87,6 +101,9 @@ class SettingsViewModel @Inject constructor(
             settings = _uiState.value.settings.copy(language = language),
             isSaved = false
         )
+
+        // 语言切换需要“实时生效”，不依赖保存按钮。
+        applyLocale(language)
     }
 
     fun saveSettings() {
@@ -99,6 +116,7 @@ class SettingsViewModel @Inject constructor(
             settingsRepository.updateReminders(s.remindersEnabled)
             settingsRepository.updateLanguage(s.language)
 
+            // 这里仍保留一次 apply，保证从“旧版本”升级后的行为一致。
             applyLocale(s.language)
 
             _uiState.value = _uiState.value.copy(isSaved = true)
@@ -108,7 +126,7 @@ class SettingsViewModel @Inject constructor(
     private fun applyLocale(language: String) {
         val locale = when {
             language.startsWith("zh") -> Locale.SIMPLIFIED_CHINESE
-            else -> Locale.US
+            else -> Locale.ENGLISH
         }
         Locale.setDefault(locale)
         val config = Configuration(appContext.resources.configuration)
@@ -116,6 +134,10 @@ class SettingsViewModel @Inject constructor(
         @Suppress("DEPRECATION")
         appContext.resources.updateConfiguration(config, appContext.resources.displayMetrics)
 
+        persistLocale(language)
+    }
+
+    private fun persistLocale(language: String) {
         appContext.getSharedPreferences("phonoark_locale", Context.MODE_PRIVATE)
             .edit()
             .putString("language", language)

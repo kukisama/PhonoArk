@@ -1,5 +1,6 @@
 package com.phonoark.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
@@ -44,6 +45,7 @@ val bottomNavItems = listOf(
 
 @Composable
 fun AppNavigation(darkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
+    Log.i("PhonoArk", "AppNavigation: composing")
     val navController = rememberNavController()
 
     Scaffold(
@@ -75,7 +77,10 @@ fun AppNavigation(darkTheme: Boolean, onDarkThemeChange: (Boolean) -> Unit) {
             startDestination = Screen.IpaChart.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.IpaChart.route) { IpaChartScreen() }
+            composable(Screen.IpaChart.route) {
+                Log.i("PhonoArk", "NavHost: IpaChart route")
+                IpaChartScreen()
+            }
             composable(Screen.Exam.route) { ExamScreen() }
             composable(Screen.History.route) { HistoryScreen() }
             composable(Screen.Settings.route) {

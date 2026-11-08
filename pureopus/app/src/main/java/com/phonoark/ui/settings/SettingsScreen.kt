@@ -169,6 +169,8 @@ fun SettingsScreen(
                                 text = { Text(name) },
                                 onClick = {
                                     viewModel.updateLanguage(code)
+                                    // 立即刷新 UI：重建 Activity 以加载新 locale 的资源。
+                                    (context as? Activity)?.recreate()
                                     langExpanded = false
                                 }
                             )

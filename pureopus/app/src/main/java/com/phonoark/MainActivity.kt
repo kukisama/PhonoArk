@@ -1,6 +1,7 @@
 package com.phonoark
 
 import android.content.res.Configuration
+import android.util.Log
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -18,8 +19,10 @@ import java.util.Locale
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("PhonoArk", "MainActivity.onCreate")
         enableEdgeToEdge()
         setContent {
+            Log.i("PhonoArk", "MainActivity.setContent: composing")
             var darkTheme by remember { mutableStateOf(false) }
             PhonoArkTheme(darkTheme = darkTheme) {
                 AppNavigation(

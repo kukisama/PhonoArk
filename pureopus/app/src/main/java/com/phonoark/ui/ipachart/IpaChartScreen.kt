@@ -1,6 +1,7 @@
 package com.phonoark.ui.ipachart
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,6 +44,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -65,8 +67,75 @@ fun IpaChartScreen(
     viewModel: IpaChartViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    Log.i(
+        "PhonoArk",
+        "IpaChartScreen: composing, vowels=${state.vowels.size}, diphthongs=${state.diphthongs.size}, consonants=${state.consonants.size}, selected=${state.selectedPhoneme?.symbol}, err=${state.loadError}"
+    )
     val configuration = LocalConfiguration.current
     val isLandscape = configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+
+    // 当用户切换音标时，确保下方“示例单词”区域回到顶部，方便立刻开始关联测试。
+    // 注意：这里用 key=selectedPhoneme.symbol 来触发回顶，避免点击同一音标重复滚动。
+    val detailScrollState = rememberScrollState()
+    LaunchedEffect(state.selectedPhoneme?.symbol) {
+        detailScrollState.scrollTo(0)
+    }
+
+    if (!state.loadError.isNullOrBlank()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "首页数据加载失败",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = state.loadError!!,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(
+                text = "请检查 assets 是否包含 phoneme-word-bank.json 以及相关音频资源目录（如 US-Jenny）。",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+        return
+    }
+
+    // 明确兜底：当列表为空但又没有抛出异常时，给出可见提示。
+    if (state.vowels.isEmpty() && state.diphthongs.isEmpty() && state.consonants.isEmpty()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "未加载到音标数据",
+                style = MaterialTheme.typography.headlineSmall,
+                fontWeight = FontWeight.SemiBold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "请确认 assets/phoneme-word-bank.json 可被读取，且 JSON 中 phonemes 列表非空。",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center
+            )
+        }
+        return
+    }
 
     if (isLandscape && state.selectedPhoneme != null) {
         // Landscape split: left = phoneme list, right = detail panel
@@ -92,7 +161,7 @@ fun IpaChartScreen(
                 modifier = Modifier
                     .weight(0.85f)
                     .fillMaxHeight()
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(detailScrollState)
                     .padding(8.dp)
             ) {
                 PhonemeDetailPanel(
@@ -127,7 +196,7 @@ fun IpaChartScreen(
             Column(
                 modifier = Modifier
                     .weight(1f)
-                    .verticalScroll(rememberScrollState())
+                    .verticalScroll(detailScrollState)
                     .padding(8.dp)
             ) {
                 PhonemeDetailPanel(
@@ -295,8 +364,9 @@ private fun PhonemeSection(
             )
             Spacer(modifier = Modifier.height(8.dp))
             FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(5.dp),
-                verticalArrangement = Arrangement.spacedBy(5.dp)
+                // 增大音标之间的间距，避免“挤”。
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 phonemes.forEach { phoneme ->
                     val isSelected = selectedPhoneme?.symbol == phoneme.symbol
@@ -318,7 +388,8 @@ private fun PhonemeSection(
                     ) {
                         Text(
                             text = phoneme.symbol,
-                            fontSize = 22.sp,
+                            // 格子足够大，适当放大字号，提升可读性。
+                            fontSize = 26.sp,
                             fontWeight = FontWeight.Bold,
                             color = if (isSelected) MaterialTheme.colorScheme.onPrimary
                             else MaterialTheme.colorScheme.onPrimaryContainer
